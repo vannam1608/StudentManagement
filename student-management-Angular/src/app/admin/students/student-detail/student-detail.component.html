@@ -1,0 +1,19 @@
+<div *ngIf="student; else errorBlock" class="container mt-4">
+  <h4>Thông tin sinh viên</h4>
+  <p><strong>Họ tên:</strong> {{ student.fullName }}</p>
+  <p><strong>Ngày sinh:</strong> {{ student.dateOfBirth | date: 'dd/MM/yyyy' }}</p>
+  <p><strong>Giới tính:</strong> {{ student.gender }}</p>
+  <p><strong>Email:</strong> {{ student.email }}</p>
+  <p><strong>Điện thoại:</strong> {{ student.phone }}</p>
+  <p><strong>Khoa:</strong> {{ student.departmentName }}</p>
+  <p><strong>Chương trình:</strong> {{ student.programName }}</p>
+
+  <div class="mt-4 d-flex gap-2">
+    <button class="btn btn-primary" (click)="editStudent()">✏️ Chỉnh sửa</button>
+    <button class="btn btn-secondary" (click)="goBack()">⬅ Quay lại</button>
+  </div>
+</div>
+
+<ng-template #errorBlock>
+  <div class="alert alert-danger mt-4">{{ errorMessage }}</div>
+</ng-template>

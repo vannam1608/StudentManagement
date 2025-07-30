@@ -1,0 +1,38 @@
+
+<div class="container mt-4">
+  <h3>📘 Quản lý Chương trình đào tạo</h3>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Form tạo mới -->
+  <div class="mb-3">
+    <label for="programName" class="form-label">Tên chương trình đào tạo</label>
+    <input type="text" id="programName" [(ngModel)]="newProgramName" class="form-control" />
+    <button class="btn btn-primary mt-2" (click)="createProgram()">➕ Tạo mới</button>
+  </div>
+
+  <!-- Danh sách chương trình -->
+  <table class="table table-bordered mt-4" *ngIf="programs.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Tên chương trình</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of programs">
+        <td>{{ p.id }}</td>
+        <td>{{ p.name }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="deleteProgram(p.id)">🗑️ Xóa</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="programs.length === 0" class="alert alert-info">
+    Không có chương trình nào.
+  </div>
+</div>

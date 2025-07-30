@@ -1,0 +1,14 @@
+<h4>👤 Thông tin giảng viên</h4>
+<div *ngIf="teacher" class="card p-3">
+  <p><strong>Mã GV:</strong> {{ teacher.teacherCode }}</p>
+  <p><strong>Họ tên:</strong> {{ teacher.fullName }}</p>
+  <p><strong>Email:</strong> {{ teacher.email }}</p>
+  <p><strong>Điện thoại:</strong> {{ teacher.phone }}</p>
+  <p><strong>Trình độ:</strong> {{ teacher.degree }}</p>
+  <p><strong>Tài khoản:</strong> {{ teacher.username }}</p>
+</div>
+
+<div class="mt-3 d-flex gap-2">
+  <a routerLink="/admin/teachers" class="btn btn-secondary">⬅️ Quay lại</a>
+  <a *ngIf="teacher" [routerLink]="['/admin/teachers/edit', teacher.id]" class="btn btn-warning">✏️ Sửa thông tin</a>
+</div>

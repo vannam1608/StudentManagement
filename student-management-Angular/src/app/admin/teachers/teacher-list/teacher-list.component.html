@@ -1,0 +1,41 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>📚 Danh sách giảng viên</h4>
+  <a routerLink="/admin/teachers/create" class="btn btn-primary">
+    ➕ Thêm giảng viên
+  </a>
+</div>
+
+<div *ngIf="loading" class="alert alert-info">Đang tải danh sách...</div>
+
+<table *ngIf="!loading && teachers.length" class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>#</th>
+      <th>Mã GV</th>
+      <th>Họ tên</th>
+      <th>Email</th>
+      <th>SĐT</th>
+      <th>Trình độ</th>
+      <th>Tài khoản</th>
+      <th>Hành động</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of teachers; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ t.teacherCode }}</td>
+      <td>{{ t.fullName }}</td>
+      <td>{{ t.email }}</td>
+      <td>{{ t.phone }}</td>
+      <td>{{ t.degree }}</td>
+      <td>{{ t.username }}</td>
+      <td>
+        <a [routerLink]="['/admin/teachers/detail', t.id]" class="btn btn-sm btn-info me-1">Xem</a>
+        <a [routerLink]="['/admin/teachers/edit', t.id]" class="btn btn-sm btn-warning me-1">Sửa</a>
+        <button class="btn btn-sm btn-danger" (click)="delete(t.id)">Xoá</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && !teachers.length" class="alert alert-warning">Không có giảng viên nào.</div>

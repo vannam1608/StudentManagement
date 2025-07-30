@@ -1,0 +1,18 @@
+<div class="container mt-4">
+  <h3>📘 Chi tiết lớp học phần</h3>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="courseClass" class="card">
+    <div class="card-body">
+      <p><strong>Mã lớp:</strong> {{ courseClass.classCode }}</p>
+      <p><strong>Môn học:</strong> {{ courseClass.subjectName }}</p>
+      <p><strong>Giảng viên:</strong> {{ courseClass.teacherName }}</p>
+      <p><strong>Học kỳ:</strong> {{ courseClass.semesterName }}</p>
+      <p><strong>Lịch học:</strong> {{ courseClass.schedule || 'Chưa có' }}</p>
+      <p><strong>Số lượng tối đa:</strong> {{ courseClass.maxStudents || 'Không giới hạn' }}</p>
+      <p><strong>Số lượng đã đăng ký:</strong> {{ courseClass.registeredCount || 0 }}</p>
+    </div>
+  </div>
+
+  <a class="btn btn-secondary mt-3" routerLink="/admin/course-classes">← Quay lại danh sách</a>
+</div>

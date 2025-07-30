@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="row min-vh-100">
+    <!-- Sidebar -->
+    <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar p-3 border-end">
+      <div class="sidebar-sticky">
+        <h5 class="mb-4">👨‍🏫 Xin chào, {{ fullName }}</h5>
+        <ul class="nav flex-column">
+          <li class="nav-item mb-2">
+            <a class="nav-link" routerLink="/teacher/dashboard" routerLinkActive="active">
+              <i class="bi bi-house-door"></i> Trang chủ
+            </a>
+          </li>
+
+          <li class="nav-item mb-2">
+            <a class="nav-link" routerLink="/teacher/profile" routerLinkActive="active">
+              <i class="bi bi-person-circle"></i> Thông tin cá nhân
+            </a>
+          </li>
+
+          <li class="nav-item mb-2">
+            <a class="nav-link" routerLink="/teacher/my-classes" routerLinkActive="active">
+              <i class="bi bi-easel2"></i> Quản lý lớp học
+            </a>
+          </li>
+
+          <li class="nav-item mb-2">
+            <a class="nav-link" routerLink="/teacher/my-scores" routerLinkActive="active">
+              <i class="bi bi-bar-chart-line"></i> Nhập điểm
+            </a>
+          </li>
+
+          <li class="nav-item mt-4">
+            <button class="btn btn-outline-danger w-100" (click)="logout()">
+              <i class="bi bi-box-arrow-right"></i> Đăng xuất
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

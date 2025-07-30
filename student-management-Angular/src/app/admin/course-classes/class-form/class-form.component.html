@@ -1,0 +1,47 @@
+<div class="container mt-4">
+  <h3>{{ isEdit ? '✏️ Cập nhật lớp học phần' : '➕ Tạo lớp học phần' }}</h3>
+
+  <form (ngSubmit)="submitForm()">
+    <div class="mb-3">
+      <label>Mã lớp:</label>
+      <input [(ngModel)]="formData.classCode" name="classCode" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label>Môn học:</label>
+      <select [(ngModel)]="formData.subjectId" name="subjectId" class="form-select" required>
+        <option value="">-- Chọn môn học --</option>
+        <option *ngFor="let subject of subjects" [value]="subject.id">{{ subject.name }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Giảng viên:</label>
+      <select [(ngModel)]="formData.teacherId" name="teacherId" class="form-select" required>
+        <option value="">-- Chọn giảng viên --</option>
+        <option *ngFor="let teacher of teachers" [value]="teacher.id">{{ teacher.fullName }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Học kỳ:</label>
+      <select [(ngModel)]="formData.semesterId" name="semesterId" class="form-select" required>
+        <option value="">-- Chọn học kỳ --</option>
+        <option *ngFor="let semester of semesters" [value]="semester.id">{{ semester.name }}</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label>Lịch học:</label>
+      <input [(ngModel)]="formData.schedule" name="schedule" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label>Sĩ số tối đa:</label>
+      <input type="number" [(ngModel)]="formData.maxStudents" name="maxStudents" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-success">💾 Lưu</button>
+    <a routerLink="/admin/course-classes" class="btn btn-secondary ms-2">⬅️ Quay lại</a>
+  </form>
+</div>

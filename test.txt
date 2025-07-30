@@ -1,0 +1,382 @@
+
+CREATE DATABASE StudentManagementDB;
+GO
+
+USE StudentManagementDB;
+GO
+
+-- 1. USERS
+CREATE TABLE Users (
+    Id INT IDENTITY PRIMARY KEY,
+    Username NVARCHAR(50) UNIQUE NOT NULL,
+    PasswordHash NVARCHAR(256) NOT NULL,
+    FullName NVARCHAR(100) NOT NULL,
+    Email NVARCHAR(100),
+    Phone NVARCHAR(20),
+    Role NVARCHAR(20) CHECK (Role IN ('Admin', 'Teacher', 'Student')) NOT NULL
+);
+
+-- 2. DEPARTMENTS
+CREATE TABLE Departments (
+    Id INT IDENTITY PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 3. EDUCATION PROGRAMS
+CREATE TABLE EducationPrograms (
+    Id INT IDENTITY PRIMARY KEY,
+    Name NVARCHAR(100) NOT NULL UNIQUE
+);
+
+-- 4. STUDENTS
+CREATE TABLE Students (
+    Id INT PRIMARY KEY,
+    StudentCode NVARCHAR(20) UNIQUE NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Gender NVARCHAR(10) CHECK (Gender IN (N'Nam', N'Nữ')) NOT NULL,
+    DepartmentId INT NOT NULL,
+    ProgramId INT NOT NULL,
+    FOREIGN KEY (Id) REFERENCES Users(Id) ON DELETE CASCADE,
+    FOREIGN KEY (DepartmentId) REFERENCES Departments(Id),
+    FOREIGN KEY (ProgramId) REFERENCES EducationPrograms(Id)
+);
+
+-- 5. TEACHERS
+CREATE TABLE Teachers (
+    Id INT PRIMARY KEY,
+    TeacherCode NVARCHAR(20) UNIQUE NOT NULL,
+    Degree NVARCHAR(50) NOT NULL,
+    FOREIGN KEY (Id) REFERENCES Users(Id) ON DELETE CASCADE
+);
+
+-- 6. SUBJECTS
+CREATE TABLE Subjects (
+    Id INT IDENTITY PRIMARY KEY,
+    SubjectCode NVARCHAR(20) UNIQUE NOT NULL,
+    Name NVARCHAR(100) NOT NULL,
+    Credit INT NOT NULL CHECK (Credit > 0),
+    Description NVARCHAR(500)
+);
+
+-- 7. SEMESTERS
+CREATE TABLE Semesters (
+    Id INT IDENTITY PRIMARY KEY,
+    Name NVARCHAR(50) NOT NULL,
+    StartDate DATE NOT NULL,
+    EndDate DATE NOT NULL,
+    IsOpen BIT DEFAULT 1
+);
+
+-- 8. COURSE CLASSES
+CREATE TABLE CourseClasses (
+    Id INT IDENTITY PRIMARY KEY,
+    ClassCode NVARCHAR(20) UNIQUE NOT NULL,
+    SubjectId INT NOT NULL,
+    TeacherId INT NOT NULL,
+    SemesterId INT NOT NULL,
+    Schedule NVARCHAR(200),
+    MaxStudents INT CHECK (MaxStudents > 0),
+    FOREIGN KEY (SubjectId) REFERENCES Subjects(Id),
+    FOREIGN KEY (TeacherId) REFERENCES Teachers(Id),
+    FOREIGN KEY (SemesterId) REFERENCES Semesters(Id)
+);
+
+-- 9. ENROLLMENTS
+CREATE TABLE Enrollments (
+    Id INT IDENTITY PRIMARY KEY,
+    StudentId INT NOT NULL,
+    CourseClassId INT NOT NULL,
+    EnrollDate DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (StudentId) REFERENCES Students(Id),
+    FOREIGN KEY (CourseClassId) REFERENCES CourseClasses(Id),
+    CONSTRAINT UC_Student_Class UNIQUE (StudentId, CourseClassId)
+);
+
+-- 10. SCORES
+CREATE TABLE Scores (
+    Id INT IDENTITY PRIMARY KEY,
+    EnrollmentId INT UNIQUE NOT NULL,
+    Midterm FLOAT CHECK (Midterm BETWEEN 0 AND 10),
+    Final FLOAT CHECK (Final BETWEEN 0 AND 10),
+    Other FLOAT CHECK (Other BETWEEN 0 AND 10),
+    Total AS (ROUND(ISNULL(Midterm,0)*0.3 + ISNULL(Other,0)*0.2 + ISNULL(Final,0)*0.5, 2)),
+    FOREIGN KEY (EnrollmentId) REFERENCES Enrollments(Id) ON DELETE CASCADE
+);
+
+-- 11. NOTIFICATIONS
+CREATE TABLE Notifications (
+    Id INT IDENTITY PRIMARY KEY,
+    Title NVARCHAR(200) NOT NULL,
+    Content NVARCHAR(MAX) NOT NULL,
+    CreatedBy INT NOT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    TargetRole NVARCHAR(20) CHECK (TargetRole IN ('Admin', 'Teacher', 'Student', 'All')),
+    FOREIGN KEY (CreatedBy) REFERENCES Users(Id)
+);
+
+-- 12. CLASS POSTS
+CREATE TABLE ClassPosts (
+    Id INT IDENTITY PRIMARY KEY,
+    CourseClassId INT NOT NULL,
+    Title NVARCHAR(200) NOT NULL,
+    Content NVARCHAR(MAX) NOT NULL,
+    CreatedBy INT NULL,
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (CourseClassId) REFERENCES CourseClasses(Id) ON DELETE CASCADE,
+    FOREIGN KEY (CreatedBy) REFERENCES Users(Id) ON DELETE SET NULL
+);
+
+-- =============================
+-- DỮ LIỆU MẪU
+-- =============================
+
+-- USERS
+INSERT INTO Users (Username, PasswordHash, FullName, Email, Phone, Role) VALUES
+('admin1', 'adminpass', N'Quản trị viên', 'admin@edu.vn', '0123456789', 'Admin'),
+('teacher1', 'teacherpass', N'Trần Văn A', 'teacher1@edu.vn', '0111111111', 'Teacher'),
+('teacher2', 'teacherpass', N'Nguyễn Thị B', 'teacher2@edu.vn', '0111111112', 'Teacher'),
+('teacher3', 'teacherpass', N'Phạm Thị H', 'teacher3@edu.vn', '0111111113', 'Teacher'),
+('teacher4', 'teacherpass', N'Lê Văn K', 'teacher4@edu.vn', '0111111114', 'Teacher'),
+('teacher5', 'teacherpass', N'Nguyễn Thị M', 'teacher5@edu.vn', '0111111115', 'Teacher'),
+('student1', 'studentpass', N'Phạm Minh C', 'student1@edu.vn', '0333333333', 'Student'),
+('student2', 'studentpass', N'Lê Hoàng D', 'student2@edu.vn', '0444444444', 'Student'),
+('student3', 'studentpass', N'Vũ Mai E', 'student3@edu.vn', '0555555555', 'Student'),
+('student4', 'studentpass', N'Nguyễn Văn F', 'student4@edu.vn', '0666666666', 'Student'),
+('student5', 'studentpass', N'Trịnh Thị G', 'student5@edu.vn', '0777777777', 'Student'),
+('student6', 'studentpass', N'Hoàng Quốc H', 'student6@edu.vn', '0888888888', 'Student'),
+('student7', 'studentpass', N'Đỗ Thị I', 'student7@edu.vn', '0999999999', 'Student');
+
+-- TEACHERS (Id tương ứng UserId)
+INSERT INTO Teachers (Id, TeacherCode, Degree) VALUES
+(2, 'GV001', N'Tiến sĩ'),
+(3, 'GV002', N'Thạc sĩ'),
+(4, 'GV003', N'Thạc sĩ'),
+(5, 'GV004', N'Cử nhân'),
+(6, 'GV005', N'Tiến sĩ');
+
+-- DEPARTMENTS
+INSERT INTO Departments (Name) VALUES
+(N'Công nghệ thông tin'), (N'Kinh tế'), (N'Cơ khí'), (N'Điện tử viễn thông'), (N'Sinh học'),
+(N'Tài chính'), (N'Marketing'), (N'Công nghệ thực phẩm'), (N'Xây dựng'), (N'Môi trường');
+
+-- EDUCATION PROGRAMS
+INSERT INTO EducationPrograms (Name) VALUES
+(N'Đại học chính quy'), (N'Liên thông'), (N'Vừa học vừa làm'), (N'Trực tuyến'), (N'Cao đẳng');
+
+-- STUDENTS (Id = UserId)
+INSERT INTO Students (Id, StudentCode, DateOfBirth, Gender, DepartmentId, ProgramId) VALUES
+(7, 'SV001', '2003-01-01', N'Nam', 1, 1),
+(8, 'SV002', '2003-02-02', N'Nữ', 2, 2),
+(9, 'SV003', '2003-03-03', N'Nữ', 3, 3),
+(10, 'SV004', '2003-04-04', N'Nam', 4, 1),
+(11, 'SV005', '2003-05-05', N'Nữ', 5, 2),
+(12, 'SV006', '2003-06-06', N'Nam', 6, 3),
+(13, 'SV007', '2003-07-07', N'Nữ', 7, 4);
+
+-- SUBJECTS (15 môn học)
+INSERT INTO Subjects (SubjectCode, Name, Credit, Description) VALUES
+('MH001', N'Cơ sở dữ liệu', 3, N'Cơ sở dữ liệu quan hệ'),
+('MH002', N'Lập trình Web', 3, N'Thiết kế web với HTML/CSS/JS'),
+('MH003', N'Mạng máy tính', 3, N'Cấu trúc mạng và TCP/IP'),
+('MH004', N'Phân tích hệ thống', 3, N'UML và phân tích yêu cầu'),
+('MH005', N'Trí tuệ nhân tạo', 3, N'Giới thiệu AI'),
+('MH006', N'Hệ điều hành', 3, N'Linux/Windows OS'),
+('MH007', N'Kiến trúc máy tính', 3, N'Tổ chức máy tính'),
+('MH008', N'Thiết kế UI/UX', 3, N'Cơ bản về thiết kế trải nghiệm người dùng'),
+('MH009', N'Lập trình Python', 3, N'Cơ bản về Python'),
+('MH010', N'Thực tập cơ sở', 2, N'Làm quen doanh nghiệp'),
+('MH011', N'Kỹ năng mềm', 2, N'Giao tiếp và làm việc nhóm'),
+('MH012', N'Thiết kế phần mềm', 3, N'Nguyên lý và mẫu thiết kế'),
+('MH013', N'Cấu trúc dữ liệu', 3, N'Danh sách, cây, đồ thị'),
+('MH014', N'Thiết kế CSDL nâng cao', 3, N'Indexing, optimization, transaction'),
+('MH015', N'An toàn thông tin', 3, N'Mã hóa, bảo mật, bảo vệ hệ thống');
+
+-- SEMESTERS
+INSERT INTO Semesters (Name, StartDate, EndDate, IsOpen) VALUES
+('HK1 2025', '2025-01-01', '2025-07-15', 1),
+('HK2 2025', '2025-08-01', '2025-12-30', 0);
+
+-- COURSE CLASSES (phân bổ 10 môn ở HK1 và 5 môn ở HK2)
+INSERT INTO CourseClasses (ClassCode, SubjectId, TeacherId, SemesterId, Schedule, MaxStudents) VALUES
+-- HK1
+('L001', 1, 2, 1, N'T2-T4 7:30-9:30', 30),
+('L002', 2, 3, 1, N'T3-T5 9:30-11:30', 30),
+('L003', 3, 4, 1, N'T2-T4 13:00-15:00', 25),
+('L004', 4, 5, 1, N'T3-T5 15:00-17:00', 25),
+('L005', 5, 6, 1, N'T2-T6 9:30-11:30', 20),
+('L006', 6, 2, 1, N'T3-T5 17:30-19:30', 20),
+('L007', 7, 3, 1, N'T2-T4 15:30-17:30', 20),
+('L008', 8, 4, 1, N'T3-T6 13:00-15:00', 20),
+('L009', 9, 5, 1, N'T2-T5 7:30-9:30', 20),
+('L010', 10, 6, 1, N'T4 8:00-11:00', 20),
+-- HK2 (chưa có điểm)
+('L011', 11, 2, 2, N'T2-T4 9:30-11:30', 25),
+('L012', 12, 3, 2, N'T3-T5 13:30-15:30', 25),
+('L013', 13, 4, 2, N'T2-T6 10:00-12:00', 25),
+('L014', 14, 5, 2, N'T3-T5 14:00-16:00', 25),
+('L015', 15, 6, 2, N'T2-T4 15:00-17:00', 25);
+
+-- ENROLLMENTS cho HK1
+INSERT INTO Enrollments (StudentId, CourseClassId) VALUES
+(7, 1), (7, 2), (7, 3),
+(8, 4), (8, 5), (8, 6),
+(9, 7), (9, 8), (9, 9),
+(10, 2), (10, 5), (10, 10),
+(11, 1), (11, 4), (11, 8),
+(12, 3), (12, 6), (12, 9),
+(13, 2), (13, 7), (13, 10);
+-- ENROLLMENTS cho HK2 (SemesterId = 2)
+INSERT INTO Enrollments (StudentId, CourseClassId) VALUES
+(7, 11), (7, 12),                 
+(8, 13),                         
+(9, 14),                         
+(10, 12), (10, 15),             
+(11, 11), (11, 13),              
+(12, 14),                        
+(13, 15);                        
+
+
+-- SCORES: Chỉ nhập điểm cho lớp ở HK1 (EnrollmentId 1-21)
+INSERT INTO Scores (EnrollmentId, Midterm, Final, Other) VALUES
+(1, 8.0, 9.0, 7.0),
+(2, 7.5, 8.0, 6.5),
+(3, 6.0, 7.0, 6.0),
+(4, 9.0, 8.5, 9.0),
+(5, 7.0, 8.0, 7.5),
+(6, 8.5, 8.0, 8.0),
+(7, 6.5, 7.5, 7.0),
+(8, 7.0, 7.5, 6.5),
+(9, 8.0, 9.0, 7.5),
+(10, 7.0, 7.5, 7.0),
+(11, 6.5, 6.0, 6.5),
+(12, 8.0, 8.5, 8.0),
+(13, 9.0, 9.0, 9.0),
+(14, 7.5, 8.0, 8.5),
+(15, 6.5, 7.0, 7.5),
+(16, 8.5, 9.0, 9.0),
+(17, 7.0, 7.5, 6.5),
+(18, 6.0, 6.5, 6.0),
+(19, 7.5, 8.0, 8.0),
+(20, 8.5, 9.0, 9.0),
+(21, 7.0, 7.5, 7.5);
+
+-- =============================
+-- NOTIFICATIONS
+-- =============================
+INSERT INTO Notifications (Title, Content, CreatedBy, TargetRole) VALUES
+(N'Cập nhật tài khoản', N'Vui lòng đổi mật khẩu ngay lần đầu đăng nhập.', 1, 'All'),
+(N'Lịch thi cuối kỳ', N'Lịch thi sẽ được công bố vào ngày 01/12/2024.', 1, 'Student'),
+(N'Hướng dẫn sử dụng hệ thống', N'Xem video hướng dẫn tại trang chủ.', 1, 'Teacher'),
+(N'Thông báo nghỉ lễ', N'Lễ 2/9 được nghỉ 4 ngày.', 1, 'All'),
+(N'Đăng ký học phần', N'Hạn cuối đăng ký là 30/07/2024.', 1, 'Student'),
+(N'Thông báo họp khoa', N'Giáo viên họp khoa ngày 20/07.', 1, 'Teacher'),
+(N'Đổi lịch dạy', N'Một số lớp có thay đổi giáo viên.', 1, 'Teacher'),
+(N'Bổ sung học bổng', N'Thêm suất học bổng cho học kỳ tới.', 1, 'Student'),
+(N'Chương trình trao đổi', N'Đăng ký tham gia chương trình trao đổi sinh viên quốc tế.', 1, 'Student'),
+(N'Đánh giá giảng viên', N'Hệ thống mở form đánh giá giảng viên từ 10/08.', 1, 'Student');
+
+
+-- USERS
+SELECT * FROM Users;
+
+-- TEACHERS
+SELECT * FROM Teachers;
+
+-- STUDENTS
+SELECT * FROM Students;
+
+-- DEPARTMENTS
+SELECT * FROM Departments;
+
+-- EDUCATION PROGRAMS
+SELECT * FROM EducationPrograms;
+
+-- SUBJECTS
+SELECT * FROM Subjects;
+
+-- SEMESTERS
+SELECT * FROM Semesters;
+
+-- COURSE CLASSES
+SELECT * FROM CourseClasses;
+
+-- ENROLLMENTS (Đăng ký môn)
+SELECT * FROM Enrollments;
+
+-- SCORES (Điểm số)
+SELECT * FROM Scores;
+
+-- NOTIFICATIONS (Thông báo)
+SELECT * FROM Notifications;
+
+-- CLASS POSTS (Bài đăng trong lớp học)
+SELECT * FROM ClassPosts;
+
+
+SELECT 
+    sub.SubjectCode,
+    sub.Name AS SubjectName,
+    sub.Description,
+    sem.Name AS Semester,
+    sem.StartDate,
+    sem.EndDate,
+    sem.IsOpen,
+    cc.ClassCode,
+    cc.Schedule,
+    cc.TeacherId
+FROM CourseClasses cc
+JOIN Subjects sub ON cc.SubjectId = sub.Id
+JOIN Semesters sem ON cc.SemesterId = sem.Id
+ORDER BY sem.StartDate;
+
+
+SELECT 
+    s.StudentCode,
+    u.FullName AS StudentName,
+    sub.SubjectCode,
+    sub.Name AS SubjectName,
+    sc.Midterm,
+    sc.Final,
+    sc.Other,
+    ROUND((sc.Midterm * 0.3 + sc.Final * 0.6 + sc.Other * 0.1), 2) AS AverageScore,
+    CASE 
+        WHEN (sc.Midterm * 0.3 + sc.Final * 0.6 + sc.Other * 0.1) >= 5 THEN N'Đậu'
+        ELSE N'Rớt'
+    END AS Result
+FROM Scores sc
+JOIN Enrollments e ON sc.EnrollmentId = e.Id
+JOIN Students s ON e.StudentId = s.Id
+JOIN Users u ON s.Id = u.Id
+JOIN CourseClasses cc ON e.CourseClassId = cc.Id
+JOIN Subjects sub ON cc.SubjectId = sub.Id
+ORDER BY s.StudentCode, sub.SubjectCode;
+
+
+
+SELECT 
+    st.StudentCode,
+    u.FullName AS StudentName,
+    sb.SubjectCode,
+    sb.Name AS SubjectName,
+    cc.ClassCode,
+    se.Name AS Semester,
+    sc.Midterm,
+    sc.Final,
+    sc.Other
+FROM Enrollments e
+JOIN Students st ON e.StudentId = st.Id
+JOIN Users u ON u.Id = st.Id
+JOIN CourseClasses cc ON e.CourseClassId = cc.Id
+JOIN Subjects sb ON cc.SubjectId = sb.Id
+JOIN Semesters se ON cc.SemesterId = se.Id
+LEFT JOIN Scores sc ON sc.EnrollmentId = e.Id
+ORDER BY st.StudentCode, se.StartDate, sb.SubjectCode;
+
+
+SELECT * FROM CourseClasses WHERE TeacherId IS NULL;
+
+
+SELECT CourseClassId, COUNT(*) AS StudentCount
+FROM Enrollments
+GROUP BY CourseClassId
+ORDER BY CourseClassId;

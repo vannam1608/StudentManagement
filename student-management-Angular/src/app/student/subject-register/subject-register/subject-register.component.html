@@ -1,0 +1,43 @@
+<div class="container mt-4">
+  <h4>📝 Đăng ký môn học</h4>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped">
+      <thead class="table-light">
+        <tr>
+          <th>Mã môn</th>
+          <th>Tên môn</th>
+          <th>Hành động</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of availableSubjects">
+          <td>{{ subject.subjectCode }}</td>
+          <td>{{ subject.name }}</td>
+          <td>
+            <button
+              class="btn btn-sm"
+              [ngClass]="isRegistered(subject.id) ? 'btn-secondary' : 'btn-success'"
+              [disabled]="isRegistered(subject.id)"
+              (click)="registerSubject(subject.id)">
+              {{ isRegistered(subject.id) ? 'Đã đăng ký' : 'Đăng ký' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h5 class="mt-4">📚 Danh sách môn đã đăng ký</h5>
+  <ul class="list-group">
+    <ng-container *ngFor="let subject of availableSubjects">
+      <li class="list-group-item" *ngIf="isRegistered(subject.id)">
+        {{ subject.subjectCode }} - {{ subject.name }}
+      </li>
+    </ng-container>
+  </ul>
+
+  <div *ngIf="registeredSubjectIds.length === 0" class="alert alert-info mt-3">
+    Bạn chưa đăng ký môn học nào.
+  </div>
+</div>

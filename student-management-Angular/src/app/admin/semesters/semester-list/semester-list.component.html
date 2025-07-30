@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <h3>📚 Danh sách học kỳ</h3>
+
+  <a routerLink="/admin/semesters/create" class="btn btn-success mb-3">➕ Thêm học kỳ</a>
+
+  <div *ngIf="isLoading" class="text-center">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+
+  <div *ngIf="!isLoading && semesters.length === 0" class="alert alert-info">
+    Chưa có học kỳ nào.
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <table class="table table-bordered" *ngIf="!isLoading && semesters.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>Tên học kỳ</th>
+        <th>Thời gian</th>
+        <th>Trạng thái</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of semesters">
+        <td>{{ s.name }}</td>
+        <td>{{ s.startDate | date:'dd/MM/yyyy' }} - {{ s.endDate | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <span class="badge" [ngClass]="s.isOpen ? 'bg-success' : 'bg-secondary'">
+            {{ s.isOpen ? 'Đang mở' : 'Đã đóng' }}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-warning me-1" (click)="toggleSemester(s.id)" [disabled]="!canToggle(s)">
+            🔄
+          </button>
+          <a [routerLink]="['/admin/semesters/edit', s.id]" class="btn btn-sm btn-primary me-1">✏️</a> 
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

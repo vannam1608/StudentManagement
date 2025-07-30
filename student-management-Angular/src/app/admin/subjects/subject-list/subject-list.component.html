@@ -1,0 +1,33 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h4>Danh sách môn học</h4>
+  <div>
+    <a class="btn btn-success me-2" routerLink="/admin/subjects/available">📘 Môn học mở</a>
+    <a class="btn btn-info me-2" routerLink="/admin/subjects/search">🔍 Tìm kiếm</a>
+    <a class="btn btn-primary" routerLink="/admin/subjects/create">+ Thêm môn học</a>
+  </div>
+</div>
+
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr>
+      <th>Mã môn</th>
+      <th>Tên môn</th>
+      <th>Số tín chỉ</th>
+      <th>Mô tả</th>
+      <th>Thao tác</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of subjects">
+      <td>{{ s.subjectCode }}</td>
+      <td>{{ s.name }}</td>
+      <td>{{ s.credit }}</td>
+      <td>{{ s.description }}</td>
+      <td>
+        <a [routerLink]="['/admin/subjects', s.id]" class="btn btn-sm btn-secondary me-1">Xem</a>
+        <a [routerLink]="['/admin/subjects/edit', s.id]" class="btn btn-sm btn-warning me-1">Sửa</a>
+        <button class="btn btn-sm btn-danger" (click)="deleteSubject(s.id)">Xóa</button>
+      </td>
+    </tr>
+  </tbody>
+</table>

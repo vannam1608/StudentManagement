@@ -1,0 +1,20 @@
+<div class="container mt-4">
+  <h3>{{ isEditMode ? 'Chỉnh sửa Khoa' : 'Thêm mới Khoa' }}</h3>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label">Tên khoa</label>
+      <input type="text" class="form-control" [(ngModel)]="model.name" name="name" required />
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary">
+        {{ isEditMode ? 'Cập nhật' : 'Tạo mới' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="router.navigate(['/admin/departments'])">Hủy</button>
+    </div>
+  </form>
+
+  <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+</div>

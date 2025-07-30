@@ -1,0 +1,35 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>📚 Danh sách Khoa</h3>
+    <a class="btn btn-primary" [routerLink]="['/admin/departments/create']">➕ Tạo mới khoa</a>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <table class="table table-bordered mt-3" *ngIf="departments.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Mã khoa</th>
+        <th>Tên khoa</th>
+        <th>Số sinh viên</th>
+        <th style="width: 150px;">Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let d of departments">
+        <td>{{ d.id }}</td>
+        <td>{{ d.name }}</td>
+        <td>{{ d.studentCount }}</td>
+        <td>
+          <a [routerLink]="['/admin/departments/edit', d.id]" class="btn btn-sm btn-warning me-1">✏️ Sửa</a>
+          <button class="btn btn-sm btn-danger" (click)="deleteDepartment(d.id)">🗑️ Xóa</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="departments.length === 0 && !errorMessage" class="alert alert-info">
+    Không có khoa nào được tìm thấy.
+  </div>
+</div>

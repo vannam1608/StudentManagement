@@ -1,0 +1,50 @@
+<div class="container mt-4">
+  <h4>🔍 Tra cứu điểm theo môn học</h4>
+
+  <div class="mb-3">
+    <label for="subject" class="form-label">Chọn môn học:</label>
+    <select id="subject" class="form-select" [(ngModel)]="subjectId">
+      <option [ngValue]="null">-- Chọn môn học --</option>
+      <option *ngFor="let s of subjects" [ngValue]="s.id">
+        {{ s.subjectCode }} - {{ s.name }}
+      </option>
+    </select>
+  </div>
+
+  <button class="btn btn-primary mb-4" (click)="search()" [disabled]="!subjectId">
+    <i class="bi bi-search me-1"></i> Xem điểm
+  </button>
+
+  <div *ngIf="scores.length === 0 || !scores[0]?.studentCode" class="alert alert-info">
+    Không có dữ liệu điểm cho môn học này.
+  </div>
+
+  <div class="table-responsive" *ngIf="scores.length > 0 && scores[0]?.studentCode">
+    <table class="table table-bordered table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>Mã sinh viên</th>
+          <th>Điểm giữa kỳ</th>
+          <th>Điểm cuối kỳ</th>
+          <th>Điểm khác</th>
+          <th>Tổng</th>
+          <th>Kết quả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let score of scores">
+          <td>{{ score.studentCode }}</td>
+          <td>{{ score.midterm }}</td>
+          <td>{{ score.final }}</td>
+          <td>{{ score.other }}</td>
+          <td><strong>{{ score.total }}</strong></td>
+          <td>
+            <span [ngClass]="score.total >= 5 ? 'text-success fw-bold' : 'text-danger fw-bold'">
+              {{ score.total >= 5 ? 'Đậu' : 'Rớt' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

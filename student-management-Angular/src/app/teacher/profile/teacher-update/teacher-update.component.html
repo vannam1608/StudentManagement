@@ -1,0 +1,26 @@
+<div *ngIf="loading">Đang tải dữ liệu...</div>
+<div *ngIf="error" class="text-danger">{{ error }}</div>
+
+<form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <div>
+    <label>Họ và tên</label>
+    <input type="text" formControlName="fullName" />
+  </div>
+
+  <div>
+    <label>Học vị</label>
+    <input type="text" formControlName="degree" />
+  </div>
+
+  <div>
+    <label>Email</label>
+    <input type="email" formControlName="email" />
+  </div>
+
+  <div>
+    <label>Số điện thoại</label>
+    <input type="text" formControlName="phone" />
+  </div>
+
+  <button type="submit" [disabled]="form.invalid">Lưu thay đổi</button>
+</form>

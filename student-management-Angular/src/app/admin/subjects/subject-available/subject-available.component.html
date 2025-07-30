@@ -1,0 +1,102 @@
+<div class="container mt-4">
+  <h3 class="mb-3">📚 Đăng ký môn học theo học kỳ</h3>
+  <button class="btn btn-secondary mb-3" (click)="goBack()">← Quay lại</button>
+
+  <!-- Chọn học kỳ -->
+  <div class="mb-3">
+    <label for="semesterSelect" class="form-label">Chọn học kỳ:</label>
+    <select class="form-select" id="semesterSelect"
+            [(ngModel)]="selectedSemesterId"
+            (change)="onStudentOrSemesterChange()">
+      <option *ngFor="let s of semesters" [value]="s.id">{{ s.name }}</option>
+    </select>
+  </div>
+
+  <!-- Chọn sinh viên -->
+  <div class="mb-3">
+    <label for="studentSelect" class="form-label">Chọn sinh viên:</label>
+    <select class="form-select" id="studentSelect"
+            [(ngModel)]="selectedStudentId"
+            (change)="onStudentOrSemesterChange()">
+      <option *ngFor="let s of students" [value]="s.id">{{ s.fullName }} ({{ s.studentCode }})</option>
+    </select>
+  </div>
+
+  <!-- Thông báo -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <!-- Môn học khả dụng -->
+  <h5 class="mt-4">📖 Môn học khả dụng</h5>
+  <table class="table table-bordered table-hover" *ngIf="availableSubjects.length > 0">
+    <thead class="table-light">
+      <tr>
+        <th>Mã môn</th>
+        <th>Tên môn</th>
+        <th>Tín chỉ</th>
+        <th>Mô tả</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of availableSubjects">
+        <td>{{ s.subjectCode }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.credit }}</td>
+        <td>{{ s.description }}</td>
+        <td>
+          <ng-container *ngIf="isSemesterOpen(); else disabledButton">
+            <button class="btn btn-primary btn-sm"
+                    (click)="registerSubject(s.id)"
+                    title="Đăng ký môn học">
+              Đăng ký
+            </button>
+          </ng-container>
+          <ng-template #disabledButton>
+            <button class="btn btn-secondary btn-sm" disabled>Học kỳ đã đóng</button>
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="availableSubjects.length === 0" class="alert alert-warning">
+    Không có môn học khả dụng cho học kỳ này.
+  </div>
+
+  <!-- Môn học đã đăng ký -->
+  <h5 class="mt-5">✅ Danh sách môn học đã đăng ký</h5>
+  <table class="table table-bordered table-striped" *ngIf="enrolledSubjects.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>Mã môn</th>
+        <th>Tên môn</th>
+        <th>Học kỳ</th>
+        <th>Lớp</th>
+        <th>Ngày đăng ký</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of enrolledSubjects">
+        <td>{{ s.subjectCode }}</td>
+        <td>{{ s.subjectName }}</td>
+        <td>{{ s.semesterName }}</td>
+        <td>{{ s.classCode }}</td>
+        <td>{{ s.enrollDate | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm"
+                  (click)="cancelEnrollment(s.id)"
+                  [disabled]="!isSemesterOpen()"
+                  title="Hủy đăng ký môn học">
+            Hủy
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="enrolledSubjects.length === 0" class="alert alert-info">
+    Chưa có môn học nào được đăng ký.
+  </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="container mt-4">
+  <h4>👤 Thông tin cá nhân</h4>
+
+  <div *ngIf="loading" class="text-muted">Đang tải dữ liệu...</div>
+
+  <div *ngIf="!loading && teacher" class="card p-4 shadow-sm">
+    <p><strong>👨‍🏫 Họ tên:</strong> {{ teacher.fullName }}</p>
+    <p><strong>📧 Email:</strong> {{ teacher.email }}</p>
+    <p><strong>📞 Số điện thoại:</strong> {{ teacher.phone }}</p>
+    <p><strong>🎓 Trình độ:</strong> {{ teacher.degree }}</p>
+    <p><strong>👤 Tên đăng nhập:</strong> {{ teacher.username }}</p>
+    <p><strong>🆔 Mã giảng viên:</strong> {{ teacher.teacherCode }}</p>
+
+    <!-- ✅ Nút Sửa -->
+    <div class="mt-3">
+      <a routerLink="/teacher/update" class="btn btn-primary">
+  ✏️ Sửa thông tin
+</a>
+
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !teacher" class="alert alert-warning">
+    Không tìm thấy thông tin giáo viên.
+  </div>
+</div>

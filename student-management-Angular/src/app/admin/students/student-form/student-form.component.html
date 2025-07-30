@@ -1,0 +1,62 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3>{{ isEdit ? 'Cập nhật sinh viên' : 'Thêm sinh viên mới' }}</h3>
+    <a class="btn btn-outline-secondary" routerLink="/admin/students">
+      ⬅ Quay lại danh sách
+    </a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label>Mã SV</label>
+        <input type="text" class="form-control" formControlName="studentCode" />
+      </div>
+      <div class="col-md-6">
+        <label>Họ tên</label>
+        <input type="text" class="form-control" formControlName="fullName" />
+      </div>
+      <div class="col-md-6" *ngIf="!isEdit">
+        <label>Tên đăng nhập</label>
+        <input type="text" class="form-control" formControlName="username" />
+        </div>
+
+        <div class="col-md-6" *ngIf="!isEdit">
+        <label>Mật khẩu</label>
+        <input type="password" class="form-control" formControlName="password" />
+        </div>
+      <div class="col-md-6">
+        <label>Giới tính</label>
+        <select class="form-select" formControlName="gender">
+          <option>Nam</option>
+          <option>Nữ</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label>Ngày sinh</label>
+        <input type="date" class="form-control" formControlName="dateOfBirth" />
+      </div>
+      <div class="col-md-6">
+        <label>Email</label>
+        <input type="email" class="form-control" formControlName="email" />
+      </div>
+      <div class="col-md-6">
+        <label>SĐT</label>
+        <input type="text" class="form-control" formControlName="phone" />
+      </div>
+      <div class="col-md-6">
+        <label>Khoa (departmentId)</label>
+        <input type="number" class="form-control" formControlName="departmentId" />
+      </div>
+      <div class="col-md-6">
+        <label>CTĐT (programId)</label>
+        <input type="number" class="form-control" formControlName="programId" />
+      </div>
+    </div>
+
+    <div class="mt-4 d-flex gap-2">
+      <button type="submit" class="btn btn-primary">💾 Lưu</button>
+      <a class="btn btn-secondary" routerLink="/admin/students">❌ Hủy</a>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,19 @@
+<div class="container mt-4">
+  <h4>📚 Danh sách lớp học của tôi</h4>
+
+  <div *ngIf="loading" class="text-muted">Đang tải dữ liệu...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && classes.length > 0">
+    <ul class="list-group">
+      <li *ngFor="let cls of classes" class="list-group-item">
+        <strong>{{ cls.classCode }}:</strong> {{ cls.subjectName }} ({{ cls.schedule }}) –
+        {{ cls.semesterName }}
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="!loading && classes.length === 0 && !error" class="alert alert-info">
+    Không có lớp học nào.
+  </div>
+</div>

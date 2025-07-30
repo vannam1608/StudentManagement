@@ -1,0 +1,32 @@
+<div class="container mt-4">
+  <h3>{{ isEdit ? 'Chỉnh sửa môn học' : 'Thêm môn học mới' }}</h3>
+
+  <!-- Thông báo -->
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label">Mã môn học</label>
+      <input formControlName="subjectCode" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Tên môn học</label>
+      <input formControlName="name" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Số tín chỉ</label>
+      <input type="number" formControlName="credit" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <textarea formControlName="description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">💾 Lưu</button>
+    <a routerLink="/admin/subjects" class="btn btn-secondary ms-2">⬅️ Quay lại</a>
+  </form>
+</div>

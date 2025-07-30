@@ -1,0 +1,30 @@
+<div class="container mt-3">
+  <h4>📝 Nhập điểm sinh viên</h4>
+
+  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <form (ngSubmit)="submit()">
+    <div class="form-group mb-2">
+      <label>Enrollment ID</label>
+      <input type="number" [(ngModel)]="dto.enrollmentId" name="enrollmentId" class="form-control" required />
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Giữa kỳ</label>
+      <input type="number" [(ngModel)]="dto.midterm" name="midterm" class="form-control" required />
+    </div>
+
+    <div class="form-group mb-2">
+      <label>Cuối kỳ</label>
+      <input type="number" [(ngModel)]="dto.final" name="final" class="form-control" required />
+    </div>
+
+    <div class="form-group mb-3">
+      <label>Khác</label>
+      <input type="number" [(ngModel)]="dto.other" name="other" class="form-control" required />
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu điểm</button>
+  </form>
+</div>

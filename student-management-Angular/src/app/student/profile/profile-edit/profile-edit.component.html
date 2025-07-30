@@ -1,0 +1,39 @@
+<div *ngIf="loading" class="text-center mt-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Đang tải...</span>
+  </div>
+</div>
+
+<form *ngIf="!loading && form" [formGroup]="form" (ngSubmit)="onSubmit()" class="card p-4 shadow-sm">
+  <h5 class="mb-4">Cập nhật thông tin cá nhân</h5>
+
+  <div class="mb-3">
+    <label class="form-label">Họ và tên</label>
+    <input formControlName="fullName" type="text" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Email</label>
+    <input formControlName="email" type="email" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Số điện thoại</label>
+    <input formControlName="phone" type="text" class="form-control" required>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Giới tính</label>
+    <select formControlName="gender" class="form-select">
+      <option value="Nam">Nam</option>
+      <option value="Nữ">Nữ</option>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Ngày sinh</label>
+    <input formControlName="dateOfBirth" type="date" class="form-control" required>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+</form>

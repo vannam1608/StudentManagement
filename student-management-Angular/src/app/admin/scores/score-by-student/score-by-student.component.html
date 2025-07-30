@@ -1,0 +1,30 @@
+<div class="container mt-3">
+  <h4>📘 Điểm của sinh viên {{ studentId }}</h4>
+
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Môn</th>
+        <th>Lớp</th>
+        <th>Học kỳ</th>
+        <th>Giữa kỳ</th>
+        <th>Cuối kỳ</th>
+        <th>Khác</th>
+        <th>Tổng</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of scores">
+        <td>{{ s.subjectName }}</td>
+        <td>{{ s.classCode }}</td>
+        <td>{{ s.semesterName }}</td>
+        <td>{{ s.midterm ?? '-' }}</td>
+        <td>{{ s.final ?? '-' }}</td>
+        <td>{{ s.other ?? '-' }}</td>
+        <td>{{ s.total }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
