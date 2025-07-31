@@ -1,0 +1,18 @@
+﻿namespace StudentManagementAPI.DTOs.Teacher
+{
+    public class CreateTeacherDto
+    {
+        // ✅ Thông tin tài khoản (User)
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+
+        // ✅ Thông tin chung
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+
+        // ✅ Thông tin riêng của Teacher
+        public string TeacherCode { get; set; } = string.Empty;
+        public string Degree { get; set; } = string.Empty;
+    }
+}

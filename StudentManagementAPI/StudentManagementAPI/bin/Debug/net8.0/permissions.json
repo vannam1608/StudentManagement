@@ -1,0 +1,110 @@
+{
+  "Admin": [
+    "user:view",
+    "user:create",
+    "user:update",
+    "user:delete",
+    "user:credential",
+    "user:password",
+    "user:role",
+
+    "student:view",
+    "student:create",
+    "student:update",
+    "student:delete",
+
+    "department:view",
+    "department:create",
+    "department:update",
+    "department:delete",
+
+    "program:view",
+    "program:create",
+    "program:update",
+    "program:delete",
+
+    "teacher:view",
+    "teacher:create",
+    "teacher:update",
+    "teacher:delete",
+    "teacher:view_self",
+    "teacher:update_self",
+
+    "subject:view",
+    "subject:create",
+    "subject:update",
+    "subject:delete",
+    "subject:unregister_any",
+
+    "semester:view",
+    "semester:create",
+    "semester:update",
+    "semester:toggle",
+
+    "courseclass:view",
+    "courseclass:create",
+    "courseclass:update",
+    "courseclass:delete",
+    "courseclass:assign",
+    "courseclass:view_by_subject",
+    "courseclass:view_by_teacher",
+    "courseclass:view_by_semester",
+
+    "notification:create",
+    "notification:view",
+
+    "report:view",
+
+    "score:view_all",
+    "score:view",
+    "score:view_by_student",
+    "score:input",
+    "score:auto_create",
+
+    "subject:register_any",
+
+    "enrollment:view",
+    "enrollment:create",
+    "enrollment:update",
+    "enrollment:delete",
+
+    "educationprogram:view",
+    "educationprogram:create",
+    "educationprogram:update",
+    "educationprogram:delete"
+
+  ],
+
+
+  "Teacher": [
+    "teacher:view_self",
+    "teacher:update_self",
+
+    "courseclass:view_assigned",
+    "courseclass:view_by_teacher",
+    "student:view_in_class",
+    
+    "notification:view",
+
+    "score:input",
+    "score:view_my_class"
+  ],
+
+  "Student": [
+    "student:view_self",
+    "student:update_self",
+    "subject:view",
+    "subject:view_self",
+    "subject:register",
+
+    "courseclass:view_self",
+    "courseclass:view_by_subject",
+    "courseclass:view_by_semester",
+
+    "schedule:view_self",
+    "score:view_self",
+    "notification:view",
+
+    "semester:view"
+  ]
+}
