@@ -10,25 +10,21 @@
               <i class="bi bi-house-door"></i> Trang chủ
             </a>
           </li>
-
           <li class="nav-item mb-2">
             <a class="nav-link" routerLink="/teacher/profile" routerLinkActive="active">
               <i class="bi bi-person-circle"></i> Thông tin cá nhân
             </a>
           </li>
-
           <li class="nav-item mb-2">
             <a class="nav-link" routerLink="/teacher/my-classes" routerLinkActive="active">
               <i class="bi bi-easel2"></i> Quản lý lớp học
             </a>
           </li>
-
           <li class="nav-item mb-2">
             <a class="nav-link" routerLink="/teacher/my-scores" routerLinkActive="active">
               <i class="bi bi-bar-chart-line"></i> Nhập điểm
             </a>
           </li>
-
           <li class="nav-item mt-4">
             <button class="btn btn-outline-danger w-100" (click)="logout()">
               <i class="bi bi-box-arrow-right"></i> Đăng xuất
@@ -39,7 +35,30 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 position-relative">
+      <!-- Notification bell -->
+      <div class="position-absolute top-0 end-0 p-3 z-3">
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span *ngIf="notifications.length > 0" class="badge text-bg-danger">
+              {{ notifications.length }}
+            </span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" style="max-width: 300px; max-height: 400px; overflow-y: auto;">
+            <li *ngIf="notifications.length === 0" class="dropdown-item text-muted">
+              Không có thông báo nào
+            </li>
+            <li *ngFor="let noti of notifications">
+              <div class="dropdown-item">
+                <strong>{{ noti.title }}</strong><br />
+                <small>{{ noti.content }}</small>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       <router-outlet></router-outlet>
     </main>
   </div>

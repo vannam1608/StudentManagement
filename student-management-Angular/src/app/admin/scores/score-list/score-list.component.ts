@@ -12,11 +12,19 @@ import { CommonModule } from '@angular/common';
 })
 export class ScoreListComponent implements OnInit {
   scores: ScoreDto[] = [];
-  groupedScores: { [semester: string]: ScoreDto[] } = {};
   editing: { [id: number]: boolean } = {};
   successMessage = '';
   errorMessage = '';
-  studentCode: string = ''; // dùng để lọc theo mã SV
+
+  // 🔍 Bộ lọc
+  studentCode: string = '';
+  classCode: string = '';
+
+  // ✅ Phân trang
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
+  totalCount = 0;
 
   constructor(private scoreService: ScoreService) {}
 
@@ -25,32 +33,39 @@ export class ScoreListComponent implements OnInit {
   }
 
   loadScores(): void {
-    this.scoreService.getAll().subscribe({
-      next: data => {
-        this.scores = data;
-        this.groupedScores = this.groupBySemester(data);
-      },
-      error: err => {
-        this.errorMessage = 'Lỗi tải điểm';
-        setTimeout(() => this.errorMessage = '', 3000);
-      }
-    });
-  }
+  const student = this.studentCode.trim();
+  const cls = this.classCode.trim();
 
-  groupBySemester(scores: ScoreDto[]): { [semester: string]: ScoreDto[] } {
-    const grouped: { [key: string]: ScoreDto[] } = {};
-    for (const s of scores) {
-      const key = s.semesterName || 'Chưa rõ học kỳ';
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(s);
+  this.scoreService.getPagedScores(this.currentPage, this.pageSize, student, cls).subscribe({
+    next: res => {
+      this.scores = res.data.sort((a, b) => {
+        // Sắp xếp theo mã sinh viên dạng SV001, SV002...
+        const numA = parseInt(a.studentCode.replace(/\D/g, ''), 10);
+        const numB = parseInt(b.studentCode.replace(/\D/g, ''), 10);
+
+        if (numA !== numB) return numA - numB;
+        // Nếu cùng SV → có thể sắp theo tên môn học
+        return a.subjectName.localeCompare(b.subjectName);
+      });
+
+      this.totalCount = res.totalItems;
+      this.totalPages = res.totalPages;
+    },
+    error: () => {
+      this.errorMessage = '❌ Lỗi tải dữ liệu phân trang từ API';
+      setTimeout(() => (this.errorMessage = ''), 3000);
     }
-    return grouped;
-  }
+  });
+}
 
+
+
+  // ✏️ Chỉnh sửa điểm
   edit(score: ScoreDto) {
     this.editing[score.id] = true;
   }
 
+  // 💾 Lưu điểm
   save(score: ScoreDto) {
     const dto: InputScoreDto = {
       enrollmentId: score.enrollmentId,
@@ -58,54 +73,66 @@ export class ScoreListComponent implements OnInit {
       final: score.final,
       other: score.other
     };
+
     this.scoreService.inputScore(dto).subscribe({
       next: () => {
         this.successMessage = '✅ Cập nhật điểm thành công';
         this.editing[score.id] = false;
-        setTimeout(() => this.successMessage = '', 3000);
+        setTimeout(() => (this.successMessage = ''), 3000);
         this.loadScores();
       },
-      error: err => {
+      error: () => {
         this.errorMessage = '❌ Cập nhật thất bại';
-        setTimeout(() => this.errorMessage = '', 3000);
+        setTimeout(() => (this.errorMessage = ''), 3000);
       }
     });
   }
 
+  // ❌ Hủy chỉnh sửa
   cancel(id: number) {
     this.editing[id] = false;
     this.loadScores();
   }
 
-  // 🎓 Lọc điểm theo mã sinh viên
-  filterByStudent(): void {
-    const trimmedCode = this.studentCode.trim().toLowerCase();
-    if (!trimmedCode) {
-      this.resetFilter();
-      return;
-    }
-    const filtered = this.scores.filter(s =>
-      s.studentCode.toLowerCase().includes(trimmedCode)
-    );
-    this.groupedScores = this.groupBySemester(filtered);
-  }
-
-  // 🔄 Reset bộ lọc
-  resetFilter(): void {
-    this.groupedScores = this.groupBySemester(this.scores);
-  }
-
-  // ⚙️ Tạo điểm tự động nếu còn thiếu
+  // ⚙️ Tạo điểm tự động
   autoCreateScores(): void {
     this.scoreService.createMissingScores().subscribe({
       next: count => {
         this.successMessage = `✅ Đã tạo ${count} điểm mới`;
         this.loadScores();
       },
-      error: err => {
+      error: () => {
         this.errorMessage = '❌ Tạo điểm tự động thất bại';
-        setTimeout(() => this.errorMessage = '', 3000);
+        setTimeout(() => (this.errorMessage = ''), 3000);
       }
     });
+  }
+
+  // 🔍 Lọc
+  filterScores(): void {
+    this.currentPage = 1;
+    this.loadScores();
+  }
+
+  // ⏮️ Phân trang
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadScores();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadScores();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadScores();
+    }
   }
 }

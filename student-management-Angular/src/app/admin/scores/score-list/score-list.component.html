@@ -1,70 +1,88 @@
 <div class="container mt-3">
-  <h3>📊 Danh sách điểm số theo học kỳ</h3>
+  <h3>📊 Danh sách điểm số</h3>
 
   <!-- THÔNG BÁO -->
   <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
   <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
-  <!-- THANH CÔNG CỤ -->
+  <!-- THANH LỌC VÀ TẠO ĐIỂM -->
   <div class="mb-3 d-flex flex-wrap align-items-center gap-2">
-    <input [(ngModel)]="studentCode" class="form-control w-auto" placeholder="🔍 Nhập mã SV..." />
-    <button class="btn btn-info" (click)="filterByStudent()">🎓 Lọc theo sinh viên</button>
-    <button class="btn btn-success" (click)="autoCreateScores()">⚙️ Tạo điểm tự động</button>
-    <button class="btn btn-secondary" (click)="resetFilter()">🔄 Xem tất cả</button>
+    <input [(ngModel)]="studentCode" class="form-control w-auto" placeholder="🔍 Mã SV..." />
+    <input [(ngModel)]="classCode" class="form-control w-auto" placeholder="🏫 Mã lớp..." />
+
+    <button class="btn btn-primary" (click)="filterScores()">Lọc</button>
+    <button class="btn btn-success" (click)="autoCreateScores()">Tạo điểm tự động</button>
   </div>
 
-  <!-- DANH SÁCH ĐIỂM THEO HỌC KỲ -->
-  <div *ngFor="let semester of groupedScores | keyvalue">
-    <h5 class="mt-4 text-primary">📘 {{ semester.key }}</h5>
+  <!-- BẢNG ĐIỂM (KHÔNG PHÂN THEO HỌC KỲ) -->
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Mã SV</th>
+        <th>Họ tên</th>
+        <th>Môn học</th>
+        <th>Lớp</th>
+        <th>Giữa kỳ</th>
+        <th>Cuối kỳ</th>
+        <th>Khác</th>
+        <th>Tổng</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let score of scores">
+        <td>{{ score.studentCode }}</td>
+        <td>{{ score.fullName }}</td>
+        <td>{{ score.subjectName }}</td>
+        <td>{{ score.classCode }}</td>
 
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Mã SV</th>
-          <th>Môn học</th>
-          <th>Lớp</th>
-          <th>Giữa kỳ</th>
-          <th>Cuối kỳ</th>
-          <th>Khác</th>
-          <th>Tổng</th>
-          <th>Thao tác</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let score of semester.value">
-          <td>{{ score.studentCode }}</td>
-          <td>{{ score.subjectName }}</td>
-          <td>{{ score.classCode }}</td>
+        <!-- Giữa kỳ -->
+        <td>
+          <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.midterm" class="form-control" />
+          <span *ngIf="!editing[score.id]">{{ score.midterm ?? '-' }}</span>
+        </td>
 
-          <!-- Giữa kỳ -->
-          <td>
-            <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.midterm" class="form-control" />
-            <span *ngIf="!editing[score.id]">{{ score.midterm ?? '-' }}</span>
-          </td>
+        <!-- Cuối kỳ -->
+        <td>
+          <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.final" class="form-control" />
+          <span *ngIf="!editing[score.id]">{{ score.final ?? '-' }}</span>
+        </td>
 
-          <!-- Cuối kỳ -->
-          <td>
-            <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.final" class="form-control" />
-            <span *ngIf="!editing[score.id]">{{ score.final ?? '-' }}</span>
-          </td>
+        <!-- Khác -->
+        <td>
+          <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.other" class="form-control" />
+          <span *ngIf="!editing[score.id]">{{ score.other ?? '-' }}</span>
+        </td>
 
-          <!-- Điểm khác -->
-          <td>
-            <input *ngIf="editing[score.id]" type="number" [(ngModel)]="score.other" class="form-control" />
-            <span *ngIf="!editing[score.id]">{{ score.other ?? '-' }}</span>
-          </td>
+        <!-- Tổng -->
+        <td>{{ score.total }}</td>
 
-          <!-- Tổng -->
-          <td>{{ score.total }}</td>
+        <!-- Thao tác -->
+        <td>
+          <button *ngIf="!editing[score.id]" class="btn btn-sm btn-primary" (click)="edit(score)">Sửa</button>
+          <button *ngIf="editing[score.id]" class="btn btn-sm btn-success" (click)="save(score)">Lưu</button>
+          <button *ngIf="editing[score.id]" class="btn btn-sm btn-secondary" (click)="cancel(score.id)">Hủy</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-          <!-- Thao tác -->
-          <td>
-            <button *ngIf="!editing[score.id]" class="btn btn-sm btn-primary" (click)="edit(score)">Sửa</button>
-            <button *ngIf="editing[score.id]" class="btn btn-sm btn-success" (click)="save(score)">Lưu</button>
-            <button *ngIf="editing[score.id]" class="btn btn-sm btn-secondary" (click)="cancel(score.id)">Hủy</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- PHÂN TRANG -->
+  <nav *ngIf="totalPages > 1" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <button class="page-link" (click)="previousPage()">Trước</button>
+      </li>
+      <li
+        class="page-item"
+        *ngFor="let page of [].constructor(totalPages); let i = index"
+        [class.active]="i + 1 === currentPage"
+      >
+        <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <button class="page-link" (click)="nextPage()">Sau</button>
+      </li>
+    </ul>
+  </nav>
 </div>

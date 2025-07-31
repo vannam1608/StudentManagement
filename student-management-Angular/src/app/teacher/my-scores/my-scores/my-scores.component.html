@@ -30,7 +30,8 @@
     <tbody>
       <tr *ngFor="let s of filteredScores">
         <td>{{ s.studentCode }}</td>
-        <td>{{ s.studentName }}</td>
+        <td>{{ s.fullName }}</td>
+
         <td>{{ s.classCode }}</td>
         <td>{{ s.subjectName }}</td>
         <td>{{ s.midterm ?? '-' }}</td>

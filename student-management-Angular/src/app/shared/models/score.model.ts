@@ -2,7 +2,7 @@
     id: number;
     enrollmentId: number;
     studentCode: string;
-
+    fullName: string;
     midterm?: number;
     final?: number;
     other?: number;
@@ -20,3 +20,4 @@
     final?: number;
     other?: number;
   }
+

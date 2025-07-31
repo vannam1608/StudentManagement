@@ -1,43 +1,75 @@
 <div class="container mt-4">
   <h4>📝 Đăng ký môn học</h4>
 
-  <div class="table-responsive">
-    <table class="table table-bordered table-striped">
-      <thead class="table-light">
-        <tr>
-          <th>Mã môn</th>
-          <th>Tên môn</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let subject of availableSubjects">
-          <td>{{ subject.subjectCode }}</td>
-          <td>{{ subject.name }}</td>
-          <td>
-            <button
-              class="btn btn-sm"
-              [ngClass]="isRegistered(subject.id) ? 'btn-secondary' : 'btn-success'"
-              [disabled]="isRegistered(subject.id)"
-              (click)="registerSubject(subject.id)">
-              {{ isRegistered(subject.id) ? 'Đã đăng ký' : 'Đăng ký' }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Dropdown chọn học kỳ -->
+  <div class="row mt-3 mb-3">
+    <div class="col-md-4">
+      <label for="semesterSelect" class="form-label">🎓 Chọn học kỳ</label>
+      <select
+        id="semesterSelect"
+        class="form-select"
+        [(ngModel)]="selectedSemester"
+        (change)="loadSubjects()">
+        <option [ngValue]="0">-- Tất cả học kỳ --</option>
+        <option *ngFor="let sem of semesters" [ngValue]="sem.id">
+          {{ sem.name }}
+        </option>
+      </select>
+    </div>
   </div>
 
-  <h5 class="mt-4">📚 Danh sách môn đã đăng ký</h5>
-  <ul class="list-group">
-    <ng-container *ngFor="let subject of availableSubjects">
-      <li class="list-group-item" *ngIf="isRegistered(subject.id)">
-        {{ subject.subjectCode }} - {{ subject.name }}
-      </li>
-    </ng-container>
-  </ul>
+  <!-- Danh sách môn học -->
+  <div *ngFor="let semester of groupedSubjects | keyvalue">
+    <h5 class="mb-3">📆 {{ semester.key }}</h5>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>Mã môn</th>
+            <th>Tên môn</th>
+            <th>Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let subject of semester.value">
+            <td>{{ subject.subjectCode }}</td>
+            <td>{{ subject.name }}</td>
+            <td>
+              <ng-container *ngIf="isRegistered(subject.id); else notRegistered">
+                <button class="btn btn-sm btn-secondary" disabled>Đã đăng ký</button>
+              </ng-container>
+
+              <ng-template #notRegistered>
+                <ng-container *ngIf="isCurrentSemesterOpen; else closedNotice">
+                  <button class="btn btn-sm btn-success" (click)="registerSubject(subject.id)">
+                    Đăng ký
+                  </button>
+                </ng-container>
+              </ng-template>
+
+              <ng-template #closedNotice>
+                <span class="text-danger">⛔ Học kỳ đã đóng</span>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Môn học đã đăng ký -->
+  <h5 class="mt-5">📚 Danh sách môn đã đăng ký</h5>
 
   <div *ngIf="registeredSubjectIds.length === 0" class="alert alert-info mt-3">
     Bạn chưa đăng ký môn học nào.
+  </div>
+
+  <div *ngFor="let semester of groupedRegisteredSubjects | keyvalue" class="mt-3">
+    <h6>{{ semester.key }}</h6>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let subject of semester.value">
+        {{ subject.subjectCode }} - {{ subject.name }}
+      </li>
+    </ul>
   </div>
 </div>
