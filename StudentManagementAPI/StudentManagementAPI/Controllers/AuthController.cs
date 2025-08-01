@@ -36,7 +36,7 @@ namespace StudentManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Lấy thông tin người dùng hiện tại
+        /// Lấy thông tin người dùng hiện tại //
         /// </summary>
         [HttpGet("me")]
         [Authorize]
