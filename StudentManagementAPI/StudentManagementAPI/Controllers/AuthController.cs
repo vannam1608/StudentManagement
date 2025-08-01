@@ -18,7 +18,7 @@ namespace StudentManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Đăng nhập và lấy token
+        /// Đăng nhập và lấy token///
         /// </summary>
         [HttpPost("login")]
         [AllowAnonymous]
