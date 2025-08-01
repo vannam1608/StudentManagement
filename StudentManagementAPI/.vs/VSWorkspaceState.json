@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.github",
+    "\\StudentManagementAPI\\DTOs",
+    "\\StudentManagementAPI\\DTOs\\Auth",
+    "\\StudentManagementAPI\\DTOs\\CourseClass",
+    "\\StudentManagementAPI\\DTOs\\Department",
+    "\\StudentManagementAPI\\DTOs\\EducationProgram",
+    "\\StudentManagementAPI\\DTOs\\Enrollment",
+    "\\StudentManagementAPI\\DTOs\\Notification",
+    "\\StudentManagementAPI\\DTOs\\Schedule"
+  ],
+  "PreviewInSolutionExplorer": false
+}
