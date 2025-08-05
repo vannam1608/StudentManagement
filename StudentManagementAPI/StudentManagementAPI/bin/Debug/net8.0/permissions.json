@@ -34,7 +34,9 @@
     "subject:create",
     "subject:update",
     "subject:delete",
-    "subject:unregister_any",
+    
+
+    "subject:view_available",
 
     "semester:view",
     "semester:create",
@@ -61,7 +63,7 @@
     "score:input",
     "score:auto_create",
 
-    "subject:register_any",
+
 
     "enrollment:view",
     "enrollment:create",
@@ -96,6 +98,8 @@
     "subject:view",
     "subject:view_self",
     "subject:register",
+    "subject:view_available",
+    
 
     "courseclass:view_self",
     "courseclass:view_by_subject",

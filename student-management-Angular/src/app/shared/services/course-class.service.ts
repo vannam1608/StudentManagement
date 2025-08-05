@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { CourseClassDto, CreateCourseClassDto } from '../models/course-class.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { CourseClassDto, CreateCourseClassDto } from '../models/course-class.model';
+
+export interface PaginatedResult<T> {
+  data: T[];
+  totalItems: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CourseClassService {
@@ -9,8 +17,9 @@ export class CourseClassService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<CourseClassDto[]> {
-    return this.http.get<CourseClassDto[]>(this.apiUrl);
+  getPaged(page: number = 1, pageSize: number = 20): Observable<PaginatedResult<CourseClassDto>> {
+    const params = new HttpParams().set('Page', page).set('PageSize', pageSize);
+    return this.http.get<PaginatedResult<CourseClassDto>>(`${this.apiUrl}/paged`, { params });
   }
 
   getById(id: number): Observable<CourseClassDto> {

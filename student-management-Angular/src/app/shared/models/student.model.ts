@@ -5,14 +5,19 @@ export interface StudentDto {
   email: string;
   phone: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   departmentName: string;
   programName: string;
+
+  // ➕ Thêm nếu cần cập nhật từ giao diện:
+  departmentId?: number;
+  programId?: number;
 }
+
 
 export interface CreateStudentDto {
   studentCode: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   gender: string;
   departmentId: number;
   programId: number;
@@ -24,11 +29,13 @@ export interface CreateStudentDto {
 }
 
 export interface UpdateStudentDto {
+  studentCode: string; 
   fullName: string;
   email?: string;
   phone?: string;
   gender: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
   departmentId: number;
   programId: number;
 }
+

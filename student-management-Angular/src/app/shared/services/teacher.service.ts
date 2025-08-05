@@ -1,7 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { TeacherDto, CreateTeacherDto } from '../models/teacher.model';
+import { PagedResult } from '../models/paged-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class TeacherService {
@@ -9,8 +10,22 @@ export class TeacherService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<TeacherDto[]> {
-    return this.http.get<TeacherDto[]>(this.apiUrl);
+  /**
+   * ✅ Phân trang danh sách giảng viên (có hỗ trợ tìm kiếm theo mã)
+   * @param page Trang hiện tại
+   * @param pageSize Số lượng mỗi trang
+   * @param teacherCode (optional) Mã giảng viên để tìm kiếm
+   */
+  getPagedTeachers(page: number, pageSize: number, teacherCode?: string): Observable<PagedResult<TeacherDto>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('pageSize', pageSize.toString());
+
+    if (teacherCode && teacherCode.trim() !== '') {
+      params = params.set('teacherCode', teacherCode.trim());
+    }
+
+    return this.http.get<PagedResult<TeacherDto>>(`${this.apiUrl}/paged`, { params });
   }
 
   getById(id: number): Observable<TeacherDto> {

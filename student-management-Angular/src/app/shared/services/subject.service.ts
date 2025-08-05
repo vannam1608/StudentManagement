@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SubjectDto, CreateSubjectDto } from '../models/subject.model';
 import { Observable } from 'rxjs';
+import { PagedResult } from '../models/paged-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class SubjectService {
@@ -9,10 +10,11 @@ export class SubjectService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<SubjectDto[]> {
-    return this.http.get<SubjectDto[]>(this.apiUrl);
+  getPagedSubjects(page: number, pageSize: number): Observable<PagedResult<SubjectDto>> {
+    return this.http.get<PagedResult<SubjectDto>>(`${this.apiUrl}/paged?page=${page}&pageSize=${pageSize}`);
   }
 
+  // Các hàm khác vẫn giữ nguyên
   getById(id: number): Observable<SubjectDto> {
     return this.http.get<SubjectDto>(`${this.apiUrl}/${id}`);
   }
@@ -22,17 +24,16 @@ export class SubjectService {
   }
 
   update(id: number, data: any): Observable<any> {
-  return this.http.put(`https://localhost:7172/api/subjects/${id}`, data, {
-    responseType: 'text' as 'json' 
-  });
-}
-
+    return this.http.put(`${this.apiUrl}/${id}`, data, { responseType: 'text' as 'json' });
+  }
 
   delete(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
-  getAvailableSubjects(semesterId: number) {
+
+  getAvailableSubjects(semesterId: number): Observable<SubjectDto[]> {
   return this.http.get<SubjectDto[]>(`${this.apiUrl}/available?semesterId=${semesterId}`);
 }
 
 }
+  

@@ -2,7 +2,7 @@
   {
     "ContainingType": "StudentManagementAPI.Controllers.AuthController",
     "Method": "Login",
-    "RelativePath": "api/Auth/login",
+    "RelativePath": "api/auth/login",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -13,17 +13,23 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [],
+    "Tags": [
+      "\uD83D\uDEE1\uFE0F Auth - X\u00E1c th\u1EF1c"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.AuthController",
     "Method": "GetCurrentUser",
-    "RelativePath": "api/Auth/me",
+    "RelativePath": "api/auth/me",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
+    "ReturnTypes": [],
+    "Tags": [
+      "\uD83D\uDEE1\uFE0F Auth - X\u00E1c th\u1EF1c"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.CourseClassController",
@@ -100,6 +106,27 @@
         "Name": "id",
         "Type": "System.Int32",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.CourseClassController",
+    "Method": "GetPagedAsync",
+    "RelativePath": "api/CourseClass/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -251,7 +278,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
@@ -289,7 +316,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
@@ -327,7 +354,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
@@ -366,7 +393,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
@@ -400,7 +427,41 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+    ]
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.EnrollmentController",
+    "Method": "GetPagedEnrollments",
+    "RelativePath": "api/enrollments/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "StudentManagementAPI.Models.Common.PaginatedResult\u00601[[StudentManagementAPI.DTOs.Enrollment.EnrollmentDto, StudentManagementAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
@@ -434,20 +495,31 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCDA Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
+      "Qu\u1EA3n l\u00FD \u0111\u0103ng k\u00FD h\u1ECDc ph\u1EA7n"
     ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.NotificationController",
-    "Method": "GetAllNotifications",
+    "Method": "GetPagedNotifications",
     "RelativePath": "api/notifications",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDD14 Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
+      "Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
     ]
   },
   {
@@ -466,7 +538,7 @@
     ],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDD14 Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
+      "Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
     ]
   },
   {
@@ -485,7 +557,7 @@
     ],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDD14 Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
+      "Qu\u1EA3n l\u00FD Th\u00F4ng b\u00E1o"
     ]
   },
   {
@@ -508,7 +580,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCD8 Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
+      "Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
     ]
   },
   {
@@ -542,7 +614,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCD8 Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
+      "Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
     ]
   },
   {
@@ -576,7 +648,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDCD8 Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
+      "Qu\u1EA3n l\u00FD ch\u01B0\u01A1ng tr\u00ECnh \u0111\u00E0o t\u1EA1o"
     ]
   },
   {
@@ -969,6 +1041,32 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "StudentManagementAPI.Controllers.StudentController",
+    "Method": "GetPagedStudents",
+    "RelativePath": "api/student/students/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "studentCode",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "StudentManagementAPI.Controllers.SubjectController",
     "Method": "GetAll",
     "RelativePath": "api/subjects",
@@ -1061,6 +1159,57 @@
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.SubjectController",
+    "Method": "GetPaged",
+    "RelativePath": "api/subjects/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "keyword",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "semesterId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.SubjectController",
+    "Method": "TestPaged",
+    "RelativePath": "api/subjects/paged-test",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.SubjectController",
+    "Method": "TestNoSkipTake",
+    "RelativePath": "api/subjects/paged-test-no-skip",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -1169,6 +1318,32 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "StudentManagementAPI.Controllers.TeacherController",
+    "Method": "GetPaged",
+    "RelativePath": "api/teachers/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "pageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "teacherCode",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "StudentManagementAPI.Controllers.UserController",
     "Method": "GetAll",
     "RelativePath": "api/users",
@@ -1188,7 +1363,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1222,7 +1397,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1260,7 +1435,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1299,7 +1474,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1333,7 +1508,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1357,7 +1532,7 @@
     ],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1381,7 +1556,7 @@
     ],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1394,7 +1569,55 @@
     "Parameters": [],
     "ReturnTypes": [],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+    ]
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.UserController",
+    "Method": "GetPagedCredentials",
+    "RelativePath": "api/users/credentials/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+    ]
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.UserController",
+    "Method": "GetPaged",
+    "RelativePath": "api/users/paged",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "Page",
+        "Type": "System.Int32",
+        "IsRequired": false
+      },
+      {
+        "Name": "PageSize",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1417,7 +1640,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1451,7 +1674,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1489,7 +1712,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1528,7 +1751,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1567,7 +1790,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1606,7 +1829,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   },
   {
@@ -1640,7 +1863,7 @@
       }
     ],
     "Tags": [
-      "\uD83D\uDC64 Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
+      "Qu\u1EA3n l\u00FD ng\u01B0\u1EDDi d\u00F9ng"
     ]
   }
 ]
