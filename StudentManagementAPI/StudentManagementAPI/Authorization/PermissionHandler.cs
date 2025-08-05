@@ -17,14 +17,22 @@ namespace StudentManagementAPI.Authorization
         {
             var role = context.User.FindFirst(ClaimTypes.Role)?.Value;
 
-            if (string.IsNullOrEmpty(role))
+            // Nếu không có Role => từ chối luôn
+            if (string.IsNullOrWhiteSpace(role))
+            {
+                context.Fail();
                 return Task.CompletedTask;
+            }
 
             var permissions = _permissionProvider.GetPermissionsForRole(role);
 
             if (permissions.Contains(requirement.Permission))
             {
                 context.Succeed(requirement);
+            }
+            else
+            {
+                context.Fail(); // ❗ rõ ràng từ chối nếu không có quyền
             }
 
             return Task.CompletedTask;
