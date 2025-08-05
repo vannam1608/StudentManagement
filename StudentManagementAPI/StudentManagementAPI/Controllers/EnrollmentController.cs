@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Enrollment;
 using StudentManagementAPI.Interfaces.Services;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Controllers
 {
@@ -11,7 +13,7 @@ namespace StudentManagementAPI.Controllers
     [ApiController]
     [Route("api/enrollments")]
     [Authorize]
-    [Tags("📚 Quản lý đăng ký học phần")]
+    [Tags("Quản lý đăng ký học phần")]
     public class EnrollmentController : ControllerBase
     {
         private readonly IEnrollmentService _enrollmentService;
@@ -92,5 +94,16 @@ namespace StudentManagementAPI.Controllers
             var result = await _enrollmentService.GetByStudentAndSemesterAsync(studentId, semesterId);
             return Ok(result);
         }
+
+        /// <summary>📄 Danh sách đăng ký học phần có phân trang</summary>
+        [HttpGet("paged")]
+        [Authorize(Policy = "enrollment:view")]
+        [ProducesResponseType(typeof(PaginatedResult<EnrollmentDto>), 200)]
+        public async Task<IActionResult> GetPagedEnrollments([FromQuery] PaginationQueryDto paginationDto)
+        {
+            var result = await _enrollmentService.GetPagedAsync(paginationDto);
+            return Ok(result);
+        }
+
     }
 }

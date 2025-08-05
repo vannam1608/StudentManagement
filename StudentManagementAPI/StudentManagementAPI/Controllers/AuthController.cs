@@ -7,7 +7,8 @@ using System.Security.Claims;
 namespace StudentManagementAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
+    [Tags("🛡️ Auth - Xác thực")]
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;

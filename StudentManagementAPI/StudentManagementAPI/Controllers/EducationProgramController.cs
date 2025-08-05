@@ -8,7 +8,7 @@ namespace StudentManagementAPI.Controllers
     [ApiController]
     [Route("api/programs")]
     [Authorize]
-    [Tags("📘 Quản lý chương trình đào tạo")]
+    [Tags("Quản lý chương trình đào tạo")]
     public class EducationProgramController : ControllerBase
     {
         private readonly IEducationProgramService _service;

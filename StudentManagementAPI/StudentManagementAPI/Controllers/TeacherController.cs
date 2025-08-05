@@ -98,5 +98,18 @@ namespace StudentManagementAPI.Controllers
                 ? Ok(new { message = "✅ Xoá giảng viên thành công." })
                 : NotFound(new { message = "❌ Không tìm thấy giảng viên cần xoá." });
         }
+
+        /// <summary>Lấy danh sách giảng viên có phân trang và tìm kiếm theo mã (chỉ Admin)</summary>
+        [HttpGet("paged")]
+        [Authorize(Policy = "teacher:view")]
+        public async Task<IActionResult> GetPaged(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
+            [FromQuery] string? teacherCode = null)
+        {
+            var result = await _teacherService.GetPagedAsync(page, pageSize, teacherCode);
+            return Ok(result);
+        }
+
     }
 }

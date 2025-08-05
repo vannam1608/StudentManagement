@@ -83,13 +83,48 @@ namespace StudentManagementAPI.Controllers
             return Ok(results);
         }
 
-        /// <summary>Danh sách môn học có thể đăng ký (chỉ Student)</summary>
+
+       
+        /// <summary>Danh sách môn học có thể đăng ký (Student hoặc Admin)</summary>
         [HttpGet("available")]
-        [Authorize(Policy = "subject:register")]
+        [Authorize(Policy = "subject:view_available")]
         public async Task<IActionResult> GetAvailableSubjectsBySemester([FromQuery] int semesterId)
         {
             var subjects = await _subjectService.GetAvailableSubjectsBySemesterAsync(semesterId);
             return Ok(subjects);
         }
+
+
+
+            /// <summary>Phân trang danh sách môn học, có hỗ trợ tìm kiếm theo keyword (Admin hoặc Student)</summary>
+            [HttpGet("paged")]
+            [Authorize(Policy = "subject:view")]
+            public async Task<IActionResult> GetPaged(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10,
+        [FromQuery] string keyword = null,
+        [FromQuery] int? semesterId = null)
+            {
+                var result = await _subjectService.GetPagedAsync(page, pageSize, keyword, semesterId);
+                return Ok(result);
+            }
+
+
+            [HttpGet("paged-test")]
+            public async Task<IActionResult> TestPaged()
+            {
+                var result = await _subjectService.GetPagedAsync(1, 10, null, null);
+                return Ok(result);
+            }
+
+
+            [HttpGet("paged-test-no-skip")]
+            public async Task<IActionResult> TestNoSkipTake()
+            {
+                var query = await _subjectService.GetAllAsync();
+                return Ok(query);
+            }
+
+
     }
 }

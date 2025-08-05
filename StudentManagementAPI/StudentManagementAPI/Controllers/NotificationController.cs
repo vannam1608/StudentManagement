@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Notification;
 using StudentManagementAPI.Interfaces.Services;
+using StudentManagementAPI.Models.Common;
 using System.Security.Claims;
 
 namespace StudentManagementAPI.Controllers
@@ -9,7 +11,7 @@ namespace StudentManagementAPI.Controllers
     [ApiController]
     [Route("api/notifications")]
     [Authorize]
-    [Tags("🔔 Quản lý Thông báo")]
+    [Tags("Quản lý Thông báo")]
     public class NotificationController : ControllerBase
     {
         private readonly INotificationService _notificationService;
@@ -19,14 +21,27 @@ namespace StudentManagementAPI.Controllers
             _notificationService = notificationService;
         }
 
-        /// <summary>📬 Lấy tất cả thông báo theo role của người dùng (Admin/Student/Teacher)</summary>
+        /// <summary>📬 Lấy danh sách thông báo có phân trang theo role (Admin/Student/Teacher)</summary>
         [HttpGet]
         [Authorize(Policy = "notification:view")]
-        public async Task<IActionResult> GetAllNotifications()
+        public async Task<IActionResult> GetPagedNotifications([FromQuery] PaginationQueryDto query)
         {
-            var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Student";
-            var notifications = await _notificationService.GetAllAsync(role);
-            return Ok(notifications);
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (string.IsNullOrEmpty(role))
+                return Unauthorized("Không xác định được vai trò.");
+
+            PaginatedResult<NotificationDto> result;
+
+            if (role == "Admin")
+            {
+                result = await _notificationService.GetPagedAsync(query);
+            }
+            else
+            {
+                result = await _notificationService.GetPagedByRoleAsync(role, query);
+            }
+
+            return Ok(result);
         }
 
         /// <summary>🔍 Lấy thông báo cụ thể theo ID</summary>

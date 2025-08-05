@@ -1,17 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Student;
 using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.DTOs.Teacher;
 using StudentManagementAPI.DTOs.User;
 using StudentManagementAPI.Interfaces.Services;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/users")]
     [Authorize]
-    [Tags("👤 Quản lý người dùng")]
+    [Tags("Quản lý người dùng")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -111,6 +113,14 @@ namespace StudentManagementAPI.Controllers
                 : NotFound(new { message = "Không tìm thấy người dùng" });
         }
 
+        [HttpGet("credentials/paged")]
+        [Authorize(Policy = "user:credential")]
+        public async Task<IActionResult> GetPagedCredentials([FromQuery] PaginationQueryDto query)
+        {
+            var result = await _userService.GetPagedCredentialsAsync(query);
+            return Ok(result);
+        }
+
 
 
 
@@ -205,5 +215,15 @@ namespace StudentManagementAPI.Controllers
                 ? Ok(new { message = "Tạo giảng viên thành công" })
                 : BadRequest(new { message = "Tạo giảng viên thất bại" });
         }
+
+
+        [HttpGet("paged")]
+        [Authorize(Policy = "user:view")]
+        public async Task<IActionResult> GetPaged([FromQuery] PaginationQueryDto query)
+        {
+            var result = await _userService.GetPagedAsync(query);
+            return Ok(result);
+        }
+
     }
 }

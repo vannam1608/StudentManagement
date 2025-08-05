@@ -10,7 +10,7 @@ namespace StudentManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/student")]
-    [Authorize(Roles = "Student")] 
+    [Authorize]
     public class StudentController : ControllerBase
     {
         private readonly IStudentService _studentService;
@@ -41,7 +41,11 @@ namespace StudentManagementAPI.Controllers
         {
             var studentId = GetCurrentStudentId();
             var student = await _studentService.GetByIdAsync(studentId);
-            return student == null ? NotFound("Không tìm thấy sinh viên.") : Ok(student);
+
+            if (student == null)
+                return NotFound(new { success = false, message = "Không tìm thấy sinh viên." });
+
+            return Ok(student);
         }
 
         /// <summary>Cập nhật thông tin cá nhân</summary>
@@ -51,7 +55,11 @@ namespace StudentManagementAPI.Controllers
         {
             var studentId = GetCurrentStudentId();
             var result = await _studentService.UpdateAsync(studentId, dto);
-            return result ? Ok("Cập nhật thành công.") : NotFound("Không tìm thấy sinh viên.");
+
+            if (!result)
+                return NotFound(new { success = false, message = "Không tìm thấy sinh viên." });
+
+            return Ok(new { success = true, message = "Cập nhật thành công." });
         }
 
         /// <summary>Đăng ký môn học</summary>
@@ -62,12 +70,10 @@ namespace StudentManagementAPI.Controllers
             var studentId = GetCurrentStudentId();
             var result = await _studentService.RegisterSubjectAsync(studentId, dto);
 
-            if (result)
-                return Ok(new { success = true, message = "Đăng ký thành công." });
-
-            return BadRequest(new { success = false, message = "Đăng ký thất bại." });
+            return result
+                ? Ok(new { success = true, message = "Đăng ký thành công." })
+                : BadRequest(new { success = false, message = "Đăng ký thất bại." });
         }
-
 
         /// <summary>Danh sách môn học đã đăng ký</summary>
         [HttpGet("my-subjects")]
@@ -98,5 +104,22 @@ namespace StudentManagementAPI.Controllers
             var scores = await _studentService.GetScoresAsync(studentId);
             return Ok(scores);
         }
+
+        /// <summary>Lấy danh sách sinh viên có phân trang</summary>
+        /// <summary>Lấy danh sách sinh viên có phân trang + tìm kiếm theo mã sinh viên</summary>
+        [HttpGet("students/paged")]
+        [Authorize(Policy = "student:view")]
+        public async Task<IActionResult> GetPagedStudents(
+            int page,
+            int pageSize,
+            [FromQuery] string? studentCode = null)
+        {
+            if (page <= 0 || pageSize <= 0)
+                return BadRequest(new { success = false, message = "Page hoặc pageSize không hợp lệ." });
+
+            var result = await _studentService.GetPagedAsync(page, pageSize, studentCode);
+            return Ok(result);
+        }
+
     }
 }
