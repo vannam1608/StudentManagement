@@ -4,6 +4,7 @@ using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Services
 {
@@ -20,14 +21,15 @@ namespace StudentManagementAPI.Services
 
         public async Task<IEnumerable<SubjectDto>> GetAllAsync()
         {
-            var subjects = await _subjectRepository.GetAllAsync();
+            var query = await _subjectRepository.GetQueryableAsync();
+            var subjects = await query.Include(s => s.Semester).ToListAsync();
             return _mapper.Map<IEnumerable<SubjectDto>>(subjects);
         }
 
         public async Task<SubjectDto?> GetByIdAsync(int id)
         {
             var subject = await _subjectRepository.GetByIdAsync(id);
-            return _mapper.Map<SubjectDto>(subject);
+            return subject == null ? null : _mapper.Map<SubjectDto>(subject);
         }
 
         public async Task<bool> CreateAsync(SubjectDto dto)
@@ -38,48 +40,86 @@ namespace StudentManagementAPI.Services
 
         public async Task<bool> UpdateAsync(int id, SubjectDto dto)
         {
-            var subject = await _subjectRepository.GetByIdAsync(id);
-            if (subject == null) return false;
+            var existing = await _subjectRepository.GetByIdAsync(id);
+            if (existing == null) return false;
 
-            subject.SubjectCode = dto.SubjectCode;
-            subject.Name = dto.Name;
-            subject.Credit = dto.Credit;
-            subject.Description = dto.Description;
+            // Map fields manually or use mapper
+            existing.SubjectCode = dto.SubjectCode;
+            existing.Name = dto.Name;
+            existing.Credit = dto.Credit;
+            existing.Description = dto.Description;
+            existing.SemesterId = dto.SemesterId;
 
-            return await _subjectRepository.UpdateAsync(subject);
+            return await _subjectRepository.UpdateAsync(existing);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
             return await _subjectRepository.DeleteAsync(id);
         }
+
         public async Task<IEnumerable<SubjectDto>> SearchByNameAsync(string name)
         {
-            var all = await _subjectRepository.GetAllAsync();
-            var matched = all.Where(s => s.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
-            return _mapper.Map<IEnumerable<SubjectDto>>(matched);
+            var query = await _subjectRepository.GetQueryableAsync();
+            var results = await query
+                .Include(s => s.Semester)
+                .Where(s => s.Name.Contains(name))
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<SubjectDto>>(results);
         }
 
         public async Task<IEnumerable<SubjectDto>> GetAvailableSubjectsAsync()
         {
-            // Lấy tất cả subject đang có lớp học phần trong học kỳ hiện tại
-            var courseClasses = await _subjectRepository.GetCourseClassesOfOpenSemester(); // Bạn cần thêm repo hỗ trợ
-            var subjectIds = courseClasses.Select(cc => cc.SubjectId).Distinct();
-            var subjects = await _subjectRepository.GetAllAsync();
-            var result = subjects.Where(s => subjectIds.Contains(s.Id));
-            return _mapper.Map<IEnumerable<SubjectDto>>(result);
+            var courseClasses = await _subjectRepository.GetCourseClassesOfOpenSemester();
+
+            var subjects = courseClasses
+                .Select(cc => cc.Subject)
+                .Where(s => s != null)
+                .DistinctBy(s => s.Id)
+                .ToList();
+
+            return _mapper.Map<IEnumerable<SubjectDto>>(subjects);
         }
+
         public async Task<IEnumerable<SubjectDto>> GetAvailableSubjectsBySemesterAsync(int semesterId)
         {
             var courseClasses = await _subjectRepository.GetCourseClassesBySemesterAsync(semesterId);
 
             var subjects = courseClasses
-                .Select(c => c.Subject)
-                .Distinct()
+                .Where(cc => cc.Subject != null)
+                .Select(cc => cc.Subject!)
+                .DistinctBy(s => s.Id)
                 .ToList();
 
             return _mapper.Map<IEnumerable<SubjectDto>>(subjects);
         }
+
+        public async Task<PaginatedResult<SubjectDto>> GetPagedAsync(
+    int page,
+    int pageSize,
+    string? keyword = null,
+    int? semesterId = null)
+        {
+            // Sanitize input
+            page = page <= 0 ? 1 : page;
+            pageSize = pageSize <= 0 ? 10 : Math.Min(pageSize, 100);
+
+            // Gọi repository đã dùng truy vấn SQL
+            var (items, totalItems) = await _subjectRepository.GetPagedAsync(page, pageSize, keyword, semesterId);
+
+            // Không cần map nữa, đã là SubjectDto
+            return new PaginatedResult<SubjectDto>
+            {
+                Data = items,
+                TotalItems = totalItems,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+        }
+
+
+
 
 
     }

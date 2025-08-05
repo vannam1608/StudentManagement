@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.CourseClass;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -68,6 +70,21 @@ namespace StudentManagementAPI.Services
             var result = await _courseClassRepository.GetByTeacherIdAsync(teacherId);
             return _mapper.Map<IEnumerable<CourseClassDto>>(result);
         }
+
+        public async Task<PaginatedResult<CourseClassDto>> GetPagedAsync(PaginationQueryDto paginationDto)
+        {
+            var totalItems = await _courseClassRepository.CountAsync();
+            var entities = await _courseClassRepository.GetPagedAsync(paginationDto.Page, paginationDto.PageSize);
+
+            return new PaginatedResult<CourseClassDto>
+            {
+                Data = _mapper.Map<IEnumerable<CourseClassDto>>(entities),
+                TotalItems = totalItems,
+                PageSize = paginationDto.PageSize,
+                CurrentPage = paginationDto.Page
+            };
+        }
+
 
     }
 }

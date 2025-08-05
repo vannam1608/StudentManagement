@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using StudentManagementAPI.DTOs.Enrollment;
 using StudentManagementAPI.DTOs.Schedule;
 using StudentManagementAPI.DTOs.Score;
@@ -7,6 +8,9 @@ using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace StudentManagementAPI.Services
 {
@@ -15,15 +19,18 @@ namespace StudentManagementAPI.Services
         private readonly IStudentRepository _studentRepository;
         private readonly IEnrollmentRepository _enrollmentRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public StudentService(
             IStudentRepository studentRepository,
             IEnrollmentRepository enrollmentRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IHttpContextAccessor httpContextAccessor)
         {
             _studentRepository = studentRepository;
             _enrollmentRepository = enrollmentRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<StudentDto>> GetAllAsync()
@@ -54,11 +61,22 @@ namespace StudentManagementAPI.Services
             student.User.Phone = dto.Phone;
             student.Gender = dto.Gender;
             student.DateOfBirth = dto.DateOfBirth;
-            student.DepartmentId = dto.DepartmentId;
-            student.ProgramId = dto.ProgramId;
+
+            // ❗ Chỉ admin mới được cập nhật các thông tin bên dưới
+            var user = _httpContextAccessor.HttpContext?.User;
+
+            if (user != null && user.IsInRole("Admin"))
+            {
+                student.DepartmentId = dto.DepartmentId;
+                student.ProgramId = dto.ProgramId;
+                student.StudentCode = dto.StudentCode;
+            }
+
+            // ❌ Nếu không phải Admin => bỏ qua các trường này
 
             return await _studentRepository.UpdateAsync(student);
         }
+
 
         public async Task<bool> DeleteAsync(int id)
         {
@@ -107,10 +125,7 @@ namespace StudentManagementAPI.Services
                 TeacherName = c.Teacher?.User?.FullName ?? "",
                 Semester = c.Semester?.Name ?? ""
             });
-
         }
-
-
 
         public async Task<IEnumerable<ScoreDto>> GetScoresAsync(int studentId)
         {
@@ -130,9 +145,7 @@ namespace StudentManagementAPI.Services
                 Other = s.Other,
                 Total = Math.Round((s.Midterm ?? 0) * 0.3 + (s.Other ?? 0) * 0.2 + (s.Final ?? 0) * 0.5, 2)
             });
-
         }
-
 
         public async Task<IEnumerable<SubjectDto>> GetRegisteredSubjectsAsync(int studentId)
         {
@@ -147,9 +160,45 @@ namespace StudentManagementAPI.Services
                 Name = s.Name,
                 Description = s.Description ?? "",
                 Credit = s.Credit,
-                
             });
         }
 
+        public async Task<PaginatedResult<StudentDto>> GetPagedAsync(int page, int pageSize, string? studentCode = null)
+        {
+            var query = await _studentRepository.GetQueryableAsync();
+
+            query = query
+                .Include(s => s.User)
+                .Include(s => s.Department)
+                .Include(s => s.Program);
+
+            // 👇 Lọc theo mã sinh viên (exact match, không phân biệt hoa thường)
+            if (!string.IsNullOrWhiteSpace(studentCode))
+            {
+                studentCode = studentCode.Trim().ToLower();
+                query = query.Where(s => s.StudentCode.ToLower() == studentCode);
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var students = await query
+                .OrderBy(s => s.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var studentDtos = _mapper.Map<IEnumerable<StudentDto>>(students);
+
+            return new PaginatedResult<StudentDto>
+            {
+                Data = studentDtos,
+                TotalItems = totalItems,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+        }
+
+
+        
     }
 }

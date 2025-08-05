@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementAPI.Data;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Student;
 using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.DTOs.Teacher;
@@ -8,6 +9,7 @@ using StudentManagementAPI.DTOs.User;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Services
 {
@@ -266,6 +268,40 @@ namespace StudentManagementAPI.Services
             _context.Enrollments.Remove(enrollment);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task<PaginatedResult<UserDto>> GetPagedAsync(PaginationQueryDto query)
+        {
+            var (users, totalItems) = await _userRepository.GetPagedAsync(query.Page, query.PageSize);
+            var dtos = _mapper.Map<IEnumerable<UserDto>>(users);
+
+            return new PaginatedResult<UserDto>
+            {
+                Data = dtos,
+                TotalItems = totalItems,
+                CurrentPage = query.Page,
+                PageSize = query.PageSize
+            };
+        }
+
+        public async Task<PaginatedResult<UserCredentialDto>> GetPagedCredentialsAsync(PaginationQueryDto query)
+        {
+            var (users, totalItems) = await _userRepository.GetPagedAsync(query.Page, query.PageSize);
+
+            var dtos = users.Select(u => new UserCredentialDto
+            {
+                Id = u.Id,
+                Username = u.Username,
+                Role = u.Role
+            });
+
+            return new PaginatedResult<UserCredentialDto>
+            {
+                Data = dtos.ToList(),
+                TotalItems = totalItems,
+                CurrentPage = query.Page,
+                PageSize = query.PageSize
+            };
         }
 
     }

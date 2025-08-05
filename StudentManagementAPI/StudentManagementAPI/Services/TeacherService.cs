@@ -5,6 +5,8 @@ using StudentManagementAPI.DTOs.Teacher;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
+using StudentManagementAPI.Repositories;
 
 namespace StudentManagementAPI.Services
 {
@@ -128,5 +130,40 @@ namespace StudentManagementAPI.Services
             _context.Users.Remove(user); // Teacher sẽ tự xoá nhờ FK
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<PaginatedResult<TeacherDto>> GetPagedAsync(int page, int pageSize, string? teacherCode = null)
+        {
+            page = page <= 0 ? 1 : page;
+            pageSize = (pageSize <= 0 || pageSize > 100) ? 10 : pageSize;
+
+            var query = await _repo.GetQueryableAsync();
+
+            // ✅ Nếu có nhập mã giảng viên để tìm kiếm
+            if (!string.IsNullOrWhiteSpace(teacherCode))
+            {
+                teacherCode = teacherCode.Trim().ToLower();
+                query = query.Where(t => t.TeacherCode.ToLower().Contains(teacherCode));
+            }
+
+            var totalItems = await query.CountAsync();
+
+            var teachers = await query
+                .Include(t => t.User)
+                .OrderBy(t => t.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var teacherDtos = _mapper.Map<IEnumerable<TeacherDto>>(teachers);
+
+            return new PaginatedResult<TeacherDto>
+            {
+                Data = teacherDtos,
+                TotalItems = totalItems,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
+        }
+
     }
 }

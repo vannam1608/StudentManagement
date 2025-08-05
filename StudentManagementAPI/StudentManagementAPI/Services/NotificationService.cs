@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Notification;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Services
 {
@@ -17,14 +21,6 @@ namespace StudentManagementAPI.Services
             _mapper = mapper;
         }
 
-        // Lấy tất cả thông báo theo role
-        public async Task<IEnumerable<NotificationDto>> GetAllAsync(string role)
-        {
-            var notifications = await _notificationRepository.GetAllByRoleAsync(role);
-            return _mapper.Map<IEnumerable<NotificationDto>>(notifications);
-        }
-
-        // Lấy thông báo theo ID
         public async Task<NotificationDto?> GetByIdAsync(int id)
         {
             var notification = await _notificationRepository.GetByIdAsync(id);
@@ -32,7 +28,6 @@ namespace StudentManagementAPI.Services
             return _mapper.Map<NotificationDto>(notification);
         }
 
-        // Tạo mới thông báo, trả về true nếu thành công
         public async Task<bool> CreateAsync(CreateNotificationDto dto, int creatorId)
         {
             var newNotification = new Notification
@@ -45,8 +40,52 @@ namespace StudentManagementAPI.Services
             };
 
             await _notificationRepository.CreateAsync(newNotification);
+            return newNotification.Id > 0;
+        }
 
-            return newNotification.Id > 0;  // giả sử Id được set khi insert thành công
+        public async Task<PaginatedResult<NotificationDto>> GetPagedAsync(PaginationQueryDto query)
+        {
+            var baseQuery = _notificationRepository.QueryAll()
+                .OrderByDescending(n => n.Id); // ✅ Sắp xếp theo ID giảm dần
+
+            var totalItems = await baseQuery.CountAsync();
+
+            var items = await baseQuery
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ProjectTo<NotificationDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return new PaginatedResult<NotificationDto>
+            {
+                Data = items,
+                TotalItems = totalItems,
+                CurrentPage = query.Page,
+                PageSize = query.PageSize
+            };
+        }
+
+        public async Task<PaginatedResult<NotificationDto>> GetPagedByRoleAsync(string role, PaginationQueryDto query)
+        {
+            var baseQuery = _notificationRepository.QueryAll()
+                .Where(n => n.TargetRole == role || n.TargetRole == "All")
+                .OrderByDescending(n => n.Id); 
+
+            var totalItems = await baseQuery.CountAsync();
+
+            var items = await baseQuery
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ProjectTo<NotificationDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return new PaginatedResult<NotificationDto>
+            {
+                Data = items,
+                TotalItems = totalItems,
+                CurrentPage = query.Page,
+                PageSize = query.PageSize
+            };
         }
     }
 }

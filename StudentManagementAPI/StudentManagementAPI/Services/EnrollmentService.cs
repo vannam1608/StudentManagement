@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using StudentManagementAPI.DTOs;
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Enrollment;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
 using StudentManagementAPI.Models;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Services
 {
@@ -65,6 +67,31 @@ namespace StudentManagementAPI.Services
             var enrollments = await _enrollmentRepository.GetByStudentAndSemesterAsync(studentId, semesterId);
             return _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
         }
+
+        public async Task<PaginatedResult<EnrollmentDto>> GetPagedAsync(PaginationQueryDto query)
+        {
+            var source = _enrollmentRepository.Query()
+                .OrderBy(e => e.StudentId);
+
+            var totalItems = await source.CountAsync();
+
+            var enrollments = await source
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .ToListAsync();
+
+            var items = _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
+
+            return new PaginatedResult<EnrollmentDto>
+            {
+                Data = items,
+                TotalItems = totalItems,
+                CurrentPage = query.Page,
+                PageSize = query.PageSize
+            };
+        }
+
+
 
 
 
