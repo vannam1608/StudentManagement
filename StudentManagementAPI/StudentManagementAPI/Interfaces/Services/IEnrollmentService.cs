@@ -1,4 +1,6 @@
-﻿using StudentManagementAPI.DTOs.Enrollment;
+﻿using StudentManagementAPI.DTOs.Common;
+using StudentManagementAPI.DTOs.Enrollment;
+using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Interfaces.Services
 {
@@ -12,5 +14,8 @@ namespace StudentManagementAPI.Interfaces.Services
 
         // ✅ Cho phép lọc theo studentId (bắt buộc) và semesterId (tùy chọn)
         Task<IEnumerable<EnrollmentDto>> GetByStudentAndSemesterAsync(int studentId, int? semesterId);
+
+        Task<PaginatedResult<EnrollmentDto>> GetPagedAsync(PaginationQueryDto query);
+
     }
 }

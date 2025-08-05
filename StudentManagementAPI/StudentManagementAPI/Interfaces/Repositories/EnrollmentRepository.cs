@@ -142,6 +142,13 @@ namespace StudentManagementAPI.Repositories
             return await query.ToListAsync();
         }
 
+        public IQueryable<Enrollment> Query()
+        {
+            return _context.Enrollments
+                .Include(e => e.Student).ThenInclude(s => s.User)
+                .Include(e => e.CourseClass).ThenInclude(c => c.Subject)
+                .Include(e => e.CourseClass).ThenInclude(c => c.Semester);
+        }
 
     }
 }

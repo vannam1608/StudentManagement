@@ -11,5 +11,8 @@ namespace StudentManagementAPI.Interfaces.Repositories
         // ➕ Các method bị thiếu
         Task<IEnumerable<Notification>> GetAllByRoleAsync(string role);
         Task CreateAsync(Notification newNotification);
+
+        IQueryable<Notification> QueryAll();
+
     }
 }

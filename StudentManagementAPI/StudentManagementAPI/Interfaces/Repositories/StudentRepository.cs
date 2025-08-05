@@ -53,6 +53,12 @@ namespace StudentManagementAPI.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<IQueryable<Student>> GetQueryableAsync()
+        {
+            return await Task.FromResult(_context.Students
+                .Include(s => s.User)  // nếu cần thông tin User liên quan
+                .AsNoTracking());
+        }
 
     }
 }

@@ -9,6 +9,8 @@ namespace StudentManagementAPI.Interfaces.Repositories
         Task<bool> CreateAsync(Teacher teacher);
         Task<bool> UpdateAsync(Teacher teacher);
         Task<bool> DeleteAsync(int id);
+
+        Task<IQueryable<Teacher>> GetQueryableAsync();
     }
 
 }

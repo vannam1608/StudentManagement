@@ -1,9 +1,9 @@
-﻿// Interfaces/Services/IStudentService.cs
-using StudentManagementAPI.DTOs.Student;
-using StudentManagementAPI.DTOs.Enrollment;
+﻿using StudentManagementAPI.DTOs.Enrollment;
 using StudentManagementAPI.DTOs.Schedule;
 using StudentManagementAPI.DTOs.Score;
+using StudentManagementAPI.DTOs.Student;
 using StudentManagementAPI.DTOs.Subject;
+using StudentManagementAPI.Models.Common;
 
 public interface IStudentService
 {
@@ -20,4 +20,6 @@ public interface IStudentService
     Task<IEnumerable<ScoreDto>> GetScoresAsync(int studentId);
     Task<bool> RegisterSubjectAsync(int studentId, RegisterSubjectDto dto);
 
+    // ✅ CHỈNH HÀM NÀY THÊM THAM SỐ TÌM KIẾM
+    Task<PaginatedResult<StudentDto>> GetPagedAsync(int page, int pageSize, string? studentCode = null);
 }

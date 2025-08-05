@@ -18,4 +18,6 @@ public interface IEnrollmentRepository
     void Update(Enrollment enrollment);
     void Delete(Enrollment enrollment);
     Task SaveChangesAsync();
+
+    IQueryable<Enrollment> Query();
 }

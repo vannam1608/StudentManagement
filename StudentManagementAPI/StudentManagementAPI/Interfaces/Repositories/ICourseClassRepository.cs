@@ -9,5 +9,9 @@ namespace StudentManagementAPI.Interfaces.Repositories
         Task CreateAsync(CourseClass entity);
         Task UpdateAsync(CourseClass entity);
         Task DeleteAsync(int id);
+
+        Task<int> CountAsync();
+
+        Task<IEnumerable<CourseClass>> GetPagedAsync(int page, int pageSize);
     }
 }

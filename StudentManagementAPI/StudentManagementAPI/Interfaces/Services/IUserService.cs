@@ -1,8 +1,10 @@
 ﻿// Interfaces/Services/IUserService.cs
+using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Student;
 using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.DTOs.Teacher;
 using StudentManagementAPI.DTOs.User;
+using StudentManagementAPI.Models.Common;
 
 
 public interface IUserService
@@ -26,6 +28,9 @@ public interface IUserService
     Task<bool> ChangeRoleAsync(int userId, string newRole);
     Task<bool> CancelEnrollmentAsync(int studentId, int enrollmentId);
 
+    Task<PaginatedResult<UserDto>> GetPagedAsync(PaginationQueryDto query);
+
+    Task<PaginatedResult<UserCredentialDto>> GetPagedCredentialsAsync(PaginationQueryDto query);
 
 
 }

@@ -98,5 +98,13 @@ namespace StudentManagementAPI.Repositories
             await _context.Notifications.AddAsync(newNotification);
             await _context.SaveChangesAsync();
         }
+
+        public IQueryable<Notification> QueryAll()
+        {
+            return _context.Notifications
+                .Include(n => n.Creator); 
+        }
+
+
     }
 }

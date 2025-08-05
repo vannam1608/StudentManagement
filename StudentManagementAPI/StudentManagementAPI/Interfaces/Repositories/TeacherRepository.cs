@@ -43,6 +43,17 @@ namespace StudentManagementAPI.Repositories
             _context.Teachers.Remove(teacher);
             return await _context.SaveChangesAsync() > 0;
         }
+
+        public async Task<IQueryable<Teacher>> GetQueryableAsync()
+        {
+            return await Task.FromResult(
+                _context.Teachers
+                    .Include(t => t.User)
+                    .AsNoTracking()
+            );
+        }
+
+
     }
 
 }

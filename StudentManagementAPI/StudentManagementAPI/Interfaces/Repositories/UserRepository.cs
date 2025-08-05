@@ -66,5 +66,21 @@ namespace StudentManagementAPI.Repositories
             _context.Teachers.Add(teacher);
             return Task.CompletedTask;
         }
+
+        public async Task<(List<User>, int)> GetPagedAsync(int page, int pageSize)
+        {
+            var query = _context.Users.AsQueryable();
+
+            var totalItems = await query.CountAsync();
+            var users = await query
+                .OrderBy(u => u.Id) 
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (users, totalItems);
+        }
+
+
     }
 }

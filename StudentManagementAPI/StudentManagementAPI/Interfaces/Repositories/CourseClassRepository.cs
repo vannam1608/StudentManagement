@@ -104,5 +104,26 @@ namespace StudentManagementAPI.Repositories
                 await SaveChangesAsync();
             }
         }
+
+
+        public async Task<int> CountAsync()
+        {
+            return await _context.CourseClasses.CountAsync();
+        }
+
+        public async Task<IEnumerable<CourseClass>> GetPagedAsync(int page, int pageSize)
+        {
+            return await _context.CourseClasses
+                .Include(c => c.Subject)
+                .Include(c => c.Teacher).ThenInclude(t => t.User)
+                .Include(c => c.Semester)
+                .Include(c => c.Enrollments)
+                .OrderBy(c => c.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+
     }
 }

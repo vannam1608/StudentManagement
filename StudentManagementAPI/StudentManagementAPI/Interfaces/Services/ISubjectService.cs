@@ -1,4 +1,5 @@
 ﻿using StudentManagementAPI.DTOs.Subject;
+using StudentManagementAPI.Models.Common;
 
 public interface ISubjectService
 {
@@ -12,5 +13,9 @@ public interface ISubjectService
     Task<IEnumerable<SubjectDto>> SearchByNameAsync(string name);
     Task<IEnumerable<SubjectDto>> GetAvailableSubjectsAsync();
     Task<IEnumerable<SubjectDto>> GetAvailableSubjectsBySemesterAsync(int semesterId);
+
+
+    Task<PaginatedResult<SubjectDto>> GetPagedAsync(int page, int pageSize, string? keyword = null, int? semesterId = null); 
+
 
 }

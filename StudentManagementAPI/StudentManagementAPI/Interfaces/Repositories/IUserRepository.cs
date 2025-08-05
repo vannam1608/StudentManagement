@@ -10,5 +10,7 @@ namespace StudentManagementAPI.Interfaces.Repositories
 
         Task<bool> UpdateAsync(User user);
         Task AddTeacherAsync(Teacher teacher);
+
+        Task<(List<User>, int)> GetPagedAsync(int page, int pageSize);
     }
 }
