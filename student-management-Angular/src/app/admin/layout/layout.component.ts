@@ -1,7 +1,7 @@
 import { Component, HostListener } from '@angular/core';
-import { Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, RouterLink,  RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 
 @Component({

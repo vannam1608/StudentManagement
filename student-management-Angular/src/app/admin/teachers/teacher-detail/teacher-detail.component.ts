@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute,  RouterLink } from '@angular/router';
 import { TeacherService } from '../../../shared/services/teacher.service';
 import { TeacherDto } from '../../../shared/models/teacher.model';
 @Component({

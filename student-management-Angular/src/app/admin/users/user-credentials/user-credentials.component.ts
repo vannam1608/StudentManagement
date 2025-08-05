@@ -15,23 +15,52 @@ import { Location } from '@angular/common';
 export class UserCredentialsComponent implements OnInit {
   users: UserCredentialDto[] = [];
 
-  // Sử dụng object để lưu từng giá trị theo userId
   passwordInputs: { [key: number]: string } = {};
   roleInputs: { [key: number]: string } = {};
 
+  // ✅ Phân trang
+  currentPage = 1;
+  pageSize = 10;
+  totalPages = 1;
+  totalItems = 0;
+
   constructor(private userService: UserService, private location: Location) {}
+
   goBack(): void {
-  this.location.back();
-}
+    this.location.back();
+  }
 
   ngOnInit(): void {
     this.loadUsers();
   }
 
   loadUsers() {
-    this.userService.getCredentials().subscribe(data => {
-      this.users = data;
+    this.userService.getPagedCredentials(this.currentPage, this.pageSize).subscribe(res => {
+      this.users = res.data;
+      this.totalItems = res.totalItems;
+      this.totalPages = res.totalPages;
     });
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadUsers();
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadUsers();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadUsers();
+    }
   }
 
   updatePassword(id: number) {
@@ -51,8 +80,7 @@ export class UserCredentialsComponent implements OnInit {
     this.userService.changeRole(id, newRole).subscribe(() => {
       alert('Cập nhật quyền thành công');
       this.roleInputs[id] = '';
-      this.loadUsers(); // refresh lại danh sách
+      this.loadUsers(); // Refresh
     });
   }
-  
 }

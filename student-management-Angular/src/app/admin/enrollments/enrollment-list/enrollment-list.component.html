@@ -1,80 +1,90 @@
-<div class="container">
-  <h3 class="mb-4">📚 Danh sách môn học đã đăng ký</h3>
+<div class="container mt-4">
+  <h3 class="mb-3">📋 Danh sách đăng ký môn học</h3>
 
-  <!-- BỘ LỌC -->
-  <div class="row mb-4">
-    <!-- CHỌN SINH VIÊN -->
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">🎓 Chọn sinh viên:</label>
-     <select
-  class="form-select"
+  <!-- Bộ lọc -->
+  <div class="row mb-3">
+    <div class="col-md-4">
+      <label for="studentFilter">🎓 Sinh viên:</label>
+      <select
+  id="studentFilter"
+  class="form-control"
   [(ngModel)]="selectedStudentId"
-  (change)="loadEnrollments()">
+  (change)="onStudentChange()"
+>
   <option [ngValue]="null">-- Tất cả sinh viên --</option>
-  <option *ngFor="let s of students" [ngValue]="s.id">
-    {{ s.fullName }} ({{ s.studentCode }})
+  <option *ngFor="let student of students" [ngValue]="student.studentCode">
+    {{ student.studentCode }} - {{ student.fullName }}
   </option>
 </select>
 
     </div>
 
-    <!-- CHỌN HỌC KỲ -->
-    <div class="col-md-6">
-      <label class="form-label fw-semibold">🗓️ Chọn học kỳ:</label>
+    <div class="col-md-4">
+      <label for="semesterFilter">📅 Học kỳ:</label>
       <select
-        class="form-select"
+        id="semesterFilter"
+        class="form-control"
         [(ngModel)]="selectedSemesterId"
-        (change)="loadEnrollments()">
+        (change)="onSemesterChange()"
+      >
         <option [ngValue]="null">-- Tất cả học kỳ --</option>
-        <option *ngFor="let s of semesters" [ngValue]="s.id">
-          {{ s.name }}
+        <option *ngFor="let semester of semesters" [ngValue]="semester.id">
+          {{ semester.name }}
         </option>
       </select>
     </div>
   </div>
 
-  <!-- BẢNG DANH SÁCH ĐĂNG KÝ -->
-  <div class="table-responsive">
-    <table class="table table-bordered table-striped align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>#</th>
-          <th>Sinh viên</th>
-          <th>Mã SV</th>
-          <th>Môn học</th>
-          <th>Mã môn</th>
-          <th>Lớp học phần</th>
-          <th>Thời khoá biểu</th>
-          <th>Học kỳ</th>
-          <th>Ngày đăng ký</th>
-          <th>Hành động</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of enrollments; let i = index">
-          <td>{{ i + 1 }}</td>
-          <td>{{ item.fullName }}</td>
-          <td>{{ item.studentCode }}</td>
-          <td>{{ item.subjectName }}</td>
-          <td>{{ item.subjectCode }}</td>
-          <td>{{ item.classCode }}</td>
-          <td>{{ item.schedule }}</td>
-          <td>{{ item.semesterName }}</td>
-          <td>{{ item.enrollDate | date: 'shortDate' }}</td>
-          <td>
-            <button
-              class="btn btn-danger btn-sm"
-              (click)="delete(item.id)">
-              <i class="bi bi-trash"></i> Xoá
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Họ tên</th>
+        <th>Mã SV</th>
+        <th>Môn học</th>
+        <th>Mã MH</th>
+        <th>Lớp</th>
+        <th>Lịch học</th>
+        <th>Học kỳ</th>
+        <th>Ngày đăng ký</th>
+        <th>Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of enrollments; let i = index; trackBy: trackById">
+        <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+        <td>{{ item.fullName }}</td>
+        <td>{{ item.studentCode }}</td>
+        <td>{{ item.subjectName }}</td>
+        <td>{{ item.subjectCode }}</td>
+        <td>{{ item.classCode }}</td>
+        <td>{{ item.schedule }}</td>
+        <td>{{ item.semesterName }}</td>
+        <td>{{ item.enrollDate | date: 'shortDate' }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="delete(item.id)">
+            <i class="bi bi-trash"></i> Xoá
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="enrollments?.length === 0">
+        <td colspan="10" class="text-center">Không có dữ liệu.</td>
+      </tr>
+    </tbody>
+  </table>
 
-  <!-- TRẠNG THÁI RỖNG -->
-  <div *ngIf="enrollments.length === 0" class="text-center text-muted mt-4">
-    🙁 Không có đăng ký nào được tìm thấy.
+  <!-- PHÂN TRANG -->
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <button class="btn btn-secondary" [disabled]="currentPage === 1" (click)="goToPreviousPage()">
+      ← Trước
+    </button>
+    <span>Trang {{ currentPage }} / {{ totalPages }}</span>
+    <button
+      class="btn btn-secondary"
+      [disabled]="currentPage === totalPages"
+      (click)="goToNextPage()"
+    >
+      Sau →
+    </button>
   </div>
 </div>

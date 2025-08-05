@@ -15,14 +15,21 @@ export class SubjectSearchComponent implements OnInit {
   searchText: string = '';
   allSubjects: SubjectDto[] = [];
   filteredSubjects: SubjectDto[] = [];
+  pagedSubjects: SubjectDto[] = [];
+
+  currentPage = 1;
+  pageSize = 10; // ✅ mặc định
+  totalPages = 0;
 
   constructor(private subjectService: SubjectService) {}
 
   ngOnInit(): void {
-    this.subjectService.getAll().subscribe({
-      next: data => {
-        this.allSubjects = data;
-        this.filteredSubjects = data;
+    // Lấy tất cả môn học (giả sử tối đa 1000)
+    this.subjectService.getPagedSubjects(1, 1000).subscribe({
+      next: res => {
+        this.allSubjects = res.data;
+        this.filteredSubjects = res.data;
+        this.updatePagination();
       },
       error: err => console.error(err),
     });
@@ -35,5 +42,26 @@ export class SubjectSearchComponent implements OnInit {
       s.subjectCode.toLowerCase().includes(text) ||
       s.name.toLowerCase().includes(text)
     );
+    this.currentPage = 1;
+    this.updatePagination();
+  }
+
+  updatePagination(): void {
+    const start = (this.currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    this.totalPages = Math.ceil(this.filteredSubjects.length / this.pageSize);
+    this.pagedSubjects = this.filteredSubjects.slice(start, end);
+  }
+
+  changePage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePagination();
+    }
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1;
+    this.updatePagination();
   }
 }

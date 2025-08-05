@@ -1,33 +1,68 @@
-<div class="d-flex justify-content-between align-items-center mb-3">
-  <h4>Danh sách môn học</h4>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+  <h4 class="mb-0">📚 Danh sách môn học</h4>
   <div>
-    <a class="btn btn-success me-2" routerLink="/admin/subjects/available">📘 Môn học mở</a>
-    <a class="btn btn-info me-2" routerLink="/admin/subjects/search">🔍 Tìm kiếm</a>
-    <a class="btn btn-primary" routerLink="/admin/subjects/create">+ Thêm môn học</a>
+    <a class="btn btn-success me-2 mb-1" routerLink="/admin/subjects/available">📘 Môn học mở</a>
+    <a class="btn btn-info me-2 mb-1" routerLink="/admin/subjects/search">🔍 Tìm kiếm</a>
+    <a class="btn btn-primary mb-1" routerLink="/admin/subjects/create">➕ Thêm môn học</a>
   </div>
 </div>
 
-<table class="table table-bordered">
-  <thead class="table-dark">
-    <tr>
-      <th>Mã môn</th>
-      <th>Tên môn</th>
-      <th>Số tín chỉ</th>
-      <th>Mô tả</th>
-      <th>Thao tác</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let s of subjects">
-      <td>{{ s.subjectCode }}</td>
-      <td>{{ s.name }}</td>
-      <td>{{ s.credit }}</td>
-      <td>{{ s.description }}</td>
-      <td>
-        <a [routerLink]="['/admin/subjects', s.id]" class="btn btn-sm btn-secondary me-1">Xem</a>
-        <a [routerLink]="['/admin/subjects/edit', s.id]" class="btn btn-sm btn-warning me-1">Sửa</a>
-        <button class="btn btn-sm btn-danger" (click)="deleteSubject(s.id)">Xóa</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<!-- Loading -->
+<div *ngIf="loading" class="alert alert-info">Đang tải dữ liệu...</div>
+
+<!-- Table -->
+<div class="table-responsive" *ngIf="!loading && subjects.length">
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Mã môn</th>
+        <th>Tên môn</th>
+        <th>Số tín chỉ</th>
+        <th>Mô tả</th>
+        <th class="text-center">Thao tác</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let s of subjects; let i = index">
+        <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+        <td>{{ s.subjectCode }}</td>
+        <td>{{ s.name }}</td>
+        <td>{{ s.credit }}</td>
+        <td>{{ s.description }}</td>
+        <td class="text-center">
+          <a [routerLink]="['/admin/subjects', s.id]" class="btn btn-sm btn-secondary me-1">Xem</a>
+          <a [routerLink]="['/admin/subjects/edit', s.id]" class="btn btn-sm btn-warning me-1">Sửa</a>
+          <button class="btn btn-sm btn-danger" (click)="deleteSubject(s.id)">Xoá</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Không có dữ liệu -->
+<div *ngIf="!loading && !subjects.length" class="alert alert-warning">
+  Không có môn học nào.
+</div>
+
+<!-- Pagination -->
+<nav *ngIf="!loading && totalPages > 1" class="mt-3">
+  <ul class="pagination justify-content-center flex-wrap">
+    <li class="page-item" [class.disabled]="page === 1">
+      <button class="page-link" (click)="changePage(page - 1)">Trước</button>
+    </li>
+
+    <li 
+      class="page-item"
+      *ngFor="let p of [].constructor(totalPages); let i = index"
+      [class.active]="page === (i + 1)">
+      <button class="page-link" (click)="changePage(i + 1)">
+        {{ i + 1 }}
+      </button>
+    </li>
+
+    <li class="page-item" [class.disabled]="page === totalPages">
+      <button class="page-link" (click)="changePage(page + 1)">Sau</button>
+    </li>
+  </ul>
+</nav>

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup, ReactiveFormsModule,   Validators } from '@angular/forms';
+import { ActivatedRoute,    Router} from '@angular/router';
 import { UserService } from '../../../shared/services/user.service'; 
 import { CreateUserDto, UpdateUserDto,UserDto } from '../../../shared/models/user.model';
-import { RouterModule } from '@angular/router';
+import {  RouterModule } from '@angular/router';
 
 
 @Component({

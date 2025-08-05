@@ -1,12 +1,12 @@
 // src/app/admin/students/student-form/student-form.component.ts
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { FormBuilder, FormGroup,  Validators } from '@angular/forms';
+import { ActivatedRoute,  Router } from '@angular/router';
 import { StudentService } from '../../../shared/services/student.service';
 import { CreateStudentDto, UpdateStudentDto } from '../../../shared/models/student.model';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; // ✅ Thêm dòng này
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-student-form',
@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router'; // ✅ Thêm dòng này
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule // ✅ Bổ sung để routerLink hoạt động
+    RouterModule 
   ],
   templateUrl: './student-form.component.html'
 })

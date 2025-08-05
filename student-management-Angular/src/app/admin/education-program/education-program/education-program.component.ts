@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {  FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { EducationProgramService } from '../../../shared/services/education-program.service';
 import { EducationProgramDto, CreateEducationProgramDto } from '../../../shared/models/education-program.model';
@@ -52,16 +52,21 @@ export class EducationProgramComponent implements OnInit {
     });
   }
 
-  deleteProgram(id: number) {
-    if (confirm('Bạn có chắc chắn muốn xóa chương trình này?')) {
-      this.programService.delete(id).subscribe({
-        next: () => {
-          this.successMessage = '✅ Xóa thành công!';
-          this.loadPrograms();
-          setTimeout(() => this.successMessage = '', 3000);
-        },
-        error: () => this.errorMessage = '❌ Xóa thất bại.'
-      });
+      deleteProgram(id: number) {
+        if (confirm('Bạn có chắc chắn muốn xóa chương trình này?')) {
+          this.programService.delete(id).subscribe({
+      next: (res) => {
+        console.log('✅ Response:', res);  // THÊM DÒNG NÀY
+        this.successMessage = '✅ Xóa thành công!';
+        this.loadPrograms();
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: (err) => {
+        console.error('❌ Delete Error:', err);  // THÊM DÒNG NÀY
+        this.errorMessage = '❌ Xóa thất bại.';
+      }
+    });
+
     }
   }
 }

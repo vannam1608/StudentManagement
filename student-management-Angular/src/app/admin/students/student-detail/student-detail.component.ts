@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'; // ⬅ Thêm Router
+import { ActivatedRoute,  Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StudentService } from '../../../shared/services/student.service';
 import { StudentDto } from '../../../shared/models/student.model';

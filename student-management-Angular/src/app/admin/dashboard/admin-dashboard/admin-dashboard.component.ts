@@ -1,9 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
-import { Router } from '@angular/router';
+import {  Router } from '@angular/router';
 import { ChartType } from 'chart.js';
-import { NgChartsModule } from 'ng2-charts'; // ✅ dùng ChartsModule (KHÔNG dùng NgChartsModule)
+import { NgChartsModule } from 'ng2-charts'; 
 
 import { StudentService } from '../../../shared/services/student.service';
 import { TeacherService } from '../../../shared/services/teacher.service';
@@ -15,7 +15,7 @@ import { NotificationService } from '../../../shared/services/notification.servi
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, NgChartsModule], // ✅ sửa lại
+  imports: [CommonModule, NgChartsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -37,6 +37,7 @@ export class AdminDashboardComponent implements OnInit {
 
   latestNotifications: any[] = [];
 
+  // Inject services
   private studentService = inject(StudentService);
   private teacherService = inject(TeacherService);
   private subjectService = inject(SubjectService);
@@ -46,34 +47,28 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      students: this.studentService.getAll(),
-      teachers: this.teacherService.getAll(),
-      subjects: this.subjectService.getAll(),
-      classes: this.courseClassService.getAll(),
+      students: this.studentService.getPagedStudents(1, 1),
+      teachers: this.teacherService.getPagedTeachers(1, 1),
+      subjects: this.subjectService.getPagedSubjects(1, 1),
+      classes: this.courseClassService.getPaged(1, 1),
       scoreCount: this.scoreService.getTotalCountFromPaged(),
-
-      notifications: this.notificationService.getAll()
+      notifications: this.notificationService.getPaged(1, 5)
     }).subscribe({
       next: (data) => {
-        this.stats[0].value = data.students.length;
-        this.stats[1].value = data.teachers.length;
-        this.stats[2].value = data.subjects.length;
-        this.stats[3].value = data.classes.length;
+        this.stats[0].value = data.students.totalItems;
+        this.stats[1].value = data.teachers.totalItems;
+        this.stats[2].value = data.subjects.totalItems;
+        this.stats[3].value = data.classes.totalItems;
         this.stats[4].value = data.scoreCount;
-
-        this.stats[5].value = data.notifications.length;
+        this.stats[5].value = data.notifications.totalItems;
 
         this.pieChartData = [
-          data.students.length,
-          data.teachers.length,
-          data.subjects.length
+          data.students.totalItems,
+          data.teachers.totalItems,
+          data.subjects.totalItems
         ];
 
-        this.latestNotifications = data.notifications
-          .sort((a: any, b: any) =>
-            new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
-          )
-          .slice(0, 5);
+        this.latestNotifications = data.notifications.data;
       },
       error: (err) => {
         console.error('Lỗi khi load dữ liệu thống kê:', err);

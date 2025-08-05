@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {  ActivatedRoute } from '@angular/router';
 import { ScoreService } from '../../../shared/services/score.service';
 import { ScoreDto } from '../../../shared/models/score.model';
 import { CommonModule } from '@angular/common';

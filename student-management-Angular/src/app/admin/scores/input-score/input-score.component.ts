@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { InputScoreDto } from '../../../shared/models/score.model';
 import { ScoreService } from '../../../shared/services/score.service';
-import { FormsModule } from '@angular/forms';
+import {  FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({

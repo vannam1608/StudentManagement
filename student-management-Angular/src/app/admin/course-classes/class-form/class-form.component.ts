@@ -11,7 +11,7 @@ import { SubjectDto } from '../../../shared/models/subject.model';
 import { TeacherDto } from '../../../shared/models/teacher.model';
 import { SemesterDto } from '../../../shared/models/semester.model';
 import { RouterModule } from '@angular/router';
-
+import { PagedResult } from '../../../shared/models/paged-result.model';
 @Component({
   selector: 'app-class-form',
   standalone: true,
@@ -66,11 +66,20 @@ export class ClassFormComponent implements OnInit {
     }
   }
 
-  loadOptions() {
-    this.subjectService.getAll().subscribe(data => this.subjects = data);
-    this.teacherService.getAll().subscribe(data => this.teachers = data);
-    this.semesterService.getAll().subscribe(data => this.semesters = data);
-  }
+ loadOptions() {
+  this.subjectService.getPagedSubjects(1, 1000).subscribe((res: PagedResult<SubjectDto>) => {
+    this.subjects = res.data;
+  });
+
+  this.teacherService.getPagedTeachers(1, 1000).subscribe((res: PagedResult<TeacherDto>) => {
+    this.teachers = res.data;
+  });
+
+  this.semesterService.getAll().subscribe((data: SemesterDto[]) => {
+    this.semesters = data;
+  });
+}
+
 
   submitForm() {
     if (!this.formData.classCode || !this.formData.subjectId || !this.formData.teacherId || !this.formData.semesterId) {

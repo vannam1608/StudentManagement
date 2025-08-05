@@ -54,12 +54,8 @@ export class SubjectAvailableComponent implements OnInit {
       next: (data) => {
         this.semesters = data;
         const openSemester = this.semesters.find(s => s.isOpen);
-        if (openSemester) {
-          this.selectedSemesterId = openSemester.id;
-        } else if (this.semesters.length > 0) {
-          this.selectedSemesterId = this.semesters[0].id;
-        }
-        this.loadSubjects();
+        this.selectedSemesterId = openSemester?.id || this.semesters[0]?.id || 0;
+        this.checkAndLoadSubjects();
       },
       error: () => {
         this.errorMessage = 'Không thể tải danh sách học kỳ.';
@@ -68,13 +64,11 @@ export class SubjectAvailableComponent implements OnInit {
   }
 
   loadStudents() {
-    this.studentService.getAll().subscribe({
-      next: (data) => {
-        this.students = data;
-        if (this.students.length > 0) {
-          this.selectedStudentId = this.students[0].id;
-          this.loadSubjects();
-        }
+    this.studentService.getPagedStudents(1, 100).subscribe({
+      next: (res) => {
+        this.students = res.data;
+        this.selectedStudentId = this.students[0]?.id;
+        this.checkAndLoadSubjects();
       },
       error: () => {
         this.errorMessage = 'Không thể tải danh sách sinh viên.';
@@ -82,8 +76,14 @@ export class SubjectAvailableComponent implements OnInit {
     });
   }
 
+  checkAndLoadSubjects() {
+    if (this.selectedSemesterId && this.selectedStudentId) {
+      this.loadSubjects();
+    }
+  }
+
   onStudentOrSemesterChange() {
-    this.loadSubjects();
+    this.checkAndLoadSubjects();
   }
 
   async loadSubjects() {
@@ -107,7 +107,8 @@ export class SubjectAvailableComponent implements OnInit {
           }));
           resolve();
         },
-        error: () => {
+        error: (err) => {
+          console.error('Lỗi tải môn học đã đăng ký:', err);
           this.errorMessage = 'Không thể tải danh sách môn học đã đăng ký.';
           this.enrolledSubjects = [];
           reject();
@@ -124,7 +125,8 @@ export class SubjectAvailableComponent implements OnInit {
           this.availableSubjects = data.filter(subject => !enrolledCodes.includes(subject.subjectCode));
           resolve();
         },
-        error: () => {
+        error: (err) => {
+          console.error('Lỗi tải môn học khả dụng:', err);
           this.errorMessage = 'Không thể tải danh sách môn học khả dụng.';
           this.availableSubjects = [];
           reject();
@@ -147,6 +149,7 @@ export class SubjectAvailableComponent implements OnInit {
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
+        console.error('Lỗi đăng ký:', err);
         this.errorMessage = err.error?.message || '❌ Đăng ký thất bại.';
         this.successMessage = '';
       }
@@ -164,6 +167,7 @@ export class SubjectAvailableComponent implements OnInit {
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (err) => {
+        console.error('Lỗi hủy đăng ký:', err);
         this.errorMessage = err.error?.message || '❌ Hủy đăng ký thất bại.';
         this.successMessage = '';
       }

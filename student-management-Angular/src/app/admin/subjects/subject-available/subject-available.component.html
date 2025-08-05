@@ -18,13 +18,19 @@
     <select class="form-select" id="studentSelect"
             [(ngModel)]="selectedStudentId"
             (change)="onStudentOrSemesterChange()">
-      <option *ngFor="let s of students" [value]="s.id">{{ s.fullName }} ({{ s.studentCode }})</option>
+      <option *ngFor="let s of students" [value]="s.id">
+        {{ s.fullName }} ({{ s.studentCode }})
+      </option>
     </select>
   </div>
 
   <!-- Thông báo -->
-  <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+  </div>
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
 
   <!-- Môn học khả dụng -->
   <h5 class="mt-4">📖 Môn học khả dụng</h5>
@@ -45,15 +51,17 @@
         <td>{{ s.credit }}</td>
         <td>{{ s.description }}</td>
         <td>
-          <ng-container *ngIf="isSemesterOpen(); else disabledButton">
+          <ng-container *ngIf="isSemesterOpen(); else disabled">
             <button class="btn btn-primary btn-sm"
                     (click)="registerSubject(s.id)"
                     title="Đăng ký môn học">
               Đăng ký
             </button>
           </ng-container>
-          <ng-template #disabledButton>
-            <button class="btn btn-secondary btn-sm" disabled>Học kỳ đã đóng</button>
+          <ng-template #disabled>
+            <button class="btn btn-secondary btn-sm" disabled>
+              Học kỳ đã đóng
+            </button>
           </ng-template>
         </td>
       </tr>

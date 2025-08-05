@@ -5,8 +5,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DepartmentService } from '../../../shared/services/department.service';
 import { CreateDepartmentDto, DepartmentDto } from '../../../shared/models/department.model';
 
-import { Route } from '@angular/router';
-
 
 @Component({
   selector: 'app-department-form',

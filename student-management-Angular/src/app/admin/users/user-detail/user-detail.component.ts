@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {  ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import {  RouterModule } from '@angular/router';
 import { UserService } from '../../../shared/services/user.service';
 import { UserDto } from '../../../shared/models/user.model';
 

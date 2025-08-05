@@ -258,22 +258,19 @@ export const adminRoutes: Routes = [
   children: [
     {
       path: '',
-      loadComponent: () =>
-        import('./notifications/notification-list/notification-list.component').then(m => m.NotificationListComponent)
+      loadComponent: () => import('./notifications/notification-list/notification-list.component').then(m => m.NotificationListComponent)
     },
     {
-  path: 'notifications/create',
-  loadComponent: () =>
-    import('./notifications/notification-form/notification-form.component').then(m => m.NotificationFormComponent)
-},
-
-{
+      path: 'create', // ✅ CHỈ 'create' là đủ
+      loadComponent: () => import('./notifications/notification-form/notification-form.component').then(m => m.NotificationFormComponent)
+    },
+    {
       path: 'edit/:id',
-      loadComponent: () =>
-        import('./notifications/notification-form/notification-form.component').then(m => m.NotificationFormComponent)
+      loadComponent: () => import('./notifications/notification-form/notification-form.component').then(m => m.NotificationFormComponent)
     }
   ]
 },
+
 
 
 {

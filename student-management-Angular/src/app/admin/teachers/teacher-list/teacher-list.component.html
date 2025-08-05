@@ -5,8 +5,28 @@
   </a>
 </div>
 
+<!-- 🔍 Thanh tìm kiếm đẹp hơn -->
+<div class="input-group mb-4 shadow-sm rounded">
+  <span class="input-group-text bg-white border-end-0">
+    <i class="bi bi-search"></i>
+  </span>
+  <input
+    type="text"
+    class="form-control border-start-0"
+    placeholder=" Nhập mã giảng viên (VD: GV001)..."
+    [(ngModel)]="searchCode"
+    (keyup.enter)="search()"
+  />
+  <button class="btn btn-primary" type="button" (click)="search()">
+    Tìm kiếm
+  </button>
+</div>
+
+
+<!-- Thông báo đang tải -->
 <div *ngIf="loading" class="alert alert-info">Đang tải danh sách...</div>
 
+<!-- ✅ Bảng dữ liệu -->
 <table *ngIf="!loading && teachers.length" class="table table-bordered table-hover">
   <thead class="table-light">
     <tr>
@@ -22,7 +42,7 @@
   </thead>
   <tbody>
     <tr *ngFor="let t of teachers; let i = index">
-      <td>{{ i + 1 }}</td>
+      <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
       <td>{{ t.teacherCode }}</td>
       <td>{{ t.fullName }}</td>
       <td>{{ t.email }}</td>
@@ -38,4 +58,27 @@
   </tbody>
 </table>
 
-<div *ngIf="!loading && !teachers.length" class="alert alert-warning">Không có giảng viên nào.</div>
+<!-- Phân trang -->
+<nav *ngIf="totalPages > 1" class="mt-3">
+  <ul class="pagination justify-content-center">
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <button class="page-link" (click)="previousPage()">Trước</button>
+    </li>
+
+    <li 
+      class="page-item" 
+      *ngFor="let page of [].constructor(totalPages); let i = index" 
+      [class.active]="i + 1 === currentPage">
+      <button class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</button>
+    </li>
+
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <button class="page-link" (click)="nextPage()">Sau</button>
+    </li>
+  </ul>
+</nav>
+
+<!-- Nếu không có dữ liệu -->
+<div *ngIf="!loading && !teachers.length" class="alert alert-warning">
+  Không có giảng viên nào.
+</div>
