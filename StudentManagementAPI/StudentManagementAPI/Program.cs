@@ -72,6 +72,7 @@ builder.Services.AddMemoryCache();
 #region 6. JWT Settings & JWT Service
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddHttpContextAccessor();
 #endregion
 
 #region 7. Application Services
