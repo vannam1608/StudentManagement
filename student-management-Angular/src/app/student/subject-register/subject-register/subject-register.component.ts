@@ -7,13 +7,14 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-subject-register',
   standalone: true,
   templateUrl: './subject-register.component.html',
-  styleUrls: ['./subject-register.component.scss'], // <-- sửa styleUrl thành styleUrls
+  styleUrls: ['./subject-register.component.scss'],
   imports: [CommonModule, FormsModule]
 })
 export class SubjectRegisterComponent implements OnInit {
   availableSubjects: any[] = [];
   registeredSubjectIds: number[] = [];
   groupedSubjects: Record<string, any[]> = {};
+  groupedRegisteredSubjects: Record<string, any[]> = {};
 
   semesters: any[] = [];
   selectedSemester: number = 0;
@@ -39,29 +40,37 @@ export class SubjectRegisterComponent implements OnInit {
     });
   }
 
- loadSubjects() {
-  let params = new HttpParams();
-  if (this.selectedSemester !== 0) {
-    params = params.set('semesterId', this.selectedSemester.toString());
-  }
-
-  this.http.get<any[]>('/api/subjects/available', { params }).subscribe({
-    next: (subjects) => {
-      this.availableSubjects = subjects;
-      this.groupSubjectsBySemester();
-    },
-    error: (err) => {
-      console.error('❌ Lỗi khi tải danh sách môn học:', err);
+  loadSubjects() {
+    let params = new HttpParams();
+    if (this.selectedSemester !== 0) {
+      params = params.set('semesterId', this.selectedSemester.toString());
     }
-  });
-}
 
+    this.http.get<any[]>('/api/subjects/available', { params }).subscribe({
+      next: (subjects) => {
+        // Gán tên học kỳ tương ứng
+        this.availableSubjects = subjects.map(s => {
+          const semester = this.semesters.find(sem => sem.id === s.semesterId);
+          return {
+            ...s,
+            semesterName: semester?.name || 'Chưa rõ học kỳ'
+          };
+        });
 
+        this.groupSubjectsBySemester();
+        this.groupRegisteredSubjects(); // cần gọi sau khi cập nhật availableSubjects
+      },
+      error: (err) => {
+        console.error('❌ Lỗi khi tải danh sách môn học:', err);
+      }
+    });
+  }
 
   loadRegisteredSubjects() {
     this.http.get<any[]>('/api/student/my-subjects').subscribe({
       next: (registered) => {
         this.registeredSubjectIds = registered.map(s => s.id);
+        this.groupRegisteredSubjects(); // cập nhật danh sách đã đăng ký
       },
       error: (err) => {
         console.error('❌ Lỗi khi tải danh sách môn đã đăng ký:', err);
@@ -73,7 +82,7 @@ export class SubjectRegisterComponent implements OnInit {
     const groups: Record<string, any[]> = {};
 
     for (const subject of this.availableSubjects) {
-      const sem = subject.semester?.toString().trim() || 'Chưa rõ học kỳ';
+      const sem = subject.semesterName || 'Chưa rõ học kỳ';
       if (!groups[sem]) groups[sem] = [];
       groups[sem].push(subject);
     }
@@ -81,17 +90,17 @@ export class SubjectRegisterComponent implements OnInit {
     this.groupedSubjects = groups;
   }
 
-  get registeredSubjects(): any[] {
-    return this.availableSubjects.filter(s => this.isRegistered(s.id));
-  }
+  groupRegisteredSubjects() {
+    const registered = this.availableSubjects.filter(s => this.isRegistered(s.id));
+    const groups: Record<string, any[]> = {};
 
-  get groupedRegisteredSubjects(): Record<string, any[]> {
-    return this.registeredSubjects.reduce((acc, subject) => {
-      const sem = subject.semester?.toString().trim() || 'Chưa rõ học kỳ';
-      if (!acc[sem]) acc[sem] = [];
-      acc[sem].push(subject);
-      return acc;
-    }, {} as Record<string, any[]>);
+    for (const subject of registered) {
+      const sem = subject.semesterName || 'Chưa rõ học kỳ';
+      if (!groups[sem]) groups[sem] = [];
+      groups[sem].push(subject);
+    }
+
+    this.groupedRegisteredSubjects = groups;
   }
 
   getCurrentStudentId(): number {
@@ -116,21 +125,21 @@ export class SubjectRegisterComponent implements OnInit {
     const body = { studentId, courseClassId: subjectId };
 
     this.http.post<any>('/api/student/register', body).subscribe({
-  next: (res) => {
-    if (!res.success) {
-      alert(`⚠️ ${res.message}`);
-      return;
-    }
+      next: (res) => {
+        if (!res.success) {
+          alert(`⚠️ ${res.message}`);
+          return;
+        }
 
-    alert('✅ Đăng ký môn thành công');
-    this.registeredSubjectIds.push(subjectId);
-  },
-  error: (err) => {
-    const msg = err.error?.message || '❌ Không thể đăng ký môn học';
-    alert(msg);
-  }
-});
-
+        alert('✅ Đăng ký môn thành công');
+        this.registeredSubjectIds.push(subjectId);
+        this.groupRegisteredSubjects(); // cập nhật lại danh sách đã đăng ký
+      },
+      error: (err) => {
+        const msg = err.error?.message || '❌ Không thể đăng ký môn học';
+        alert(msg);
+      }
+    });
   }
 
   isRegistered(subjectId: number): boolean {
@@ -138,10 +147,7 @@ export class SubjectRegisterComponent implements OnInit {
   }
 
   get isCurrentSemesterOpen(): boolean {
-  const selected = this.semesters.find(s => s.id === this.selectedSemester);
-  return !!selected?.isOpen;
+    const selected = this.semesters.find(s => s.id === this.selectedSemester);
+    return !!selected?.isOpen;
+  }
 }
-
-
-}
-

@@ -1,17 +1,28 @@
 <div class="container mt-4">
   <h4 class="mb-3">📢 Thông báo</h4>
 
-  <div *ngIf="loading" class="text-muted">Đang tải dữ liệu...</div>
+  <!-- Debug info -->
+  <div class="alert alert-info mb-3" *ngIf="userRole">
+    <small>Debug: Bạn đang đăng nhập với role: <strong>{{ userRole }}</strong></small>
+  </div>
 
-  <div *ngIf="!loading && notifications.length === 0" class="alert alert-info">
-    Không có thông báo nào.
+  <div *ngIf="loading" class="text-muted">
+    <div class="spinner-border spinner-border-sm me-2"></div>
+    Đang tải dữ liệu...
+  </div>
+
+  <div *ngIf="!loading && notifications.length === 0" class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle"></i>
+    Không có thông báo nào dành cho sinh viên.
   </div>
 
   <div *ngFor="let n of notifications" class="card mb-3 shadow-sm">
     <div class="card-body">
       <h5 class="card-title text-primary">{{ n.title }}</h5>
       <h6 class="card-subtitle mb-2 text-muted">
-        {{ n.creatorName }} - {{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+        <i class="bi bi-person"></i> {{ n.creatorName }} - 
+        <i class="bi bi-calendar"></i> {{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }} -
+        <span class="badge bg-secondary">{{ n.targetRole }}</span>
       </h6>
       <p class="card-text" style="white-space: pre-line;">{{ n.content }}</p>
     </div>

@@ -1,39 +1,57 @@
-<div *ngIf="loading" class="text-center mt-5">
-  <div class="spinner-border text-primary" role="status">
-    <span class="visually-hidden">Đang tải...</span>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
+  <!-- Mã sinh viên (readonly) -->
+  <div class="mb-3">
+    <label class="form-label">Mã sinh viên</label>
+    <input class="form-control" [value]="student?.studentCode" disabled />
   </div>
-</div>
 
-<form *ngIf="!loading && form" [formGroup]="form" (ngSubmit)="onSubmit()" class="card p-4 shadow-sm">
-  <h5 class="mb-4">Cập nhật thông tin cá nhân</h5>
+  <!-- Khoa -->
+  <div class="mb-3">
+    <label class="form-label">Khoa</label>
+    <input class="form-control" [value]="student?.departmentName" disabled />
+  </div>
 
+  <!-- Chương trình -->
+  <div class="mb-3">
+    <label class="form-label">Chương trình</label>
+    <input class="form-control" [value]="student?.programName" disabled />
+  </div>
+
+  <!-- Họ tên -->
   <div class="mb-3">
     <label class="form-label">Họ và tên</label>
-    <input formControlName="fullName" type="text" class="form-control" required>
+    <input class="form-control" formControlName="fullName" />
   </div>
 
+  <!-- Email -->
   <div class="mb-3">
     <label class="form-label">Email</label>
-    <input formControlName="email" type="email" class="form-control" required>
+    <input class="form-control" formControlName="email" />
   </div>
 
-  <div class="mb-3">
-    <label class="form-label">Số điện thoại</label>
-    <input formControlName="phone" type="text" class="form-control" required>
-  </div>
-
+  <!-- Giới tính -->
   <div class="mb-3">
     <label class="form-label">Giới tính</label>
-    <select formControlName="gender" class="form-select">
+    <select class="form-select" formControlName="gender">
       <option value="Nam">Nam</option>
       <option value="Nữ">Nữ</option>
+      <option value="Khác">Khác</option>
     </select>
   </div>
 
+  <!-- Ngày sinh -->
   <div class="mb-3">
     <label class="form-label">Ngày sinh</label>
-    <input formControlName="dateOfBirth" type="date" class="form-control" required>
+    <input type="date" class="form-control" formControlName="dateOfBirth" />
   </div>
 
-  <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+  <!-- Điện thoại -->
+  <div class="mb-3">
+    <label class="form-label">Số điện thoại</label>
+    <input class="form-control" formControlName="phone" />
+  </div>
+
+  <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving">
+    {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+  </button>
 </form>

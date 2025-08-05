@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { StudentService } from '../../../shared/services/student.service';
 import { StudentDto, UpdateStudentDto } from '../../../shared/models/student.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './profile-edit.component.html',
   styleUrls: ['./profile-edit.component.scss']
 })
@@ -16,6 +16,7 @@ export class ProfileEditComponent implements OnInit {
   form!: FormGroup;
   loading = true;
   student?: StudentDto;
+  saving = false;
 
   constructor(
     private fb: FormBuilder,
@@ -25,44 +26,55 @@ export class ProfileEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.studentService.getProfile().subscribe({
-      next: (student: StudentDto) => {
-        this.student = student;
-
+      next: (data) => {
+        this.student = data;
         this.form = this.fb.group({
-          fullName: [student.fullName, Validators.required],
-          email: [student.email, [Validators.required, Validators.email]],
-          phone: [student.phone, Validators.required],
-          gender: [student.gender, Validators.required],
-          dateOfBirth: [student.dateOfBirth, Validators.required]
+          fullName: [data.fullName, [Validators.required]],
+          email: [data.email, [Validators.required, Validators.email]],
+          gender: [data.gender, [Validators.required]],
+          dateOfBirth: [new Date(data.dateOfBirth), [Validators.required]],
+          phone: [data.phone, [Validators.required]],
         });
-
         this.loading = false;
       },
       error: (err) => {
-        console.error('Lỗi khi tải hồ sơ sinh viên:', err);
-        alert(`Không thể tải hồ sơ sinh viên: ${err.message || 'Lỗi không xác định'}`);
+        console.error('❌ Lỗi tải thông tin sinh viên:', err);
         this.loading = false;
       }
     });
   }
 
-  onSubmit() {
-    if (this.form.invalid || !this.student) return;
+  onSubmit(): void {
+  if (this.form.invalid || !this.student) return;
 
-    const dto: UpdateStudentDto = {
-      ...this.form.value,     
-    };
+  this.saving = true;
 
-    this.studentService.updateProfile(dto).subscribe({
-      next: () => {
-        alert('✅ Cập nhật thành công');
-        localStorage.setItem('fullName', this.form.value.fullName); // nếu dùng trong layout
-        this.router.navigate(['/student/profile']);
-      },
-      error: (err) => {
-        console.error('Lỗi khi cập nhật', err);
-        alert('❌ Cập nhật thất bại');
-      }
-    });
-  }
+  const updatedStudent: UpdateStudentDto = {
+    studentCode: this.student.studentCode,
+    fullName: this.form.value.fullName,
+    email: this.form.value.email,
+    phone: this.form.value.phone,
+    gender: this.form.value.gender,
+    dateOfBirth: new Date(this.form.value.dateOfBirth).toISOString(), // 💡 Fix here
+    departmentId: this.student.departmentId ?? 1,
+    programId: this.student.programId ?? 2
+  };
+
+  console.log('📦 Dữ liệu gửi lên:', JSON.stringify(updatedStudent, null, 2));
+
+  this.studentService.updateProfile(updatedStudent).subscribe({
+    next: () => {
+      this.router.navigate(['/student/user-info'], {
+        state: { updated: true }
+      });
+      this.saving = false;
+    },
+    error: (err) => {
+      console.error('❌ Lỗi cập nhật thông tin:', err);
+      console.log('Chi tiết lỗi:', err.error);
+      this.saving = false;
+    }
+  });
+}
+
 }
