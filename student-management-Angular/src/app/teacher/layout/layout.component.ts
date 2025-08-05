@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { CommonModule } from '@angular/common';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterModule, CommonModule],
+  imports: [RouterOutlet, RouterModule, CommonModule, NgbDropdownModule],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
@@ -32,11 +33,9 @@ export class LayoutComponent implements OnInit {
       const decoded: any = jwtDecode(token);
       const userId = decoded?.nameid || decoded?.sub;
       let role = decoded?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || 'Teacher';
-      console.log('🧾 Decoded token:', decoded);
       
-      // Chuẩn hóa role chữ hoa đầu
+      // Format role: Teacher, Student, etc.
       role = role.charAt(0).toUpperCase() + role.slice(1).toLowerCase();
-      console.log('🎯 Vai trò hiện tại:', role);
 
       if (!userId) {
         console.error('❌ Không có userId trong token');
@@ -44,11 +43,10 @@ export class LayoutComponent implements OnInit {
         return;
       }
 
-      // Gọi API lấy tên giảng viên
+      // Lấy thông tin giảng viên
       this.http.get<any>(`/api/teachers/me`).subscribe({
         next: (data) => {
           this.fullName = data.fullName;
-          console.log('👤 Tên giảng viên:', this.fullName);
         },
         error: (err) => {
           console.error('❌ Không thể lấy tên giảng viên:', err);
@@ -56,22 +54,21 @@ export class LayoutComponent implements OnInit {
         }
       });
 
-      // Gọi API lấy danh sách thông báo
-      this.http.get<any[]>('/api/notifications').subscribe({
-        next: (data) => {
-          console.log('📜 Tất cả thông báo:', data);
+      // Lấy thông báo
+      this.http.get<any>('/api/notifications?Page=1&PageSize=10').subscribe({
+        next: (res) => {
+          const allNotis = res.data || [];
 
-          this.notifications = data.filter(n => {
+          this.notifications = allNotis.filter((n: any) => {
             const target = n.targetRole?.toLowerCase();
-            const matched = target === 'all' || target === role.toLowerCase();
-            console.log(`🔍 "${n.title}" | targetRole: ${n.targetRole} | matched: ${matched}`);
-            return matched;
+            return target === 'all' || target === role.toLowerCase();
           });
 
-          console.log('📬 Thông báo sau lọc:', this.notifications);
+          console.log(`📬 Có ${this.notifications.length} thông báo hợp lệ`);
         },
         error: (err) => {
           console.error('❌ Không thể lấy thông báo:', err);
+          this.notifications = [];
         }
       });
 

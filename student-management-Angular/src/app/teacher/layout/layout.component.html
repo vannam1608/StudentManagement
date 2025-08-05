@@ -36,29 +36,32 @@
 
     <!-- Main Content -->
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4 position-relative">
-      <!-- Notification bell -->
+      <!-- Notification bell using ng-bootstrap -->
       <div class="position-absolute top-0 end-0 p-3 z-3">
-        <div class="dropdown">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+        <div ngbDropdown placement="bottom-end" class="d-inline-block">
+          <button class="btn btn-outline-secondary position-relative" ngbDropdownToggle>
             <i class="bi bi-bell"></i>
-            <span *ngIf="notifications.length > 0" class="badge text-bg-danger">
-              {{ notifications.length }}
+            <span *ngIf="(notifications.length || 0) > 0"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {{ notifications.length || 0 }}
             </span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end" style="max-width: 300px; max-height: 400px; overflow-y: auto;">
-            <li *ngIf="notifications.length === 0" class="dropdown-item text-muted">
+
+          <div ngbDropdownMenu class="dropdown-menu-end shadow-sm"
+            style="max-width: 300px; max-height: 400px; overflow-y: auto;">
+            <button *ngIf="!notifications || notifications.length === 0"
+              class="dropdown-item text-muted text-center py-3" disabled>
               Không có thông báo nào
-            </li>
-            <li *ngFor="let noti of notifications">
-              <div class="dropdown-item">
-                <strong>{{ noti.title }}</strong><br />
-                <small>{{ noti.content }}</small>
-              </div>
-            </li>
-          </ul>
+            </button>
+            <button *ngFor="let noti of notifications" class="dropdown-item text-start">
+              <strong>{{ noti.title }}</strong><br />
+              <small class="text-muted">{{ noti.content }}</small>
+            </button>
+          </div>
         </div>
       </div>
 
+      <!-- Nội dung động -->
       <router-outlet></router-outlet>
     </main>
   </div>
