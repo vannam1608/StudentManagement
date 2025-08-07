@@ -7,61 +7,48 @@ on:
     branches: [ "main", "dev" ]
 
 jobs:
-  build-backend:
-    name: 🛠️ Build & Test Backend (.NET 8)
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 📥 Checkout source
-      uses: actions/checkout@v3
+      - name: 📥 Checkout source
+        uses: actions/checkout@v3
 
-    - name: 🧰 Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
+      - name: 🧰 Setup .NET 8 SDK
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
 
-    - name: 📦 Restore backend dependencies
-      run: dotnet restore StudentManagementAPI/StudentManagementAPI.csproj
+      - name: 🧰 Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
-    - name: 🛠️ Build backend
-      run: dotnet build StudentManagementAPI/StudentManagementAPI.csproj --no-restore --configuration Release
+      - name: 📦 Restore backend dependencies
+        run: dotnet restore StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj
 
-    - name: ✅ Run backend tests (nếu có)
-      run: dotnet test StudentManagementAPI/StudentManagementAPI.csproj --no-build --verbosity normal
-      continue-on-error: true
+      - name: 🛠️ Build backend
+        run: dotnet build StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj --no-restore --configuration Release
 
-    - name: 🚀 Publish backend
-      run: dotnet publish StudentManagementAPI/StudentManagementAPI.csproj -c Release -o backend-publish
+      - name: ✅ Test backend (ignore failures)
+        run: dotnet test StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj --no-build --verbosity normal
+        continue-on-error: true
 
-  build-frontend:
-    name: 🛠️ Build Angular Frontend
-    runs-on: ubuntu-latest
+      - name: 📦 Publish backend
+        run: dotnet publish StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj -c Release -o ./publish/backend
 
-    steps:
-    - name: 📥 Checkout source
-      uses: actions/checkout@v3
+      - name: 📦 Install frontend dependencies
+        working-directory: ./student-management-Angular
+        run: |
+          npm install --legacy-peer-deps
 
-    - name: 📦 Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: 🛠️ Build frontend
+        working-directory: ./student-management-Angular
+        run: |
+          npx ng build --configuration production
 
-    - name: 📦 Install Angular CLI
-      run: npm install -g @angular/cli
-
-    - name: 📦 Install frontend dependencies
-      run: |
-        cd student-management-angular
-        npm install
-
-    - name: 🛠️ Build Angular frontend
-      run: |
-        cd student-management-angular
-        ng build --configuration production
-
-    # Optional: upload artifact
-    - name: 📤 Upload Angular build artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: angular-dist
-        path: student-management-angular/dist
+      - name: 📤 Upload frontend artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: ./student-management-Angular/dist
