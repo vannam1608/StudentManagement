@@ -27,21 +27,21 @@ jobs:
       with:
         node-version: '18.x'
 
-    # 4. Restore and Build Backend (ASP.NET Core)
+    # 4. Restore and Build Backend (.NET)
     - name: 📦 Restore backend dependencies
-      run: dotnet restore StudentManagementAPI/StudentManagementAPI.csproj
+      run: dotnet restore StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj
 
     - name: 🛠️ Build backend
-      run: dotnet build StudentManagementAPI/StudentManagementAPI.csproj --no-restore --configuration Release
+      run: dotnet build StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj --no-restore --configuration Release
 
     # 5. Run backend tests (optional)
     - name: ✅ Test backend (ignore failures)
-      run: dotnet test StudentManagementAPI/StudentManagementAPI.csproj --no-build --verbosity normal
+      run: dotnet test StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj --no-build --verbosity normal
       continue-on-error: true
 
     # 6. Publish backend output
     - name: 📦 Publish backend
-      run: dotnet publish StudentManagementAPI/StudentManagementAPI.csproj -c Release -o ./publish/backend
+      run: dotnet publish StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj -c Release -o ./publish/backend
 
     # 7. Install Angular frontend dependencies
     - name: 📦 Install frontend dependencies
@@ -53,7 +53,7 @@ jobs:
       working-directory: ./student-management-angular
       run: npm run build -- --configuration production
 
-    # 9. Optionally, upload artifacts (for deployment or later steps)
+    # 9. Upload artifacts
     - name: 📤 Upload backend artifact
       uses: actions/upload-artifact@v4
       with:
@@ -65,7 +65,3 @@ jobs:
       with:
         name: frontend-dist
         path: ./student-management-angular/dist
-
-    # 10. (Optional) Deploy to dev server or push to specific branch
-    # - name: 🚀 Deploy to dev (example only)
-    #   run: echo "Deploying to dev server..."
