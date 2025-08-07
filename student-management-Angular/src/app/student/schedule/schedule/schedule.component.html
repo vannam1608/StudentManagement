@@ -1,31 +1,530 @@
-<div class="container">
-  <h3 class="mb-4">📅 Lịch học</h3>
-
-  <div *ngIf="loading" class="text-muted">Đang tải dữ liệu...</div>
-
-  <div *ngIf="!loading && groupedSchedules.length === 0" class="alert alert-info">
-    Không có lịch học nào được đăng ký.
+<div class="container-fluid p-4">
+  <!-- Header Section -->
+  <div class="header-section mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h2 class="page-title mb-0">
+          <i class="bi bi-calendar-week me-2"></i>
+          Lịch học của tôi
+        </h2>
+        <p class="text-muted mb-0">Xem thời khóa biểu và lịch học các môn đã đăng ký</p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="d-flex gap-2 justify-content-md-end justify-content-center">
+          <button 
+            class="btn btn-view-toggle"
+            [class.active]="viewMode === 'semester'"
+            (click)="viewMode = 'semester'">
+            <i class="bi bi-list-ul me-1"></i>
+            Theo học kỳ
+          </button>
+          <button 
+            class="btn btn-view-toggle"
+            [class.active]="viewMode === 'weekly'"
+            (click)="viewMode = 'weekly'">
+            <i class="bi bi-calendar-week me-1"></i>
+            Theo tuần
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngFor="let group of groupedSchedules" class="mb-5">
-    <h5 class="text-primary">📚 Học kỳ: {{ group.semester }}</h5>
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <th>Môn học</th>
-          <th>Mã lớp</th>
-          <th>Lịch học</th>
-          <th>Giảng viên</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of group.schedules">
-          <td>{{ item.subjectName }}</td>
-          <td>{{ item.classCode }}</td>
-          <td>{{ item.schedule }}</td>
-          <td>{{ item.teacherName }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p class="text-muted mt-3">Đang tải thời khóa biểu...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && groupedSchedules.length === 0" class="empty-state text-center py-5">
+    <div class="empty-icon mb-3">
+      <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
+    </div>
+    <h5 class="text-muted">Chưa có lịch học nào</h5>
+    <p class="text-muted">Bạn chưa đăng ký môn học nào hoặc chưa có lịch học được xếp.</p>
+    <button class="btn btn-primary">
+      <i class="bi bi-plus-circle me-2"></i>
+      Đăng ký môn học
+    </button>
+  </div>
+
+  <!-- Schedule Content -->
+  <div *ngIf="!loading && groupedSchedules.length > 0">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-book"></i>
+          </div>
+          <div class="stats-content">
+            <h6>Tổng môn học</h6>
+            <h4>{{ getTotalSubjects() }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-calendar-range"></i>
+          </div>
+          <div class="stats-content">
+            <h6>Số học kỳ</h6>
+            <h4>{{ groupedSchedules.length }}</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="stats-card">
+          <div class="stats-icon">
+            <i class="bi bi-clock-history"></i>
+          </div>
+          <div class="stats-content">
+            <h6>Tổng tiết học</h6>
+            <h4>{{ getTotalCredits() }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Semester View -->
+    <div *ngIf="viewMode === 'semester'">
+      <!-- Semester Filter -->
+      <div class="semester-filter mb-4">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h5 class="mb-0">
+              <i class="bi bi-funnel me-2"></i>
+              Lọc theo học kỳ
+            </h5>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex gap-2 justify-content-md-end justify-content-start">
+              <select 
+                class="form-select" 
+                style="width: auto; min-width: 200px;"
+                [value]="currentSemester" 
+                (change)="onSemesterChange($event)">
+                <option value="">-- Tất cả học kỳ --</option>
+                <option *ngFor="let semester of availableSemesters" [value]="semester">
+                  {{ semester }} {{ getSemesterDateRange(semester) }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Semester Highlight -->
+      <div *ngIf="currentSemester" class="current-semester-info mb-4">
+        <div class="alert alert-info d-flex align-items-center" role="alert">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          <div>
+            <strong>Đang xem học kỳ:</strong> {{ currentSemester }}
+            <span class="ms-2">{{ getSemesterDateRange(currentSemester) }}</span>
+            <div class="mt-1">
+              <small class="text-muted">
+                {{ getFilteredSchedules().length }} môn học • 
+                {{ getTotalCreditsForSemester(currentSemester) }} tín chỉ
+              </small>
+            </div>
+          </div>
+          <button 
+            class="btn btn-sm btn-outline-secondary ms-auto" 
+            (click)="clearSemesterFilter()"
+            title="Xem tất cả học kỳ">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Semesters List -->
+      <div *ngFor="let group of getFilteredSemesterGroups(); let i = index" class="semester-section mb-4">
+        <div class="semester-header mb-3">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <h4 class="semester-title mb-0">
+                <i class="bi bi-bookmark-fill me-2" 
+                   [style.color]="getSemesterStatusColor(group.semester)"></i>
+                {{ group.semester }}
+              </h4>
+              <div class="semester-meta mt-1">
+                <small class="text-muted">
+                  {{ group.schedules.length }} môn học • 
+                  {{ getTotalCreditsForSemester(group.semester) }} tín chỉ • 
+                  {{ getSemesterDateRange(group.semester) }}
+                </small>
+              </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+              <span class="badge" 
+                    [class]="getSemesterStatusBadgeClass(group.semester)">
+                {{ getSemesterStatusText(group.semester) }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Desktop View -->
+        <div class="schedule-table d-none d-lg-block">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-header">
+                <tr>
+                  <th scope="col">
+                    <i class="bi bi-book me-2"></i>Môn học
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-tag me-2"></i>Mã lớp
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-calendar-week me-2"></i>Lịch học
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-person-badge me-2"></i>Giảng viên
+                  </th>
+                  <th scope="col">
+                    <i class="bi bi-credit-card me-2"></i>Tín chỉ
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of group.schedules" class="schedule-row">
+                  <td>
+                    <div class="subject-info">
+                      <h6 class="mb-1">{{ item.subjectName }}</h6>
+                      <small class="text-muted">{{ item.subjectCode }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-primary-soft text-primary">
+                      {{ item.classCode }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="schedule-info">
+                      <span class="schedule-time">{{ item.schedule }}</span>
+                      <small class="d-block text-muted">{{ item.room }}</small>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="teacher-info">
+                      <span class="teacher-name">{{ item.teacherName }}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge bg-info-soft text-info">
+                      {{ item.credits || 3 }} TC
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="schedule-cards d-lg-none">
+          <div *ngFor="let item of group.schedules" class="schedule-card mb-3">
+            <div class="card border-0 shadow-sm">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-8">
+                    <h6 class="card-title mb-1">{{ item.subjectName }}</h6>
+                    <small class="text-muted">{{ item.subjectCode }}</small>
+                  </div>
+                  <div class="col-4 text-end">
+                    <span class="badge bg-primary-soft text-primary">
+                      {{ item.classCode }}
+                    </span>
+                  </div>
+                </div>
+                
+                <div class="schedule-details mt-3">
+                  <div class="detail-item mb-2">
+                    <i class="bi bi-calendar-week text-primary me-2"></i>
+                    <span>{{ item.schedule }}</span>
+                  </div>
+                  <div class="detail-item mb-2">
+                    <i class="bi bi-geo-alt text-success me-2"></i>
+                    <span>{{ item.room || 'Chưa xếp phòng' }}</span>
+                  </div>
+                  <div class="detail-item mb-2">
+                    <i class="bi bi-person-badge text-info me-2"></i>
+                    <span>{{ item.teacherName }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <i class="bi bi-credit-card text-warning me-2"></i>
+                    <span>{{ item.credits || 3 }} tín chỉ</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly View -->
+    <div *ngIf="viewMode === 'weekly'" class="weekly-schedule">
+      <!-- Week Header -->
+      <div class="week-header mb-4">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <h4 class="week-title mb-0">
+              <i class="bi bi-calendar-week me-2"></i>
+              {{ getWeekTitle() }}
+            </h4>
+            <small class="text-muted">
+              {{ getDateString(currentWeekDays[0]) }} - {{ getDateString(currentWeekDays[6]) }}
+              <span class="ms-2">{{ getSemesterDateRange(currentSemester) }}</span>
+            </small>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="week-navigation">
+              <button 
+                class="btn btn-outline-primary btn-sm me-2" 
+                (click)="goToPreviousWeek()"
+                title="Tuần trước">
+                <i class="bi bi-chevron-left"></i>
+              </button>
+              <button 
+                class="btn btn-primary btn-sm mx-1" 
+                (click)="goToCurrentWeek()"
+                [disabled]="currentWeekOffset === 0"
+                title="Tuần hiện tại">
+                <i class="bi bi-calendar-today me-1"></i>
+                <span>Hôm nay</span>
+              </button>
+              <button 
+                class="btn btn-outline-primary btn-sm ms-2" 
+                (click)="goToNextWeek()"
+                title="Tuần sau">
+                <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <div class="d-flex gap-2 justify-content-md-end justify-content-center align-items-center">
+              <label class="form-label mb-0 me-2">Học kỳ:</label>
+              <select 
+                class="form-select" 
+                style="width: auto; min-width: 150px;"
+                [value]="currentSemester" 
+                (change)="onSemesterChange($event)">
+                <option *ngFor="let semester of availableSemesters" [value]="semester">
+                  {{ semester }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Cảnh báo ngoài thời gian học kỳ -->
+        <div *ngIf="!isWeekInSemester(currentWeekDays, currentSemester)" class="alert alert-warning mt-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          <strong>Lưu ý:</strong> Tuần này nằm ngoài thời gian học kỳ {{ currentSemester }}. 
+          Có thể không có lịch học hoặc lịch học chưa được cập nhật.
+        </div>
+      </div>
+
+      <!-- Weekly Calendar Grid -->
+      <div class="weekly-grid">
+        <div class="row g-3">
+          <div *ngFor="let day of dayNames; let i = index" class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+            <div class="day-card" [class]="getDayColorClass(day.key)" [class.today]="isToday(currentWeekDays[i])">>
+              <div class="day-header">
+                <div class="day-info">
+                  <h6 class="day-name mb-0">{{ day.name }}</h6>
+                  <small class="day-date">{{ getDateString(currentWeekDays[i]) }}</small>
+                </div>
+                <div class="day-count">
+                  <span class="badge">{{ weeklySchedule[day.key].length || 0 }}</span>
+                </div>
+              </div>
+              
+              <div class="day-schedule">
+                <div *ngIf="weeklySchedule[day.key].length === 0" class="no-schedule">
+                  <i class="bi bi-calendar-x text-muted"></i>
+                  <span>Không có lịch</span>
+                </div>
+                
+                <!-- Hiển thị theo khung thời gian -->
+                <div *ngIf="weeklySchedule[day.key].length > 0" class="time-slots">
+                  <!-- Sáng -->
+                  <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'morning')" class="time-slot-group">
+                    <div class="time-slot-header morning">
+                      <i class="bi bi-sunrise"></i>
+                      <span>Sáng</span>
+                    </div>
+                    <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['morning']" class="schedule-item morning">
+                      <div class="schedule-time-slot">
+                        <span class="time">{{ parseTimeFromSchedule(item.schedule) }}</span>
+                        <span class="subject-name">{{ item.subjectName }}</span>
+                      </div>
+                      <div class="schedule-details-mini">
+                        <small class="class-code">{{ item.classCode }}</small>
+                        <small class="room">{{ item.room }}</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Trưa -->
+                  <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'afternoon')" class="time-slot-group">
+                    <div class="time-slot-header afternoon">
+                      <i class="bi bi-sun"></i>
+                      <span>Trưa</span>
+                    </div>
+                    <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['afternoon']" class="schedule-item afternoon">
+                      <div class="schedule-time-slot">
+                        <span class="time">{{ parseTimeFromSchedule(item.schedule) }}</span>
+                        <span class="subject-name">{{ item.subjectName }}</span>
+                      </div>
+                      <div class="schedule-details-mini">
+                        <small class="class-code">{{ item.classCode }}</small>
+                        <small class="room">{{ item.room }}</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Tối -->
+                  <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'evening')" class="time-slot-group">
+                    <div class="time-slot-header evening">
+                      <i class="bi bi-moon"></i>
+                      <span>Tối</span>
+                    </div>
+                    <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['evening']" class="schedule-item evening">
+                      <div class="schedule-time-slot">
+                        <span class="time">{{ parseTimeFromSchedule(item.schedule) }}</span>
+                        <span class="subject-name">{{ item.subjectName }}</span>
+                      </div>
+                      <div class="schedule-details-mini">
+                        <small class="class-code">{{ item.classCode }}</small>
+                        <small class="room">{{ item.room }}</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Weekly Schedule List (Mobile) -->
+      <div class="weekly-list d-lg-none mt-4">
+        <div *ngFor="let day of dayNames; let i = index" class="day-section mb-3">
+          <div class="day-section-header">
+            <h6 class="mb-0">
+              <i class="bi bi-calendar-day me-2"></i>
+              {{ day.name }} - {{ getDateString(currentWeekDays[i]) }}
+              <span class="badge bg-primary-soft text-primary ms-2">
+                {{ weeklySchedule[day.key].length || 0 }} môn
+              </span>
+            </h6>
+          </div>
+          
+          <div *ngIf="weeklySchedule[day.key].length === 0" class="no-schedule-mobile">
+            <div class="alert alert-light text-center">
+              <i class="bi bi-calendar-x text-muted me-2"></i>
+              Không có lịch học
+            </div>
+          </div>
+          
+          <!-- Mobile view theo khung thời gian -->
+          <div *ngIf="weeklySchedule[day.key].length > 0" class="mobile-time-slots">
+            <!-- Sáng -->
+            <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'morning')" class="mobile-time-slot-group">
+              <h6 class="time-slot-title morning">
+                <i class="bi bi-sunrise me-2"></i>
+                Buổi sáng
+              </h6>
+              <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['morning']" class="schedule-item-mobile">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <div class="row align-items-center">
+                      <div class="col-3">
+                        <div class="time-badge morning">
+                          {{ parseTimeFromSchedule(item.schedule) }}
+                        </div>
+                      </div>
+                      <div class="col-9">
+                        <h6 class="mb-1">{{ item.subjectName }}</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <span class="badge bg-primary-soft text-primary">{{ item.classCode }}</span>
+                          <span class="badge bg-success-soft text-success">{{ item.room }}</span>
+                          <span class="badge bg-info-soft text-info">{{ item.teacherName }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trưa -->
+            <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'afternoon')" class="mobile-time-slot-group">
+              <h6 class="time-slot-title afternoon">
+                <i class="bi bi-sun me-2"></i>
+                Buổi trưa
+              </h6>
+              <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['afternoon']" class="schedule-item-mobile">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <div class="row align-items-center">
+                      <div class="col-3">
+                        <div class="time-badge afternoon">
+                          {{ parseTimeFromSchedule(item.schedule) }}
+                        </div>
+                      </div>
+                      <div class="col-9">
+                        <h6 class="mb-1">{{ item.subjectName }}</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <span class="badge bg-primary-soft text-primary">{{ item.classCode }}</span>
+                          <span class="badge bg-success-soft text-success">{{ item.room }}</span>
+                          <span class="badge bg-info-soft text-info">{{ item.teacherName }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tối -->
+            <div *ngIf="hasScheduleInTimeSlot(weeklySchedule[day.key], 'evening')" class="mobile-time-slot-group">
+              <h6 class="time-slot-title evening">
+                <i class="bi bi-moon me-2"></i>
+                Buổi tối
+              </h6>
+              <div *ngFor="let item of getSchedulesByTimeSlot(weeklySchedule[day.key])['evening']" class="schedule-item-mobile">
+                <div class="card border-0 shadow-sm">
+                  <div class="card-body p-3">
+                    <div class="row align-items-center">
+                      <div class="col-3">
+                        <div class="time-badge evening">
+                          {{ parseTimeFromSchedule(item.schedule) }}
+                        </div>
+                      </div>
+                      <div class="col-9">
+                        <h6 class="mb-1">{{ item.subjectName }}</h6>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <span class="badge bg-primary-soft text-primary">{{ item.classCode }}</span>
+                          <span class="badge bg-success-soft text-success">{{ item.room }}</span>
+                          <span class="badge bg-info-soft text-info">{{ item.teacherName }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

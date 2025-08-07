@@ -1,26 +1,103 @@
-<div *ngIf="loading">Đang tải dữ liệu...</div>
-<div *ngIf="error" class="text-danger">{{ error }}</div>
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-person-gear"></i> Cập nhật thông tin cá nhân
+          </h4>
+        </div>
+        <div class="card-body">
+          
+          <div *ngIf="loading" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Đang tải...</span>
+            </div>
+            <p class="mt-2">Đang tải dữ liệu...</p>
+          </div>
+          
+          <div *ngIf="error" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i> {{ error }}
+          </div>
 
-<form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <div>
-    <label>Họ và tên</label>
-    <input type="text" formControlName="fullName" />
+          <form *ngIf="!loading" [formGroup]="form" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="fullName" class="form-label">
+                  <i class="bi bi-person"></i> Họ và tên <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="fullName"
+                  class="form-control" 
+                  formControlName="fullName"
+                  placeholder="Nhập họ và tên"
+                />
+                <div *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched" class="text-danger small">
+                  Họ và tên là bắt buộc
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="degree" class="form-label">
+                  <i class="bi bi-mortarboard"></i> Học vị
+                </label>
+                <input 
+                  type="text" 
+                  id="degree"
+                  class="form-control" 
+                  formControlName="degree"
+                  placeholder="VD: Thạc sĩ, Tiến sĩ..."
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">
+                  <i class="bi bi-envelope"></i> Email <span class="text-danger">*</span>
+                </label>
+                <input 
+                  type="email" 
+                  id="email"
+                  class="form-control" 
+                  formControlName="email"
+                  placeholder="example@university.edu.vn"
+                />
+                <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="text-danger small">
+                  Email không hợp lệ
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">
+                  <i class="bi bi-telephone"></i> Số điện thoại
+                </label>
+                <input 
+                  type="text" 
+                  id="phone"
+                  class="form-control" 
+                  formControlName="phone"
+                  placeholder="0123456789"
+                />
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <button type="button" class="btn btn-secondary" onclick="history.back()">
+                <i class="bi bi-arrow-left"></i> Quay lại
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-primary"
+                [disabled]="form.invalid"
+              >
+                <i class="bi bi-check-circle"></i> Lưu thay đổi
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <div>
-    <label>Học vị</label>
-    <input type="text" formControlName="degree" />
-  </div>
-
-  <div>
-    <label>Email</label>
-    <input type="email" formControlName="email" />
-  </div>
-
-  <div>
-    <label>Số điện thoại</label>
-    <input type="text" formControlName="phone" />
-  </div>
-
-  <button type="submit" [disabled]="form.invalid">Lưu thay đổi</button>
-</form>
+</div>

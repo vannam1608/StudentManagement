@@ -182,17 +182,30 @@
   {
     "ContainingType": "StudentManagementAPI.Controllers.DepartmentController",
     "Method": "GetAll",
-    "RelativePath": "api/Department",
+    "RelativePath": "api/departments",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[StudentManagementAPI.DTOs.Department.DepartmentDto, StudentManagementAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD khoa"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.DepartmentController",
     "Method": "Create",
-    "RelativePath": "api/Department",
+    "RelativePath": "api/departments",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -203,12 +216,34 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 400
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD khoa"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.DepartmentController",
     "Method": "GetById",
-    "RelativePath": "api/Department/{id}",
+    "RelativePath": "api/departments/{id}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -219,12 +254,34 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "StudentManagementAPI.DTOs.Department.DepartmentDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD khoa"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.DepartmentController",
     "Method": "Update",
-    "RelativePath": "api/Department/{id}",
+    "RelativePath": "api/departments/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
@@ -240,12 +297,34 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD khoa"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.DepartmentController",
     "Method": "Delete",
-    "RelativePath": "api/Department/{id}",
+    "RelativePath": "api/departments/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
@@ -256,7 +335,29 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": []
+    "ReturnTypes": [
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 404
+      }
+    ],
+    "Tags": [
+      "Qu\u1EA3n l\u00FD khoa"
+    ]
   },
   {
     "ContainingType": "StudentManagementAPI.Controllers.EnrollmentController",
@@ -599,12 +700,16 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 200
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "System.Object",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -633,12 +738,16 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "System.Void",
-        "MediaTypes": [],
+        "Type": "System.Object",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
         "StatusCode": 200
       },
       {
-        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "Type": "System.Object",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -719,6 +828,32 @@
           "text/json"
         ],
         "StatusCode": 404
+      }
+    ]
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.ScoreController",
+    "Method": "GetScoresGroupedBySemester",
+    "RelativePath": "api/Score/grouped-by-semester/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.Dictionary\u00602[[System.String, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Collections.Generic.List\u00601[[ScoreDto, StudentManagementAPI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
       }
     ]
   },

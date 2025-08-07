@@ -84,77 +84,83 @@ namespace StudentManagementAPI.Repositories
             );
         }
 
-        
+
         public async Task<(IEnumerable<SubjectDto> Items, int TotalCount)> GetPagedAsync(
     int page, int pageSize, string? keyword, int? semesterId)
         {
             var connection = _context.Database.GetDbConnection();
-
             var items = new List<SubjectDto>();
             int totalCount = 0;
 
-            using (var command = connection.CreateCommand())
+            await using (connection)
             {
                 await connection.OpenAsync();
 
-                command.CommandText = @"
-            SELECT s.Id, s.SubjectCode, s.Name, s.Description, s.Credit,
-                   ISNULL(s.SemesterId, 0) AS SemesterId,
-                   ISNULL(se.Name, '') AS SemesterName
-            FROM Subjects s
-            LEFT JOIN Semesters se ON s.SemesterId = se.Id
-            WHERE (@keyword IS NULL 
-                   OR s.Name LIKE '%' + @keyword + '%' 
-                   OR s.SubjectCode LIKE '%' + @keyword + '%' 
-                   OR s.Description LIKE '%' + @keyword + '%')
-              AND (@semesterId IS NULL OR s.SemesterId = @semesterId)
-            ORDER BY s.Id
-            OFFSET (@page - 1) * @pageSize ROWS
-            FETCH NEXT @pageSize ROWS ONLY;
-        ";
-
-                command.Parameters.Add(new SqlParameter("@keyword", string.IsNullOrWhiteSpace(keyword) ? DBNull.Value : keyword));
-                command.Parameters.Add(new SqlParameter("@semesterId", semesterId ?? (object)DBNull.Value));
-                command.Parameters.Add(new SqlParameter("@page", page));
-                command.Parameters.Add(new SqlParameter("@pageSize", pageSize));
-
-                using (var reader = await command.ExecuteReaderAsync())
+                // Truy vấn lấy dữ liệu phân trang
+                await using (var command = connection.CreateCommand())
                 {
-                    while (await reader.ReadAsync())
+                    command.CommandText = @"
+                SELECT s.Id, s.SubjectCode, s.Name, s.Description, s.Credit,
+                       ISNULL(s.SemesterId, 0) AS SemesterId,
+                       ISNULL(se.Name, '') AS SemesterName
+                FROM Subjects s
+                LEFT JOIN Semesters se ON s.SemesterId = se.Id
+                WHERE (@keyword IS NULL 
+                       OR s.Name LIKE '%' + @keyword + '%' 
+                       OR s.SubjectCode LIKE '%' + @keyword + '%' 
+                       OR s.Description LIKE '%' + @keyword + '%')
+                  AND (@semesterId IS NULL OR s.SemesterId = @semesterId)
+                ORDER BY s.Id
+                OFFSET (@page - 1) * @pageSize ROWS
+                FETCH NEXT @pageSize ROWS ONLY;
+            ";
+
+                    command.Parameters.Add(new SqlParameter("@keyword", string.IsNullOrWhiteSpace(keyword) ? DBNull.Value : keyword));
+                    command.Parameters.Add(new SqlParameter("@semesterId", semesterId ?? (object)DBNull.Value));
+                    command.Parameters.Add(new SqlParameter("@page", page));
+                    command.Parameters.Add(new SqlParameter("@pageSize", pageSize));
+
+                    await using (var reader = await command.ExecuteReaderAsync())
                     {
-                        items.Add(new SubjectDto
+                        while (await reader.ReadAsync())
                         {
-                            Id = reader.GetInt32(0),
-                            SubjectCode = reader.GetString(1),
-                            Name = reader.GetString(2),
-                            Description = reader.GetString(3),
-                            Credit = reader.GetInt32(4),
-                            SemesterId = reader.GetInt32(5),
-                            SemesterName = reader.GetString(6)
-                        });
+                            items.Add(new SubjectDto
+                            {
+                                Id = reader.GetInt32(0),
+                                SubjectCode = reader.GetString(1),
+                                Name = reader.GetString(2),
+                                Description = reader.GetString(3),
+                                Credit = reader.GetInt32(4),
+                                SemesterId = reader.GetInt32(5),
+                                SemesterName = reader.GetString(6)
+                            });
+                        }
                     }
                 }
 
-                // Lấy tổng count
-                command.CommandText = @"
-            SELECT COUNT(*)
-            FROM Subjects s
-            WHERE (@keyword IS NULL 
-                   OR s.Name LIKE '%' + @keyword + '%' 
-                   OR s.SubjectCode LIKE '%' + @keyword + '%' 
-                   OR s.Description LIKE '%' + @keyword + '%')
-              AND (@semesterId IS NULL OR s.SemesterId = @semesterId);
-        ";
+                // Truy vấn lấy tổng số dòng
+                await using (var countCommand = connection.CreateCommand())
+                {
+                    countCommand.CommandText = @"
+                SELECT COUNT(*)
+                FROM Subjects s
+                WHERE (@keyword IS NULL 
+                       OR s.Name LIKE '%' + @keyword + '%' 
+                       OR s.SubjectCode LIKE '%' + @keyword + '%' 
+                       OR s.Description LIKE '%' + @keyword + '%')
+                  AND (@semesterId IS NULL OR s.SemesterId = @semesterId);
+            ";
 
-                command.Parameters.Clear();
-                command.Parameters.Add(new SqlParameter("@keyword", string.IsNullOrWhiteSpace(keyword) ? DBNull.Value : keyword));
-                command.Parameters.Add(new SqlParameter("@semesterId", semesterId ?? (object)DBNull.Value));
+                    countCommand.Parameters.Add(new SqlParameter("@keyword", string.IsNullOrWhiteSpace(keyword) ? DBNull.Value : keyword));
+                    countCommand.Parameters.Add(new SqlParameter("@semesterId", semesterId ?? (object)DBNull.Value));
 
-                totalCount = (int)await command.ExecuteScalarAsync();
+                    totalCount = (int)(await countCommand.ExecuteScalarAsync());
+                }
             }
 
             return (items, totalCount);
         }
+
 
 
 

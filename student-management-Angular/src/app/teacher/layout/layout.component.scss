@@ -1,392 +1,287 @@
-// Teacher Dashboard Styles
-// ========================
+// Modern Teacher Layout Styles - Elegant & Smooth Design
+// ====================================================
 
 // Variables
-$sidebar-width-md: 25%; // 3/12 columns
-$sidebar-width-lg: 16.666667%; // 2/12 columns
-$sidebar-bg: #f8f9fa;
-$border-color: #dee2e6;
 $primary-color: #0d6efd;
-$danger-color: #dc3545;
-$secondary-color: #6c757d;
-$text-muted: #6c757d;
-$shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-$border-radius: 0.375rem;
-$border-radius-pill: 50rem;
+$primary-light: rgba(13, 110, 253, 0.1);
+$text-light: rgba(255, 255, 255, 0.8);
+$hover-bg: rgba(255, 255, 255, 0.15);
+$glass-bg: rgba(255, 255, 255, 0.1);
+$backdrop-blur: blur(10px);
 
-// Main container
-.container-fluid {
-  padding: 0;
-}
-
-.row {
-  margin: 0;
+// Global Layout
+.min-vh-100 {
   min-height: 100vh;
 }
 
-// Sidebar styles
-.sidebar {
-  background-color: $sidebar-bg;
-  border-right: 1px solid $border-color;
-  padding: 1rem;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  overflow-y: auto;
-  z-index: 1000;
-  
-  // Mobile: hidden by default
-  display: none;
-  
-  // Tablet and up
-  @media (min-width: 768px) {
-    display: block;
-    width: $sidebar-width-md;
-  }
-  
-  // Desktop
-  @media (min-width: 992px) {
-    width: $sidebar-width-lg;
-  }
-  
-  .sidebar-sticky {
-    position: sticky;
-    top: 0;
-    
-    h5 {
-      margin-bottom: 1.5rem;
-      color: #333;
-      font-weight: 600;
-      
-      // Emoji spacing
-      &::before {
-        margin-right: 0.5rem;
-      }
-    }
-    
-    .nav {
-      .nav-item {
-        margin-bottom: 0.5rem;
-        
-        .nav-link {
-          display: flex;
-          align-items: center;
-          padding: 0.75rem 1rem;
-          color: #495057;
-          text-decoration: none;
-          border-radius: $border-radius;
-          transition: all 0.2s ease-in-out;
-          
-          i {
-            margin-right: 0.75rem;
-            width: 1.2rem;
-            text-align: center;
-          }
-          
-          &:hover {
-            background-color: rgba($primary-color, 0.1);
-            color: $primary-color;
-          }
-          
-          &.active {
-            background-color: $primary-color;
-            color: white;
-          }
-        }
-        
-        // Logout button specific styles
-        &:last-child {
-          margin-top: 2rem;
-          
-          .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1rem;
-            border-color: $danger-color;
-            color: $danger-color;
-            transition: all 0.2s ease-in-out;
-            
-            i {
-              margin-right: 0.75rem;
-            }
-            
-            &:hover {
-              background-color: $danger-color;
-              color: white;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// Main content area
-main {
-  margin-left: 0;
-  padding: 1.5rem;
+// Sidebar with Gradient Background
+.sidebar-gradient {
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
   position: relative;
   
-  @media (min-width: 768px) {
-    margin-left: $sidebar-width-md;
-    padding: 1.5rem 2rem;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.9) 0%, rgba(25, 118, 210, 0.9) 100%);
+    backdrop-filter: $backdrop-blur;
   }
   
-  @media (min-width: 992px) {
-    margin-left: $sidebar-width-lg;
+  > * {
+    position: relative;
+    z-index: 1;
   }
 }
 
-// Notification bell
-.notification-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 1rem;
-  z-index: 3;
+// Enhanced Navigation Items
+.nav-item-modern {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 1rem !important;
+  backdrop-filter: $backdrop-blur;
+  color: rgba(255, 255, 255, 0.9) !important;
   
-  .dropdown-toggle {
-    position: relative;
-    background: white;
-    border: 1px solid $border-color;
-    color: $secondary-color;
-    padding: 0.5rem 0.75rem;
-    border-radius: $border-radius;
-    transition: all 0.2s ease-in-out;
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    transform: translateX(8px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.active {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  i {
+    transition: transform 0.3s ease;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  
+  &:hover i {
+    transform: scale(1.1);
+    color: white;
+  }
+  
+  &.active i {
+    color: white;
+  }
+}
+// Logout Button Styling
+.logout-btn {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: $backdrop-blur;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.25) !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  i {
+    color: rgba(255, 255, 255, 0.95);
+  }
+  
+  &:hover i {
+    color: white;
+  }
+}
+
+// Main Content Area
+.main-content {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e3f2fd 100%);
+  min-height: 100vh;
+}
+
+// Modern Header
+.header-modern {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  z-index: 1040;
+  
+  .header-title {
+    h4 {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 700;
+    }
+    
+    small {
+      color: #6c757d;
+      font-weight: 500;
+    }
+  }
+}
+
+// Notification Button
+.notification-btn {
+  border: 2px solid rgba(33, 150, 243, 0.3);
+  background: rgba(33, 150, 243, 0.05);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1055;
+  
+  &:hover {
+    background: rgba(33, 150, 243, 0.1);
+    border-color: rgba(33, 150, 243, 0.5);
+    transform: scale(1.05);
+  }
+  
+  .notification-badge {
+    animation: pulse 2s infinite;
+  }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+// Notification Dropdown
+.notification-dropdown {
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  border-radius: 1rem;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  min-width: 320px;
+  z-index: 1060 !important;
+  position: relative;
+  
+  .dropdown-header {
+    background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+    color: white !important;
+    padding: 1rem 1.5rem;
+    border: none;
+  }
+  
+  .notification-item {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
     
     &:hover {
-      background-color: #f8f9fa;
-      border-color: $secondary-color;
+      background: rgba(33, 150, 243, 0.05);
+      transform: translateX(5px);
     }
     
-    &:focus {
-      box-shadow: 0 0 0 0.2rem rgba($secondary-color, 0.25);
+    &:last-child {
+      border-bottom: none;
     }
     
-    // Notification badge
-    .badge {
-      position: absolute;
-      top: -0.25rem;
-      left: 100%;
-      transform: translateX(-50%);
-      background-color: $danger-color;
+    .notification-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: white;
-      font-size: 0.75rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: $border-radius-pill;
-      min-width: 1.5rem;
-      text-align: center;
+    }
+    
+    strong {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+    
+    p {
+      color: #6c757d;
+      margin-bottom: 0.25rem;
+    }
+    
+    small {
+      color: #9ca3af;
+      font-weight: 500;
     }
   }
   
-  .dropdown-menu {
-    max-width: 300px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: $shadow-sm;
-    border: 1px solid rgba(0, 0, 0, 0.15);
+  .dropdown-item-text {
+    padding: 2rem 1.5rem;
+    background: rgba(33, 150, 243, 0.02);
     
-    .dropdown-item {
-      padding: 0.75rem 1rem;
-      border: none;
-      background: none;
-      text-align: left;
-      width: 100%;
-      
-      &:not(:last-child) {
-        border-bottom: 1px solid #f8f9fa;
-      }
-      
-      &.text-center {
-        color: $text-muted;
-        padding: 1.5rem;
-        
-        &:disabled {
-          opacity: 0.6;
-        }
-      }
-      
-      &:not(.text-center) {
-        &:hover {
-          background-color: #f8f9fa;
-        }
-        
-        strong {
-          display: block;
-          margin-bottom: 0.25rem;
-          color: #333;
-        }
-        
-        small {
-          color: $text-muted;
-          line-height: 1.4;
-        }
-      }
+    .bi-bell-slash {
+      color: #9ca3af;
+    }
+    
+    p {
+      color: #4b5563;
+      font-weight: 600;
+    }
+    
+    small {
+      color: #6b7280;
     }
   }
 }
 
-// Responsive utilities
+// Content Area
+.content-area {
+  background: transparent;
+  border-radius: 1.5rem 1.5rem 0 0;
+  margin: 0;
+  padding: 2rem !important;
+}
+
+// Responsive Design
 @media (max-width: 767.98px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease-in-out;
+  .sidebar-gradient {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 280px;
+    height: 100vh;
+    z-index: 1050;
+    transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     
     &.show {
-      transform: translateX(0);
+      left: 0;
     }
   }
   
-  main {
+  .main-content {
     margin-left: 0;
-    padding: 1rem;
+    width: 100%;
   }
-}
-
-// Additional utility classes
-.w-100 {
-  width: 100% !important;
-}
-
-.position-relative {
-  position: relative !important;
-}
-
-.position-absolute {
-  position: absolute !important;
-}
-
-.top-0 {
-  top: 0 !important;
-}
-
-.end-0 {
-  right: 0 !important;
-}
-
-.start-100 {
-  left: 100% !important;
-}
-
-.translate-middle {
-  transform: translate(-50%, -50%) !important;
-}
-
-.z-3 {
-  z-index: 3 !important;
-}
-
-.d-inline-block {
-  display: inline-block !important;
-}
-
-.d-block {
-  display: block !important;
-}
-
-.text-muted {
-  color: $text-muted !important;
-}
-
-.text-center {
-  text-align: center !important;
-}
-
-.text-start {
-  text-align: left !important;
-}
-
-.shadow-sm {
-  box-shadow: $shadow-sm !important;
-}
-
-.py-3 {
-  padding-top: 1rem !important;
-  padding-bottom: 1rem !important;
-}
-
-.p-3 {
-  padding: 1rem !important;
-}
-
-.px-md-4 {
-  @media (min-width: 768px) {
-    padding-left: 1.5rem !important;
-    padding-right: 1.5rem !important;
-  }
-}
-
-.py-4 {
-  padding-top: 1.5rem !important;
-  padding-bottom: 1.5rem !important;
-}
-
-.mb-2 {
-  margin-bottom: 0.5rem !important;
-}
-
-.mb-4 {
-  margin-bottom: 1.5rem !important;
-}
-
-.mt-4 {
-  margin-top: 1.5rem !important;
-}
-
-.ms-sm-auto {
-  @media (min-width: 576px) {
-    margin-left: auto !important;
-  }
-}
-
-// Dark mode support (optional)
-@media (prefers-color-scheme: dark) {
-  .sidebar {
-    background-color: #212529;
-    border-right-color: #495057;
+  
+  .nav-item-modern {
+    font-size: 0.9rem !important;
+    padding: 0.75rem !important;
     
-    h5 {
-      color: #f8f9fa;
-    }
-    
-    .nav-link {
-      color: #adb5bd;
-      
-      &:hover {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #f8f9fa;
-      }
+    i {
+      font-size: 1.1rem !important;
     }
   }
   
-  .notification-container {
-    .dropdown-toggle {
-      background-color: #495057;
-      border-color: #6c757d;
-      color: #f8f9fa;
-      
-      &:hover {
-        background-color: #6c757d;
-      }
+  .notification-dropdown {
+    min-width: 280px;
+  }
+  
+  .header-modern {
+    padding: 1rem !important;
+    
+    .header-title h4 {
+      font-size: 1.1rem;
     }
     
-    .dropdown-menu {
-      background-color: #495057;
-      border-color: #6c757d;
-      
-      .dropdown-item {
-        color: #f8f9fa;
-        
-        &:hover {
-          background-color: #6c757d;
-        }
-        
-        strong {
-          color: #f8f9fa;
-        }
-      }
+    small {
+      display: none;
     }
   }
 }

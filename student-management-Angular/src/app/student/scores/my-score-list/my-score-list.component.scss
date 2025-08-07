@@ -1,0 +1,293 @@
+// My Score List Component Styles
+
+// Header gradient background
+.bg-gradient-success {
+  background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%);
+  color: #155724 !important;
+}
+
+// Card enhancements
+.card {
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+  background-color: #fefefe;
+  border: 1px solid rgba(0,0,0,0.05);
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
+  }
+}
+
+// GPA Cards styling
+.bg-primary {
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%) !important;
+  color: #1565c0 !important;
+}
+
+.bg-info {
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%) !important;
+  color: #00838f !important;
+}
+
+// Table enhancements
+.table {
+  th {
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none !important;
+  }
+  
+  td {
+    border: none !important;
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+  }
+  
+  tbody tr {
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f8f9fa;
+    
+    &:hover {
+      background-color: rgba(13, 110, 253, 0.02);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+// Badge styling with score colors
+.badge {
+  font-weight: 500;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  border: 1px solid transparent;
+  
+  &.fs-6 {
+    font-size: 0.875rem !important;
+  }
+  
+  // Score-based colors - softer tones
+  &.bg-success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    border-color: #c3e6cb;
+  }
+  
+  &.bg-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-color: #ffeaa7;
+  }
+  
+  &.bg-info {
+    background-color: #d1ecf1 !important;
+    color: #0c5460 !important;
+    border-color: #bee5eb;
+  }
+  
+  &.bg-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-color: #f5c6cb;
+  }
+  
+  &.bg-secondary {
+    background-color: #e2e3e5 !important;
+    color: #383d41 !important;
+    border-color: #d6d8db;
+  }
+  
+  &.bg-outline-secondary {
+    background-color: rgba(108, 117, 125, 0.05);
+    color: #6c757d;
+    border: 1px solid rgba(108, 117, 125, 0.15);
+  }
+  
+  &.bg-light {
+    background-color: #f8f9fa !important;
+    color: #495057 !important;
+    border: 1px solid #e9ecef;
+  }
+}
+
+// Semester header styling
+.bg-primary.bg-opacity-10 {
+  background-color: rgba(13, 110, 253, 0.05) !important;
+  border: 1px solid rgba(13, 110, 253, 0.1);
+}
+
+// Button styling
+.btn {
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  &.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+  
+  &.btn-light {
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #155724;
+    
+    &:hover {
+      background-color: white;
+      border-color: rgba(255, 255, 255, 0.5);
+      color: #155724;
+    }
+  }
+}
+
+// Border enhancements
+.border-start {
+  border-left-width: 4px !important;
+}
+
+// Animation
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease;
+}
+
+// Mobile card styling
+.card-body {
+  .card-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+// Status badges specific styling
+.badge {
+  &.bg-success i {
+    color: #155724;
+  }
+  
+  &.bg-danger i {
+    color: #721c24;
+  }
+  
+  &.bg-secondary i {
+    color: #383d41;
+  }
+  
+  &.bg-info i {
+    color: #0c5460;
+  }
+  
+  &.bg-warning i {
+    color: #856404;
+  }
+}
+
+// GPA display cards
+.display-5 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .container-fluid {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+  
+  .display-4 {
+    font-size: 2rem !important;
+  }
+  
+  .card-title {
+    font-size: 1.25rem !important;
+  }
+  
+  .btn-lg {
+    padding: 0.75rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .display-5 {
+    font-size: 2rem !important;
+  }
+}
+
+// Header card responsiveness
+@media (max-width: 576px) {
+  .card-body {
+    .d-flex.justify-content-between {
+      flex-direction: column;
+      text-align: center;
+      
+      .text-end {
+        margin-top: 1rem;
+        text-align: center !important;
+      }
+    }
+  }
+}
+
+// Custom scrollbar for table
+.table-responsive {
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+    
+    &:hover {
+      background: #a8a8a8;
+    }
+  }
+}
+
+// Icon styling
+.bi {
+  line-height: 1;
+}
+
+// Hover effects for GPA cards
+.bg-primary, .bg-info {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  }
+}
+
+// Gap utilities
+.gap-3 {
+  gap: 1rem !important;
+}

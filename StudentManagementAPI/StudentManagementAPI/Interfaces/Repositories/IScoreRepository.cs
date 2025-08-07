@@ -13,6 +13,9 @@ namespace StudentManagementAPI.Interfaces.Repositories
         Task<(IEnumerable<Score> Scores, int TotalItems)> GetPagedAsync(int page, int pageSize, string? studentCode, string? classCode);
 
 
+        Task<IEnumerable<Score>> GetWithSemesterByStudentIdAsync(int studentId);
+
+
 
     }
 }

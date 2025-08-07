@@ -25,9 +25,11 @@ export class SubjectAvailableComponent implements OnInit {
   enrolledSubjects: any[] = [];
   semesters: SemesterDto[] = [];
   students: StudentDto[] = [];
+  filteredStudents: StudentDto[] = [];
 
   selectedSemesterId: number = 0;
   selectedStudentId?: number;
+  studentSearchTerm: string = '';
 
   successMessage: string = '';
   errorMessage: string = '';
@@ -67,6 +69,7 @@ export class SubjectAvailableComponent implements OnInit {
     this.studentService.getPagedStudents(1, 100).subscribe({
       next: (res) => {
         this.students = res.data;
+        this.filteredStudents = this.students;
         this.selectedStudentId = this.students[0]?.id;
         this.checkAndLoadSubjects();
       },
@@ -74,6 +77,23 @@ export class SubjectAvailableComponent implements OnInit {
         this.errorMessage = 'Không thể tải danh sách sinh viên.';
       }
     });
+  }
+
+  onSearchStudent() {
+    if (!this.studentSearchTerm.trim()) {
+      this.filteredStudents = this.students;
+    } else {
+      this.filteredStudents = this.students.filter(student =>
+        student.studentCode.toLowerCase().includes(this.studentSearchTerm.toLowerCase()) ||
+        student.fullName.toLowerCase().includes(this.studentSearchTerm.toLowerCase())
+      );
+    }
+    
+    // Reset selected student if not in filtered list
+    if (this.selectedStudentId && !this.filteredStudents.find(s => s.id === this.selectedStudentId)) {
+      this.selectedStudentId = this.filteredStudents[0]?.id;
+      this.checkAndLoadSubjects();
+    }
   }
 
   checkAndLoadSubjects() {
@@ -88,8 +108,8 @@ export class SubjectAvailableComponent implements OnInit {
 
   async loadSubjects() {
     try {
-      await this.loadEnrolledSubjects(); // cần chạy trước để có enrolledSubjects
-      await this.loadAvailableSubjects(); // rồi mới lọc những môn chưa đăng ký
+      await this.loadEnrolledSubjects();
+      await this.loadAvailableSubjects();
     } catch {
       // lỗi riêng đã xử lý
     }

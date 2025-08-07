@@ -25,33 +25,35 @@ namespace StudentManagementAPI.Controllers
         public async Task<IActionResult> GetAll()
         {
             var programs = await _service.GetAllAsync();
-            return Ok(programs);
+            return new JsonResult(programs) { StatusCode = 200 };
         }
 
         // ✅ Tạo chương trình mới
         [HttpPost]
         [Authorize(Policy = "educationprogram:create")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(400)]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(object), 400)]
         public async Task<IActionResult> Create([FromBody] CreateEducationProgramDto dto)
         {
             var result = await _service.CreateAsync(dto);
-            return result
-                ? Ok(new { message = "Tạo thành công" })
-                : BadRequest(new { message = "Tạo thất bại" });
+            if (result)
+                return new JsonResult(new { message = "Tạo thành công" }) { StatusCode = 200 };
+
+            return new JsonResult(new { message = "Tạo thất bại" }) { StatusCode = 400 };
         }
 
         // ✅ Xoá chương trình
         [HttpDelete("{id}")]
         [Authorize(Policy = "educationprogram:delete")]
-        [ProducesResponseType(200)]
-        [ProducesResponseType(404)]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(typeof(object), 404)]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.DeleteAsync(id);
-            return result
-                ? Ok(new { message = "Xóa thành công" })
-                : NotFound(new { message = "Không tìm thấy chương trình" });
+            if (result)
+                return new JsonResult(new { message = "Xóa thành công" }) { StatusCode = 200 };
+
+            return new JsonResult(new { message = "Không tìm thấy chương trình" }) { StatusCode = 404 };
         }
     }
 }

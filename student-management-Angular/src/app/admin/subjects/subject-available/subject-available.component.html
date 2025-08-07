@@ -8,8 +8,21 @@
     <select class="form-select" id="semesterSelect"
             [(ngModel)]="selectedSemesterId"
             (change)="onStudentOrSemesterChange()">
-      <option *ngFor="let s of semesters" [value]="s.id">{{ s.name }}</option>
+      <option *ngFor="let semester of semesters" [value]="semester.id">
+        {{ semester.name }}
+      </option>
     </select>
+  </div>
+
+  <!-- Tìm kiếm sinh viên -->
+  <div class="mb-3">
+    <label for="studentSearch" class="form-label">Tìm kiếm sinh viên:</label>
+    <input type="text" 
+           class="form-control" 
+           id="studentSearch"
+           placeholder="Nhập mã sinh viên hoặc tên sinh viên..."
+           [(ngModel)]="studentSearchTerm"
+           (input)="onSearchStudent()">
   </div>
 
   <!-- Chọn sinh viên -->
@@ -18,10 +31,13 @@
     <select class="form-select" id="studentSelect"
             [(ngModel)]="selectedStudentId"
             (change)="onStudentOrSemesterChange()">
-      <option *ngFor="let s of students" [value]="s.id">
-        {{ s.fullName }} ({{ s.studentCode }})
+      <option *ngFor="let student of filteredStudents" [value]="student.id">
+        {{ student.fullName }} ({{ student.studentCode }})
       </option>
     </select>
+    <div *ngIf="filteredStudents.length === 0 && studentSearchTerm" class="text-muted mt-1">
+      Không tìm thấy sinh viên nào phù hợp.
+    </div>
   </div>
 
   <!-- Thông báo -->
@@ -34,7 +50,7 @@
 
   <!-- Môn học khả dụng -->
   <h5 class="mt-4">📖 Môn học khả dụng</h5>
-  <table class="table table-bordered table-hover" *ngIf="availableSubjects.length > 0">
+  <table class="table table-bordered table-hover" *ngIf="(availableSubjects?.length || 0) > 0">
     <thead class="table-light">
       <tr>
         <th>Mã môn</th>
@@ -45,20 +61,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let s of availableSubjects">
-        <td>{{ s.subjectCode }}</td>
-        <td>{{ s.name }}</td>
-        <td>{{ s.credit }}</td>
-        <td>{{ s.description }}</td>
+      <tr *ngFor="let subject of availableSubjects">
+        <td>{{ subject.subjectCode }}</td>
+        <td>{{ subject.name }}</td>
+        <td>{{ subject.credit }}</td>
+        <td>{{ subject.description }}</td>
         <td>
-          <ng-container *ngIf="isSemesterOpen(); else disabled">
+          <ng-container *ngIf="isSemesterOpen(); else disabledTemplate">
             <button class="btn btn-primary btn-sm"
-                    (click)="registerSubject(s.id)"
+                    (click)="registerSubject(subject.id)"
                     title="Đăng ký môn học">
               Đăng ký
             </button>
           </ng-container>
-          <ng-template #disabled>
+          <ng-template #disabledTemplate>
             <button class="btn btn-secondary btn-sm" disabled>
               Học kỳ đã đóng
             </button>
@@ -68,13 +84,13 @@
     </tbody>
   </table>
 
-  <div *ngIf="availableSubjects.length === 0" class="alert alert-warning">
+  <div *ngIf="availableSubjects?.length === 0" class="alert alert-warning">
     Không có môn học khả dụng cho học kỳ này.
   </div>
 
   <!-- Môn học đã đăng ký -->
   <h5 class="mt-5">✅ Danh sách môn học đã đăng ký</h5>
-  <table class="table table-bordered table-striped" *ngIf="enrolledSubjects.length > 0">
+  <table class="table table-bordered table-striped" *ngIf="(enrolledSubjects?.length || 0) > 0">
     <thead class="table-dark">
       <tr>
         <th>Mã môn</th>
@@ -86,15 +102,15 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let s of enrolledSubjects">
-        <td>{{ s.subjectCode }}</td>
-        <td>{{ s.subjectName }}</td>
-        <td>{{ s.semesterName }}</td>
-        <td>{{ s.classCode }}</td>
-        <td>{{ s.enrollDate | date:'dd/MM/yyyy' }}</td>
+      <tr *ngFor="let enrolled of enrolledSubjects">
+        <td>{{ enrolled.subjectCode }}</td>
+        <td>{{ enrolled.subjectName }}</td>
+        <td>{{ enrolled.semesterName }}</td>
+        <td>{{ enrolled.classCode }}</td>
+        <td>{{ enrolled.enrollDate | date: 'dd/MM/yyyy' }}</td>
         <td>
           <button class="btn btn-danger btn-sm"
-                  (click)="cancelEnrollment(s.id)"
+                  (click)="cancelEnrollment(enrolled.id)"
                   [disabled]="!isSemesterOpen()"
                   title="Hủy đăng ký môn học">
             Hủy
@@ -104,7 +120,7 @@
     </tbody>
   </table>
 
-  <div *ngIf="enrolledSubjects.length === 0" class="alert alert-info">
+  <div *ngIf="enrolledSubjects?.length === 0" class="alert alert-info">
     Chưa có môn học nào được đăng ký.
   </div>
 </div>

@@ -1,49 +1,289 @@
-<div *ngIf="loading" class="text-center mt-5">
-  <div class="spinner-border text-primary" role="status">
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container text-center py-5">
+  <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
     <span class="visually-hidden">Đang tải...</span>
   </div>
+  <p class="text-muted mt-3">Đang tải thông tin sinh viên...</p>
 </div>
 
-<div *ngIf="!loading && student" class="card shadow p-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">
-      <i class="bi bi-person-circle me-2"></i> Thông tin sinh viên
-    </h4>
-    <a class="btn btn-sm btn-primary d-flex align-items-center gap-1" routerLink="/student/profile-edit">
-      <i class="bi bi-pencil-square"></i> Chỉnh sửa
-    </a>
+<!-- Error State -->
+<div *ngIf="!loading && !student" class="error-state text-center py-5">
+  <div class="error-icon mb-3">
+    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 4rem;"></i>
+  </div>
+  <h5 class="text-muted">Không thể tải thông tin sinh viên</h5>
+  <p class="text-muted">Vui lòng thử lại sau hoặc liên hệ hỗ trợ kỹ thuật.</p>
+  <button class="btn btn-primary" (click)="loadStudentInfo()">
+    <i class="bi bi-arrow-clockwise me-2"></i>
+    Thử lại
+  </button>
+</div>
+
+<!-- Student Info Content -->
+<div *ngIf="!loading && student" class="student-info-container">
+  <!-- Header Section -->
+  <div class="profile-header">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <div class="d-flex align-items-center">
+          <div class="avatar-container me-4">
+            <div class="avatar-circle">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="status-indicator online"></div>
+          </div>
+          <div class="profile-info">
+            <h3 class="profile-name mb-1">{{ student.fullName }}</h3>
+            <p class="profile-email mb-0 text-muted">
+              <i class="bi bi-envelope me-2"></i>
+              {{ student.email }}
+            </p>
+            <div class="profile-meta mt-2">
+              <span class="badge bg-success-soft text-success me-2">
+                <i class="bi bi-check-circle me-1"></i>
+                Đang học
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="profile-actions">
+          <button class="btn btn-outline-primary me-2" (click)="exportProfile()">
+            <i class="bi bi-download me-2"></i>
+            Xuất PDF
+          </button>
+          <a class="btn btn-primary" routerLink="/student/profile-edit">
+            <i class="bi bi-pencil-square me-2"></i>
+            Chỉnh sửa
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <table class="table table-hover">
-    <tbody>
-      <tr>
-        <th><i class="bi bi-person-fill"></i> Họ và tên</th>
-        <td>{{ student.fullName }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-envelope-fill"></i> Email</th>
-        <td>{{ student.email }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-gender-ambiguous"></i> Giới tính</th>
-        <td>{{ student.gender }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-calendar-event"></i> Ngày sinh</th>
-        <td>{{ student.dateOfBirth | date:'dd/MM/yyyy' }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-telephone-fill"></i> Số điện thoại</th>
-        <td>{{ student.phone }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-building"></i> Khoa</th>
-        <td>{{ student.departmentName }}</td>
-      </tr>
-      <tr>
-        <th><i class="bi bi-journal-bookmark-fill"></i> Chương trình</th>
-        <td>{{ student.programName }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Info Cards Grid -->
+  <div class="info-grid mt-4">
+    <div class="row g-4">
+      <!-- Personal Information Card -->
+      <div class="col-lg-6">
+        <div class="info-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person-lines-fill me-2 text-primary"></i>
+              Thông tin cá nhân
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="info-list">
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-person-fill"></i>
+                  <span>Họ và tên</span>
+                </div>
+                <div class="info-value">{{ student.fullName }}</div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-gender-ambiguous"></i>
+                  <span>Giới tính</span>
+                </div>
+                <div class="info-value">
+                  <span class="badge" [class]="getGenderBadgeClass(student.gender)">
+                    <i [class]="getGenderIcon(student.gender)" class="me-1"></i>
+                    {{ getGenderText(student.gender) }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-calendar-event"></i>
+                  <span>Ngày sinh</span>
+                </div>
+                <div class="info-value">
+                  {{ student.dateOfBirth | date:'dd/MM/yyyy' }}
+                  <small class="text-muted ms-2">({{ getAge() }} tuổi)</small>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-telephone-fill"></i>
+                  <span>Số điện thoại</span>
+                </div>
+                <div class="info-value">
+                  <a href="tel:{{ student.phone }}" class="text-decoration-none">
+                    {{ student.phone || 'Chưa cập nhật' }}
+                  </a>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-envelope-fill"></i>
+                  <span>Email</span>
+                </div>
+                <div class="info-value">
+                  <a href="mailto:{{ student.email }}" class="text-decoration-none">
+                    {{ student.email }}
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Information Card -->
+      <div class="col-lg-6">
+        <div class="info-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-mortarboard me-2 text-success"></i>
+              Thông tin học tập
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="info-list">
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-card-text"></i>
+                  <span>Mã sinh viên</span>
+                </div>
+                <div class="info-value">
+                  <span class="badge bg-primary-soft text-primary">
+                    {{ student.studentCode || student.id }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-building"></i>
+                  <span>Khoa</span>
+                </div>
+                <div class="info-value">
+                  <div class="d-flex align-items-center">
+                    <div class="department-icon me-2">
+                      <i class="bi bi-buildings"></i>
+                    </div>
+                    <div>
+                      <div>{{ student.departmentName || 'Chưa xác định' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-journal-bookmark-fill"></i>
+                  <span>Chương trình đào tạo</span>
+                </div>
+                <div class="info-value">
+                  <div class="d-flex align-items-center">
+                    <div class="program-icon me-2">
+                      <i class="bi bi-book"></i>
+                    </div>
+                    <div>
+                      <div>{{ student.programName || 'Chưa xác định' }}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-calendar-range"></i>
+                  <span>Năm học</span>
+                </div>
+                <div class="info-value">
+                  <span class="badge bg-info-soft text-info">
+                    {{ getCurrentAcademicYear() }}
+                  </span>
+                </div>
+              </div>
+              
+              <div class="info-item">
+                <div class="info-label">
+                  <i class="bi bi-trophy"></i>
+                  <span>Trình độ</span>
+                </div>
+                <div class="info-value">
+                  <span class="badge bg-warning-soft text-warning">
+                    <i class="bi bi-mortarboard me-1"></i>
+                    Cử nhân
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions Card -->
+      <div class="col-12">
+        <div class="info-card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-lightning me-2 text-warning"></i>
+              Thao tác nhanh
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <a routerLink="/student/schedule" class="quick-action-btn">
+                  <div class="action-icon bg-primary-soft text-primary">
+                    <i class="bi bi-calendar-week"></i>
+                  </div>
+                  <div class="action-text">
+                    <div class="action-title">Lịch học</div>
+                    <small class="action-desc">Xem thời khóa biểu</small>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="col-md-3">
+                <a routerLink="/student/scores" class="quick-action-btn">
+                  <div class="action-icon bg-success-soft text-success">
+                    <i class="bi bi-award"></i>
+                  </div>
+                  <div class="action-text">
+                    <div class="action-title">Điểm số</div>
+                    <small class="action-desc">Xem kết quả học tập</small>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="col-md-3">
+                <a routerLink="/student/subject-register" class="quick-action-btn">
+                  <div class="action-icon bg-info-soft text-info">
+                    <i class="bi bi-plus-circle"></i>
+                  </div>
+                  <div class="action-text">
+                    <div class="action-title">Đăng ký môn</div>
+                    <small class="action-desc">Đăng ký học phần</small>
+                  </div>
+                </a>
+              </div>
+              
+              <div class="col-md-3">
+                <a routerLink="/student/notifications" class="quick-action-btn">
+                  <div class="action-icon bg-warning-soft text-warning">
+                    <i class="bi bi-bell"></i>
+                  </div>
+                  <div class="action-text">
+                    <div class="action-title">Thông báo</div>
+                    <small class="action-desc">Xem tin tức mới</small>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

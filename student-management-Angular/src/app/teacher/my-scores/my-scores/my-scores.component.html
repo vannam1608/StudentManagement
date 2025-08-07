@@ -1,76 +1,330 @@
-<div class="container mt-4">
-  <h4>📊 Danh sách điểm</h4>
-
-  <!-- Bộ lọc lớp -->
-  <div class="mb-3">
-    <label for="classFilter" class="form-label fw-semibold">Lọc theo lớp:</label>
-    <select id="classFilter" class="form-select w-auto d-inline-block" [(ngModel)]="selectedClassCode" (change)="applyClassFilter()">
-      <option value="">Tất cả</option>
-      <option *ngFor="let c of availableClasses" [value]="c">{{ c }}</option>
-    </select>
-  </div>
-
-  <div *ngIf="loading" class="text-muted">Đang tải dữ liệu...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-  <table *ngIf="!loading && filteredScores.length > 0" class="table table-bordered table-hover mt-3">
-    <thead class="table-light">
-      <tr>
-        <th>Mã SV</th>
-        <th>Họ tên</th>
-        <th>Lớp</th>
-        <th>Môn học</th>
-        <th>GK</th>
-        <th>CK</th>
-        <th>Khác</th>
-        <th>Tổng</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let s of filteredScores">
-        <td>{{ s.studentCode }}</td>
-        <td>{{ s.fullName }}</td>
-
-        <td>{{ s.classCode }}</td>
-        <td>{{ s.subjectName }}</td>
-        <td>{{ s.midterm ?? '-' }}</td>
-        <td>{{ s.final ?? '-' }}</td>
-        <td>{{ s.other ?? '-' }}</td>
-        <td>{{ s.total }}</td>
-        <td>
-          <button class="btn btn-sm btn-primary" (click)="startEdit(s)">Sửa</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div *ngIf="!loading && filteredScores.length === 0" class="alert alert-warning">
-    Không có dữ liệu điểm cho lớp này.
-  </div>
-
-  <!-- Form chỉnh sửa điểm -->
-  <div *ngIf="editingScore" class="card mt-4 p-3 border-primary">
-    <h5>✏️ Sửa điểm cho {{ editingScore.studentName }} ({{ editingScore.classCode }} - {{ editingScore.subjectName }})</h5>
-
-    <div class="row g-3">
-      <div class="col-md-4">
-        <label>Giữa kỳ</label>
-        <input type="number" class="form-control" [(ngModel)]="editingScore.midterm" />
+<div class="container-fluid mt-4">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h3 class="text-primary mb-0">
+            <i class="bi bi-clipboard-data"></i> Quản lý điểm số
+          </h3>
+          <div *ngIf="currentClassInfo" class="mt-2">
+            <span class="badge bg-primary me-2">{{ currentClassInfo.classCode }}</span>
+            <span class="badge bg-success me-2">{{ currentClassInfo.subjectName }}</span>
+            <span class="badge bg-info">{{ currentClassInfo.semesterName }}</span>
+          </div>
+        </div>
+        <div class="badge bg-info fs-6">
+          <i class="bi bi-people"></i> {{ filteredScores.length }} sinh viên
+        </div>
       </div>
-      <div class="col-md-4">
-        <label>Cuối kỳ</label>
-        <input type="number" class="form-control" [(ngModel)]="editingScore.final" />
-      </div>
-      <div class="col-md-4">
-        <label>Khác</label>
-        <input type="number" class="form-control" [(ngModel)]="editingScore.other" />
+      <p class="text-muted mt-2">
+        <span *ngIf="!currentClassInfo">Xem và chỉnh sửa điểm số của sinh viên trong các lớp học</span>
+        <span *ngIf="currentClassInfo">Quản lý điểm số cho lớp {{ currentClassInfo.classCode }} - {{ currentClassInfo.subjectName }}</span>
+      </p>
+      
+      <!-- Navigation buttons when viewing specific class -->
+      <div *ngIf="currentClassInfo" class="mt-3">
+        <button class="btn btn-outline-secondary btn-sm me-2" [routerLink]="['/teacher/my-classes']">
+          <i class="bi bi-arrow-left"></i> Quay lại danh sách lớp học
+        </button>
+        <button class="btn btn-outline-primary btn-sm" [routerLink]="['/teacher/my-scores']">
+          <i class="bi bi-list"></i> Xem tất cả điểm
+        </button>
       </div>
     </div>
+  </div>
 
-    <div class="mt-3 d-flex gap-2">
-      <button class="btn btn-success" (click)="saveScore()">💾 Lưu</button>
-      <button class="btn btn-secondary" (click)="cancelEdit()">❌ Hủy</button>
+  <!-- Debug Info (remove in production) -->
+  <div *ngIf="currentClassInfo" class="alert alert-info border-0 shadow-sm mb-4">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-info-circle fs-4 me-3"></i>
+      <div>
+        <h6 class="mb-1">Debug Info:</h6>
+        <p class="mb-0">ClassId: {{ currentClassInfo.classId }} | ClassCode: {{ currentClassInfo.classCode }} | Filtered: {{ filteredScores.length }} items</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section - Always show but with different behavior -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center">
+            <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3">
+              <i class="bi bi-funnel"></i>
+            </div>
+            <div class="flex-grow-1">
+              <label for="classFilter" class="form-label mb-1 fw-semibold">
+                <span *ngIf="!currentClassInfo">Lọc theo lớp học:</span>
+                <span *ngIf="currentClassInfo">Đang xem lớp:</span>
+              </label>
+              <select 
+                id="classFilter" 
+                class="form-select" 
+                [(ngModel)]="selectedClassCode" 
+                (change)="applyClassFilter()"
+                [disabled]="!!currentClassInfo"
+              >
+                <option value="" *ngIf="!currentClassInfo">🏫 Tất cả lớp học</option>
+                <option *ngFor="let c of availableClasses" [value]="c">
+                  📚 {{ c }}
+                </option>
+              </select>
+              <small class="text-muted" *ngIf="currentClassInfo">
+                <i class="bi bi-info-circle"></i> Đã được filter tự động. Nhấn "Xem tất cả điểm" để thay đổi.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p class="text-muted mt-3">Đang tải dữ liệu điểm...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger border-0 shadow-sm">
+    <div class="d-flex align-items-center">
+      <i class="bi bi-exclamation-triangle fs-4 me-3"></i>
+      <div>
+        <h6 class="mb-1">Có lỗi xảy ra</h6>
+        <p class="mb-0">{{ error }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scores Table -->
+  <div *ngIf="!loading && filteredScores.length > 0" class="card border-0 shadow-sm">
+    <div class="card-header bg-light border-0">
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+          <i class="bi bi-table"></i> Bảng điểm
+          <span class="badge bg-secondary ms-2">{{ filteredScores.length }} sinh viên</span>
+        </h5>
+        <div *ngIf="currentClassInfo" class="text-muted small">
+          <i class="bi bi-info-circle"></i> Hiển thị sinh viên lớp {{ currentClassInfo.classCode }}
+        </div>
+      </div>
+    </div>
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0">
+          <thead class="table-dark">
+            <tr>
+              <th class="border-0">#</th>
+              <th class="border-0">
+                <i class="bi bi-person-badge"></i> Mã SV
+              </th>
+              <th class="border-0">
+                <i class="bi bi-person"></i> Họ tên
+              </th>
+              <th class="border-0">
+                <i class="bi bi-building"></i> Lớp
+              </th>
+              <th class="border-0">
+                <i class="bi bi-book"></i> Môn học
+              </th>
+              <th class="border-0 text-center">
+                <i class="bi bi-clipboard-check"></i> GK
+              </th>
+              <th class="border-0 text-center">
+                <i class="bi bi-clipboard2-check"></i> CK
+              </th>
+              <th class="border-0 text-center">
+                <i class="bi bi-plus-circle"></i> Khác
+              </th>
+              <th class="border-0 text-center">
+                <i class="bi bi-trophy"></i> Tổng
+              </th>
+              <th class="border-0 text-center">
+                <i class="bi bi-gear"></i> Thao tác
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of filteredScores; let i = index" class="align-middle">
+              <td class="fw-semibold">{{ i + 1 }}</td>
+              <td>
+                <span class="badge bg-info">{{ s.studentCode }}</span>
+              </td>
+              <td class="fw-semibold">{{ s.fullName }}</td>
+              <td>
+                <span class="badge bg-secondary">{{ s.classCode }}</span>
+              </td>
+              <td class="text-primary fw-semibold">{{ s.subjectName }}</td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="getScoreBadgeClass(s.midterm)">
+                  {{ s.midterm ?? '-' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="getScoreBadgeClass(s.final)">
+                  {{ s.final ?? '-' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge" [ngClass]="getScoreBadgeClass(s.other)">
+                  {{ s.other ?? '-' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <span class="badge fs-6" [ngClass]="getTotalScoreBadgeClass(s.total)">
+                  {{ s.total }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button 
+                  class="btn btn-sm btn-outline-primary"
+                  (click)="startEdit(s)"
+                  [disabled]="editingScore?.id === s.id"
+                >
+                  <i class="bi bi-pencil"></i> Sửa
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data State -->
+  <div *ngIf="!loading && filteredScores.length === 0" class="text-center py-5">
+    <div class="empty-state">
+      <i class="bi bi-clipboard-x display-1 text-muted"></i>
+      <h4 class="mt-3 text-muted">Không có dữ liệu điểm</h4>
+      <p class="text-muted">Chưa có điểm số nào cho lớp được chọn.</p>
+    </div>
+  </div>
+
+  <!-- Edit Score Modal -->
+  <div *ngIf="editingScore" class="modal d-block" style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">
+            <i class="bi bi-pencil-square"></i> Chỉnh sửa điểm số
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="student-info bg-light rounded p-3 mb-4">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-person-circle text-primary me-2"></i>
+                  <span class="fw-semibold">{{ editingScore.studentName }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-center mb-2">
+                  <i class="bi bi-building text-info me-2"></i>
+                  <span>{{ editingScore.classCode }}</span>
+                  <span class="mx-2">-</span>
+                  <span class="text-primary">{{ editingScore.subjectName }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-4">
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-clipboard-check text-warning"></i> Điểm giữa kỳ
+              </label>
+              <input 
+                type="number" 
+                class="form-control form-control-lg text-center" 
+                [(ngModel)]="editingScore.midterm"
+                min="0"
+                max="10"
+                step="0.1"
+                placeholder="0.0"
+              />
+              <small class="text-muted">Thang điểm: 0 - 10</small>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-clipboard2-check text-danger"></i> Điểm cuối kỳ
+              </label>
+              <input 
+                type="number" 
+                class="form-control form-control-lg text-center" 
+                [(ngModel)]="editingScore.final"
+                min="0"
+                max="10"
+                step="0.1"
+                placeholder="0.0"
+              />
+              <small class="text-muted">Thang điểm: 0 - 10</small>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">
+                <i class="bi bi-plus-circle text-success"></i> Điểm khác
+              </label>
+              <input 
+                type="number" 
+                class="form-control form-control-lg text-center" 
+                [(ngModel)]="editingScore.other"
+                min="0"
+                max="10"
+                step="0.1"
+                placeholder="0.0"
+              />
+              <small class="text-muted">Thang điểm: 0 - 10</small>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button class="btn btn-secondary" (click)="cancelEdit()">
+            <i class="bi bi-x-circle"></i> Hủy bỏ
+          </button>
+          <button class="btn btn-primary" (click)="saveScore()">
+            <i class="bi bi-check-circle"></i> Lưu thay đổi
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
+
+<style>
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+}
+
+.modal {
+  z-index: 1050;
+}
+
+.student-info {
+  border-left: 4px solid #0d6efd;
+}
+
+.table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge {
+  font-size: 0.8em;
+}
+</style>

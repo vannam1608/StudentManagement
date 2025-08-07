@@ -15,6 +15,6 @@ namespace StudentManagementAPI.Interfaces.Services
         Task<IEnumerable<ScoreDto>> GetScoresByTeacherIdAsync(int teacherId);
         Task<PaginatedResult<ScoreDto>> GetPagedAsync(int page, int pageSize, string? studentCode, string? classCode);
 
-
+        Task<IEnumerable<SemesterScoreDto>> GetScoresGroupedBySemesterAsync(int studentId);
     }
 }

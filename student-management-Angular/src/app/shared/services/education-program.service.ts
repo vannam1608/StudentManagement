@@ -17,7 +17,8 @@ export class EducationProgramService {
     return this.http.post(this.apiUrl, data);
   }
 
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
-  }
+  delete(id: number): Observable<{ message: string }> {
+  return this.http.delete<{ message: string }>(`${this.apiUrl}/${id}`);
+}
+
 }

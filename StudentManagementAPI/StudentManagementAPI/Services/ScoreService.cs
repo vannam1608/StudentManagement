@@ -184,5 +184,39 @@ namespace StudentManagementAPI.Services
         }
 
 
+
+
+            public async Task<IEnumerable<SemesterScoreDto>> GetScoresGroupedBySemesterAsync(int studentId)
+            {
+                var scores = await _scoreRepository.GetByStudentIdAsync(studentId);
+
+                foreach (var score in scores)
+                    score.CalculateTotal();
+
+                var grouped = scores
+                    .GroupBy(s => s.Enrollment.CourseClass.Semester.Name) // Giả định bạn muốn group theo Semester.Name
+                    .Select(g => new SemesterScoreDto
+                    {
+                        SemesterName = g.Key,
+                        Scores = g.Select(score => new ScoreDto
+                        {
+                            Id = score.Id,
+                            EnrollmentId = score.EnrollmentId,
+                            StudentCode = score.Enrollment.Student.StudentCode,
+                            FullName = score.Enrollment.Student.User.FullName,
+                            Midterm = score.Midterm,
+                            Final = score.Final,
+                            Other = score.Other,
+                            Total = score.Total,
+                            SubjectName = score.Enrollment.CourseClass.Subject?.Name ?? string.Empty,
+                            ClassCode = score.Enrollment.CourseClass.ClassCode
+                        }).ToList()
+                    });
+
+                return grouped;
+            }
+
+
+
     }
 }

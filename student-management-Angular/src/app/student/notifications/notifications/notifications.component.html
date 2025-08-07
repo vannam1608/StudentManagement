@@ -1,30 +1,154 @@
-<div class="container mt-4">
-  <h4 class="mb-3">📢 Thông báo</h4>
-
-  <!-- Debug info -->
-  <div class="alert alert-info mb-3" *ngIf="userRole">
-    <small>Debug: Bạn đang đăng nhập với role: <strong>{{ userRole }}</strong></small>
+<!-- Notifications Container -->
+<div class="notifications-container">
+  <!-- Header Section -->
+  <div class="notifications-header">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h3 class="page-title mb-1">
+          <i class="bi bi-bell-fill me-2"></i>
+          Thông báo của tôi
+        </h3>
+        <p class="text-muted mb-0">Xem các thông báo và tin tức mới nhất từ trường</p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <div class="notification-stats">
+          <span class="badge bg-primary-soft text-primary">
+            <i class="bi bi-envelope me-1"></i>
+            {{ notifications.length }} thông báo
+          </span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="loading" class="text-muted">
-    <div class="spinner-border spinner-border-sm me-2"></div>
-    Đang tải dữ liệu...
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p class="text-muted mt-3">Đang tải thông báo...</p>
   </div>
 
-  <div *ngIf="!loading && notifications.length === 0" class="alert alert-warning">
-    <i class="bi bi-exclamation-triangle"></i>
-    Không có thông báo nào dành cho sinh viên.
+  <!-- Empty State -->
+  <div *ngIf="!loading && notifications.length === 0" class="empty-state text-center py-5">
+    <div class="empty-icon mb-3">
+      <i class="bi bi-bell-slash text-muted" style="font-size: 4rem;"></i>
+    </div>
+    <h5 class="text-muted">Chưa có thông báo nào</h5>
+    <p class="text-muted">Bạn chưa có thông báo mới. Hãy kiểm tra lại sau!</p>
+    <button class="btn btn-outline-primary" (click)="refreshNotifications()">
+      <i class="bi bi-arrow-clockwise me-2"></i>
+      Làm mới
+    </button>
   </div>
 
-  <div *ngFor="let n of notifications" class="card mb-3 shadow-sm">
-    <div class="card-body">
-      <h5 class="card-title text-primary">{{ n.title }}</h5>
-      <h6 class="card-subtitle mb-2 text-muted">
-        <i class="bi bi-person"></i> {{ n.creatorName }} - 
-        <i class="bi bi-calendar"></i> {{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }} -
-        <span class="badge bg-secondary">{{ n.targetRole }}</span>
-      </h6>
-      <p class="card-text" style="white-space: pre-line;">{{ n.content }}</p>
+  <!-- Notifications List -->
+  <div *ngIf="!loading && notifications.length > 0" class="notifications-list">
+    <!-- Notifications Cards -->
+    <div class="notifications-grid">
+      <div *ngFor="let n of notifications; let i = index" 
+           class="notification-card" 
+           [class.unread]="!n.isRead"
+           [class.important]="n.isImportant"
+           (click)="markAsRead(n)">
+        
+        <!-- Card Header -->
+        <div class="card-header">
+          <div class="row align-items-center">
+            <div class="col">
+              <div class="notification-meta">
+                <span class="creator-info">
+                  <div class="creator-avatar">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="creator-details">
+                    <div class="creator-name">{{ n.creatorName || 'Hệ thống' }}</div>
+                    <div class="creator-role">
+                      <span class="badge" [class]="getRoleBadgeClass(n.targetRole)">
+                        {{ getRoleText(n.targetRole) }}
+                      </span>
+                    </div>
+                  </div>
+                </span>
+              </div>
+            </div>
+            <div class="col-auto">
+              <div class="notification-status">
+                <div class="notification-time">
+                  <i class="bi bi-clock me-1"></i>
+                  {{ getTimeAgo(n.createdAt) }}
+                </div>
+                <div class="notification-badges">
+                  <span *ngIf="!n.isRead" class="status-badge unread">
+                    <i class="bi bi-circle-fill"></i>
+                  </span>
+                  <span *ngIf="n.isImportant" class="status-badge important">
+                    <i class="bi bi-star-fill"></i>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <h5 class="notification-title">
+            <i [class]="getNotificationIcon(n.type)" class="me-2"></i>
+            {{ n.title }}
+          </h5>
+          <div class="notification-content">
+            <p class="content-text">{{ getPreviewText(n.content) }}</p>
+            <div *ngIf="n.content.length > 150" class="content-actions">
+              <button 
+                class="btn btn-link btn-sm p-0" 
+                (click)="$event.stopPropagation(); toggleExpanded(n)">
+                {{ n.isExpanded ? 'Thu gọn' : 'Xem thêm' }}
+              </button>
+            </div>
+            <div *ngIf="n.isExpanded" class="content-full mt-2">
+              <p class="mb-0" style="white-space: pre-line;">{{ n.content }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <div class="row align-items-center">
+            <div class="col">
+              <div class="notification-actions">
+                <button 
+                  class="action-btn" 
+                  (click)="$event.stopPropagation(); toggleFavorite(n)"
+                  [class.active]="n.isFavorite">
+                  <i class="bi" [class.bi-star]="!n.isFavorite" [class.bi-star-fill]="n.isFavorite"></i>
+                  <span>{{ n.isFavorite ? 'Đã lưu' : 'Lưu' }}</span>
+                </button>
+                <button 
+                  class="action-btn" 
+                  (click)="$event.stopPropagation(); shareNotification(n)">
+                  <i class="bi bi-share"></i>
+                  <span>Chia sẻ</span>
+                </button>
+              </div>
+            </div>
+            <div class="col-auto">
+              <div class="notification-date">
+                <i class="bi bi-calendar3 me-1"></i>
+                {{ n.createdAt | date: 'dd/MM/yyyy' }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Load More -->
+    <div *ngIf="hasMoreNotifications" class="load-more-section text-center mt-4">
+      <button class="btn btn-outline-primary" (click)="loadMoreNotifications()">
+        <i class="bi bi-arrow-down-circle me-2"></i>
+        Tải thêm thông báo
+      </button>
     </div>
   </div>
 </div>

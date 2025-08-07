@@ -4,19 +4,15 @@
   <!-- Bộ lọc -->
   <div class="row mb-3">
     <div class="col-md-4">
-      <label for="studentFilter">🎓 Sinh viên:</label>
-      <select
-  id="studentFilter"
-  class="form-control"
-  [(ngModel)]="selectedStudentId"
-  (change)="onStudentChange()"
->
-  <option [ngValue]="null">-- Tất cả sinh viên --</option>
-  <option *ngFor="let student of students" [ngValue]="student.studentCode">
-    {{ student.studentCode }} - {{ student.fullName }}
-  </option>
-</select>
-
+      <label for="studentFilter">🎓 Mã sinh viên:</label>
+      <input
+        type="text"
+        id="studentFilter"
+        class="form-control"
+        placeholder="Nhập mã sinh viên..."
+        [(ngModel)]="studentCodeFilter"
+        (input)="onStudentCodeChange()"
+      />
     </div>
 
     <div class="col-md-4">

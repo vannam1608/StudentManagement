@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './teacher-update.component.html',
-  styleUrls: ['./teacher-update.component.scss'] // ❗ Sửa lại: styleUrls (số nhiều)
+  styleUrls: ['./teacher-update.component.scss']
 })
 export class TeacherUpdateComponent implements OnInit {
   form!: FormGroup;

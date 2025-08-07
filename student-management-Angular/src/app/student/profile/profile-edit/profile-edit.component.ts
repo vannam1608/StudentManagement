@@ -31,9 +31,9 @@ export class ProfileEditComponent implements OnInit {
         this.form = this.fb.group({
           fullName: [data.fullName, [Validators.required]],
           email: [data.email, [Validators.required, Validators.email]],
-          gender: [data.gender, [Validators.required]],
-          dateOfBirth: [new Date(data.dateOfBirth), [Validators.required]],
-          phone: [data.phone, [Validators.required]],
+          gender: [data.gender],
+          dateOfBirth: [new Date(data.dateOfBirth).toISOString().split('T')[0]],
+          phone: [data.phone]
         });
         this.loading = false;
       },
@@ -45,36 +45,51 @@ export class ProfileEditComponent implements OnInit {
   }
 
   onSubmit(): void {
-  if (this.form.invalid || !this.student) return;
+    if (this.form.invalid || !this.student) return;
 
-  this.saving = true;
+    this.saving = true;
 
-  const updatedStudent: UpdateStudentDto = {
-    studentCode: this.student.studentCode,
-    fullName: this.form.value.fullName,
-    email: this.form.value.email,
-    phone: this.form.value.phone,
-    gender: this.form.value.gender,
-    dateOfBirth: new Date(this.form.value.dateOfBirth).toISOString(), // 💡 Fix here
-    departmentId: this.student.departmentId ?? 1,
-    programId: this.student.programId ?? 2
-  };
+    const updatedStudent: UpdateStudentDto = {
+      studentCode: this.student.studentCode,
+      fullName: this.form.value.fullName,
+      email: this.form.value.email,
+      phone: this.form.value.phone,
+      gender: this.form.value.gender,
+      dateOfBirth: new Date(this.form.value.dateOfBirth).toISOString(),
+      departmentId: this.student.departmentId ?? 1,
+      programId: this.student.programId ?? 2
+    };
 
-  console.log('📦 Dữ liệu gửi lên:', JSON.stringify(updatedStudent, null, 2));
+    console.log('📦 Dữ liệu gửi lên:', JSON.stringify(updatedStudent, null, 2));
 
-  this.studentService.updateProfile(updatedStudent).subscribe({
-    next: () => {
-      this.router.navigate(['/student/user-info'], {
-        state: { updated: true }
+    this.studentService.updateProfile(updatedStudent).subscribe({
+      next: () => {
+        this.router.navigate(['/student/user-info'], {
+          state: { updated: true }
+        });
+        this.saving = false;
+      },
+      error: (err) => {
+        console.error('❌ Lỗi cập nhật thông tin:', err);
+        console.log('Chi tiết lỗi:', err.error);
+        this.saving = false;
+      }
+    });
+  }
+
+  // ✅ Reset form to original values
+  resetForm(): void {
+    if (this.student) {
+      this.form.patchValue({
+        fullName: this.student.fullName,
+        email: this.student.email,
+        gender: this.student.gender,
+        dateOfBirth: new Date(this.student.dateOfBirth).toISOString().split('T')[0],
+        phone: this.student.phone
       });
-      this.saving = false;
-    },
-    error: (err) => {
-      console.error('❌ Lỗi cập nhật thông tin:', err);
-      console.log('Chi tiết lỗi:', err.error);
-      this.saving = false;
+      this.form.markAsUntouched();
+      this.form.markAsPristine();
     }
-  });
-}
+  }
 
 }

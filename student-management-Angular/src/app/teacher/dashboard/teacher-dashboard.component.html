@@ -1,16 +1,79 @@
-<div class="container mt-4">
-  <h2>🎓 Trang chủ giáo viên</h2>
-  <p>Chào mừng bạn đến với hệ thống quản lý lớp học.</p>
+<div class="container-fluid py-4">
+  <!-- Header -->
+  <div class="text-center mb-5">
+    <h1 class="display-4 text-primary mb-3">
+      <i class="bi bi-mortarboard me-3"></i>
+      Dashboard Giáo viên
+    </h1>
+    <p class="lead text-muted">Quản lý giảng dạy và đánh giá sinh viên</p>
+  </div>
 
-  <div class="row mt-4">
-    <div class="col-md-4">
-      <a routerLink="/teacher/my-classes" class="btn btn-primary w-100 mb-3">
-        📘 Quản lý lớp học
-      </a>
+  <!-- Main Cards -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow">
+        <div class="card-body p-4 text-center">
+          <div class="mb-4">
+            <i class="bi bi-journal-bookmark display-1 text-primary"></i>
+          </div>
+          <h3 class="card-title text-primary mb-3">Quản lý lớp học</h3>
+          <p class="text-muted mb-4">Xem và quản lý các lớp học được phân công</p>
+          <a routerLink="/teacher/my-classes" class="btn btn-primary btn-lg px-5">
+            <i class="bi bi-arrow-right me-2"></i>
+            Vào quản lý lớp
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="col-md-4">
-      <a routerLink="/teacher/my-scores" class="btn btn-success w-100 mb-3">
-        📝 Nhập điểm sinh viên
-      </a>
+
+    <div class="col-lg-6">
+      <div class="card h-100 border-0 shadow">
+        <div class="card-body p-4 text-center">
+          <div class="mb-4">
+            <i class="bi bi-clipboard-data display-1 text-success"></i>
+          </div>
+          <h3 class="card-title text-success mb-3">Nhập điểm số</h3>
+          <p class="text-muted mb-4">Nhập và chỉnh sửa điểm số cho sinh viên</p>
+          <a routerLink="/teacher/my-scores" class="btn btn-success btn-lg px-5">
+            <i class="bi bi-arrow-right me-2"></i>
+            Vào nhập điểm
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card border-0 bg-light">
+        <div class="card-body">
+          <h5 class="mb-4">
+            <i class="bi bi-lightning text-warning me-2"></i>
+            Truy cập nhanh
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <a routerLink="/teacher/profile" class="btn btn-outline-primary w-100">
+                <i class="bi bi-person-circle me-2"></i>
+                Hồ sơ cá nhân
+              </a>
+            </div>
+            <div class="col-md-4">
+              <a routerLink="/teacher/my-classes" class="btn btn-outline-info w-100">
+                <i class="bi bi-calendar-week me-2"></i>
+                Lịch giảng dạy
+              </a>
+            </div>
+            <div class="col-md-4">
+              <a routerLink="/teacher/my-scores" class="btn btn-outline-success w-100">
+                <i class="bi bi-graph-up me-2"></i>
+                Xem điểm số
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

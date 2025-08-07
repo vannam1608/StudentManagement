@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { jwtDecode } from 'jwt-decode'; // Nhớ đã cài: `npm install jwt-decode`
 
 @Component({
   selector: 'app-my-classes',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './my-classes.component.html',
   styleUrls: ['./my-classes.component.scss']
 })
@@ -54,5 +55,25 @@ export class MyClassesComponent implements OnInit {
       this.error = 'Token không hợp lệ.';
       this.loading = false;
     }
+  }
+
+  // Utility methods for UI
+  getHeaderClass(index: number): string {
+    const classes = ['bg-primary', 'bg-success', 'bg-info', 'bg-warning', 'bg-danger', 'bg-secondary'];
+    return classes[index % classes.length];
+  }
+
+  getUniqueSemesters(): string[] {
+    const semesters = this.classes.map(cls => cls.semesterName).filter(s => s);
+    return [...new Set(semesters)];
+  }
+
+  getUniqueSubjects(): string[] {
+    const subjects = this.classes.map(cls => cls.subjectName).filter(s => s);
+    return [...new Set(subjects)];
+  }
+
+  getTotalStudents(): number {
+    return this.classes.reduce((total, cls) => total + (cls.studentCount || 0), 0);
   }
 }

@@ -99,7 +99,7 @@
     "subject:view_self",
     "subject:register",
     "subject:view_available",
-    
+
 
     "courseclass:view_self",
     "courseclass:view_by_subject",
@@ -107,6 +107,8 @@
 
     "schedule:view_self",
     "score:view_self",
+
+    "score:view_by_student",
     "notification:view",
 
     "semester:view"

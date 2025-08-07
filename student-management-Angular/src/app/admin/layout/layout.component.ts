@@ -27,7 +27,7 @@ export class LayoutComponent {
     { link: '/admin/semesters', icon: 'bi-calendar-range-fill', label: 'Học kỳ' },
     { link: '/admin/programs', icon: 'bi-diagram-3-fill', label: 'CT Đào tạo' },
     { link: '/admin/departments', icon: 'bi-building', label: 'Khoa' },
-    { link: '/admin/enrollments', icon: 'bi-file-earmark-check-fill', label: 'Đăng ký học phần' }
+    { link: '/admin/enrollments', icon: 'bi-file-earmark-check-fill', label: 'Học phần đang giảng dạy' }
   ];
 
   constructor(private authService: AuthService, private router: Router) {

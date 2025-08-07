@@ -1,26 +1,104 @@
-<div class="card">
-  <div class="card-body">
-    <h3 class="card-title">Chào mừng bạn đến hệ thống sinh viên!</h3>
-    <p class="card-text">
-      Tại đây bạn có thể theo dõi thông tin cá nhân, đăng ký môn học, xem lịch học và xem kết quả học tập của mình.
-    </p>
-
-    <div class="row mt-4">
-      <div class="col-md-6 mb-3">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Thông tin cá nhân</h5>
-            <p class="card-text">Xem và chỉnh sửa hồ sơ cá nhân.</p>
-            <a routerLink="/student/user-info" class="btn btn-primary">Xem chi tiết</a>
+<!-- Student Dashboard -->
+<div class="dashboard-wrapper">
+  <!-- Main Content -->
+  <div class="dashboard-content">
+    <div class="container">
+      <div class="row g-4 justify-content-center">
+        <!-- Row 1: Main Features -->
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-profile" routerLink="/student/user-info">
+            <div class="card-icon">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Thông tin cá nhân</h5>
+              <p class="card-description">Xem và chỉnh sửa hồ sơ cá nhân của bạn</p>
+              <div class="card-action">
+                <span class="action-text">Xem chi tiết</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-md-6 mb-3">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">Đăng ký môn học</h5>
-            <p class="card-text">Chọn môn học cho học kỳ hiện tại.</p>
-            <a routerLink="/student/subjects" class="btn btn-primary">Đăng ký ngay</a>
+
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-subjects" routerLink="/student/subjects">
+            <div class="card-icon">
+              <i class="bi bi-journal-plus"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Đăng ký môn học</h5>
+              <p class="card-description">Chọn và đăng ký môn học cho học kỳ hiện tại</p>
+              <div class="card-action">
+                <span class="action-text">Đăng ký ngay</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-schedule" routerLink="/student/schedule">
+            <div class="card-icon">
+              <i class="bi bi-calendar-week-fill"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Lịch học</h5>
+              <p class="card-description">Xem lịch học theo tuần và theo học kỳ</p>
+              <div class="card-action">
+                <span class="action-text">Xem lịch học</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Additional Features -->
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-scores" routerLink="/student/scores">
+            <div class="card-icon">
+              <i class="bi bi-bar-chart-fill"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Kết quả học tập</h5>
+              <p class="card-description">Xem điểm số và thành tích học tập</p>
+              <div class="card-action">
+                <span class="action-text">Xem điểm</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-notifications" routerLink="/student/notifications">
+            <div class="card-icon">
+              <i class="bi bi-bell-fill"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Thông báo</h5>
+              <p class="card-description">Xem các thông báo và tin tức từ nhà trường</p>
+              <div class="card-action">
+                <span class="action-text">Xem thông báo</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-6 col-md-6">
+          <div class="feature-card card-edit" routerLink="/student/profile-edit">
+            <div class="card-icon">
+              <i class="bi bi-pencil-square"></i>
+            </div>
+            <div class="card-content">
+              <h5 class="card-title">Chỉnh sửa hồ sơ</h5>
+              <p class="card-description">Cập nhật thông tin và ảnh đại diện</p>
+              <div class="card-action">
+                <span class="action-text">Chỉnh sửa</span>
+                <i class="bi bi-arrow-right"></i>
+              </div>
+            </div>
           </div>
         </div>
       </div>

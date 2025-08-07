@@ -1,4 +1,5 @@
-﻿using FluentValidation.AspNetCore;
+﻿using AspNetCoreRateLimit;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,8 @@ using StudentManagementAPI.Repositories;
 using StudentManagementAPI.Services;
 using StudentManagementAPI.Shared;
 using StudentManagementAPI.Shared.Middlewares;
-using System.Text;
 using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -156,6 +157,14 @@ builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 #endregion
 
 var app = builder.Build();
+
+
+// Add Rate Limiting
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+builder.Services.AddInMemoryRateLimiting();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
 
 #region 12. Configure HTTP Request Pipeline
 app.UseSwagger();

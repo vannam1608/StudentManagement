@@ -59,7 +59,7 @@ namespace StudentManagementAPI.Shared
 
             // ✅ Enrollment
             CreateMap<Enrollment, EnrollmentDto>()
-                .ForMember(dest => dest.StudentCode, opt => opt.MapFrom(src => src.Student.User.Username))
+                .ForMember(dest => dest.StudentCode, opt => opt.MapFrom(src => src.Student.StudentCode)) 
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Student.User.FullName))
                 .ForMember(dest => dest.ClassCode, opt => opt.MapFrom(src => src.CourseClass.ClassCode))
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.CourseClass.Subject.Name))

@@ -141,6 +141,17 @@ namespace StudentManagementAPI.Controllers
         }
 
 
+        /// <summary>Lấy điểm của sinh viên và nhóm theo học kỳ</summary>
+        [HttpGet("grouped-by-semester/{studentId}")]    
+        [Authorize(Policy = "score:view_by_student")]
+        [ProducesResponseType(typeof(Dictionary<string, List<ScoreDto>>), 200)]
+        public async Task<IActionResult> GetScoresGroupedBySemester(int studentId)
+        {
+            var groupedScores = await _scoreService.GetScoresGroupedBySemesterAsync(studentId);
+            return Ok(groupedScores);
+        }
+
+
 
     }
 }

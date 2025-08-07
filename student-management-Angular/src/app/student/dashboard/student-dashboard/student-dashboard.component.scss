@@ -1,0 +1,263 @@
+// Student Dashboard Styles
+.dashboard-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  margin: -1.5rem;
+  padding: 2rem 0;
+
+  @media (max-width: 768px) {
+    margin: -1rem;
+    padding: 1.5rem 0;
+  }
+
+  @media (max-width: 576px) {
+    margin: -0.5rem;
+    padding: 1rem 0;
+  }
+}
+
+// Dashboard Content
+.dashboard-content {
+  padding: 2rem 0;
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 1rem 0;
+  }
+}
+
+// Feature Cards
+.feature-card {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+    &::before {
+      opacity: 0.1;
+    }
+
+    .card-icon {
+      transform: scale(1.1);
+    }
+
+    .action-text {
+      color: white;
+    }
+
+    i.bi-arrow-right {
+      transform: translateX(5px);
+    }
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+
+    i {
+      font-size: 1.8rem;
+      color: white;
+    }
+  }
+
+  .card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 1rem;
+    }
+
+    .card-description {
+      color: #6c757d;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+      flex: 1;
+    }
+
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .action-text {
+        font-weight: 600;
+        color: #495057;
+        transition: color 0.3s ease;
+      }
+
+      i {
+        color: #667eea;
+        transition: transform 0.3s ease;
+      }
+    }
+  }
+
+  // Individual card themes
+  &.card-profile {
+    .card-icon {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+  }
+
+  &.card-subjects {
+    .card-icon {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+  }
+
+  &.card-schedule {
+    .card-icon {
+      background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #00c9ff 0%, #92fe9d 100%);
+    }
+  }
+
+  &.card-scores {
+    .card-icon {
+      background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #fc466b 0%, #3f5efb 100%);
+    }
+  }
+
+  &.card-notifications {
+    .card-icon {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    }
+  }
+
+  &.card-edit {
+    .card-icon {
+      background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    }
+    &::before {
+      background: linear-gradient(135deg, #2c3e50 0%, #4ca1af 100%);
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem;
+
+    .card-icon {
+      width: 50px;
+      height: 50px;
+
+      i {
+        font-size: 1.5rem;
+      }
+    }
+
+    .card-content .card-title {
+      font-size: 1.1rem;
+    }
+
+    .card-content .card-description {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+// Responsive Grid
+@media (max-width: 1200px) {
+  .col-xl-4 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .col-lg-6 {
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  .feature-card {
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard-content {
+    padding: 0.5rem;
+  }
+}
+
+// Animation for cards
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feature-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+// Stagger animation for cards
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+.feature-card:nth-child(4) { animation-delay: 0.4s; }
+.feature-card:nth-child(5) { animation-delay: 0.5s; }
+.feature-card:nth-child(6) { animation-delay: 0.6s; }

@@ -1,57 +1,234 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!loading">
-  <!-- Mã sinh viên (readonly) -->
-  <div class="mb-3">
-    <label class="form-label">Mã sinh viên</label>
-    <input class="form-control" [value]="student?.studentCode" disabled />
+<!-- Loading State -->
+<div *ngIf="loading" class="loading-container text-center py-5">
+  <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+    <span class="visually-hidden">Đang tải...</span>
+  </div>
+  <p class="text-muted mt-3">Đang tải thông tin sinh viên...</p>
+</div>
+
+<!-- Profile Edit Form -->
+<div *ngIf="!loading" class="profile-edit-container">
+  <!-- Header Section -->
+  <div class="edit-header mb-4">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h3 class="page-title mb-1">
+          <i class="bi bi-pencil-square me-2 text-primary"></i>
+          Chỉnh sửa thông tin cá nhân
+        </h3>
+        <p class="text-muted mb-0">Cập nhật thông tin cá nhân của bạn</p>
+      </div>
+      <div class="col-md-4 text-md-end">
+        <a class="btn btn-outline-secondary" routerLink="/student/user-info">
+          <i class="bi bi-arrow-left me-2"></i>
+          Quay lại
+        </a>
+      </div>
+    </div>
   </div>
 
-  <!-- Khoa -->
-  <div class="mb-3">
-    <label class="form-label">Khoa</label>
-    <input class="form-control" [value]="student?.departmentName" disabled />
-  </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="row g-4">
+      <!-- Left Column - Read-only Information -->
+      <div class="col-lg-4">
+        <div class="info-card readonly-info">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-shield-lock me-2 text-warning"></i>
+              Thông tin hệ thống
+            </h5>
+            <small class="text-muted">Không thể chỉnh sửa</small>
+          </div>
+          <div class="card-body">
+            <!-- Avatar Section -->
+            <div class="avatar-section text-center mb-4">
+              <div class="avatar-circle-large mx-auto">
+                <i class="bi bi-person-fill"></i>
+              </div>
+              <button type="button" class="btn btn-sm btn-outline-primary mt-2">
+                <i class="bi bi-camera me-1"></i>
+                Đổi ảnh
+              </button>
+            </div>
 
-  <!-- Chương trình -->
-  <div class="mb-3">
-    <label class="form-label">Chương trình</label>
-    <input class="form-control" [value]="student?.programName" disabled />
-  </div>
+            <!-- System Info -->
+            <div class="readonly-fields">
+              <div class="field-group">
+                <label class="field-label">
+                  <i class="bi bi-card-text"></i>
+                  Mã sinh viên
+                </label>
+                <div class="field-value">
+                  <span class="badge bg-primary-soft text-primary">
+                    {{ student?.studentCode || student?.id }}
+                  </span>
+                </div>
+              </div>
 
-  <!-- Họ tên -->
-  <div class="mb-3">
-    <label class="form-label">Họ và tên</label>
-    <input class="form-control" formControlName="fullName" />
-  </div>
+              <div class="field-group">
+                <label class="field-label">
+                  <i class="bi bi-building"></i>
+                  Khoa
+                </label>
+                <div class="field-value">
+                  {{ student?.departmentName || 'Chưa xác định' }}
+                </div>
+              </div>
 
-  <!-- Email -->
-  <div class="mb-3">
-    <label class="form-label">Email</label>
-    <input class="form-control" formControlName="email" />
-  </div>
+              <div class="field-group">
+                <label class="field-label">
+                  <i class="bi bi-journal-bookmark"></i>
+                  Chương trình đào tạo
+                </label>
+                <div class="field-value">
+                  {{ student?.programName || 'Chưa xác định' }}
+                </div>
+              </div>
 
-  <!-- Giới tính -->
-  <div class="mb-3">
-    <label class="form-label">Giới tính</label>
-    <select class="form-select" formControlName="gender">
-      <option value="Nam">Nam</option>
-      <option value="Nữ">Nữ</option>
-      <option value="Khác">Khác</option>
-    </select>
-  </div>
+              <div class="field-group">
+                <label class="field-label">
+                  <i class="bi bi-calendar-range"></i>
+                  Năm học
+                </label>
+                <div class="field-value">
+                  <span class="badge bg-info-soft text-info">
+                    2024-2025
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-  <!-- Ngày sinh -->
-  <div class="mb-3">
-    <label class="form-label">Ngày sinh</label>
-    <input type="date" class="form-control" formControlName="dateOfBirth" />
-  </div>
+      <!-- Right Column - Editable Information -->
+      <div class="col-lg-8">
+        <div class="info-card editable-info">
+          <div class="card-header">
+            <h5 class="card-title mb-0">
+              <i class="bi bi-person-lines-fill me-2 text-success"></i>
+              Thông tin cá nhân
+            </h5>
+            <small class="text-muted">Có thể chỉnh sửa</small>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <!-- Họ tên -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="fullName"
+                    formControlName="fullName"
+                    placeholder="Nhập họ và tên">
+                  <label for="fullName">
+                    <i class="bi bi-person-fill me-2"></i>
+                    Họ và tên *
+                  </label>
+                  <div *ngIf="form.get('fullName')?.invalid && form.get('fullName')?.touched" class="invalid-feedback d-block">
+                    Vui lòng nhập họ và tên
+                  </div>
+                </div>
+              </div>
 
-  <!-- Điện thoại -->
-  <div class="mb-3">
-    <label class="form-label">Số điện thoại</label>
-    <input class="form-control" formControlName="phone" />
-  </div>
+              <!-- Email -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input 
+                    type="email" 
+                    class="form-control" 
+                    id="email"
+                    formControlName="email"
+                    placeholder="Nhập email">
+                  <label for="email">
+                    <i class="bi bi-envelope-fill me-2"></i>
+                    Email *
+                  </label>
+                  <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="invalid-feedback d-block">
+                    Vui lòng nhập email hợp lệ
+                  </div>
+                </div>
+              </div>
 
-  <button type="submit" class="btn btn-primary" [disabled]="form.invalid || saving">
-    {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
-  </button>
-</form>
+              <!-- Giới tính -->
+              <div class="col-md-6">
+                <label class="form-label mb-2">
+                  <i class="bi bi-gender-ambiguous me-2"></i>
+                  Giới tính
+                </label>
+                <select class="form-select" formControlName="gender">
+                  <option value="">-- Chọn giới tính --</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
+                </select>
+              </div>
+
+              <!-- Ngày sinh -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input 
+                    type="date" 
+                    class="form-control" 
+                    id="dateOfBirth"
+                    formControlName="dateOfBirth">
+                  <label for="dateOfBirth">
+                    <i class="bi bi-calendar-event me-2"></i>
+                    Ngày sinh
+                  </label>
+                </div>
+              </div>
+
+              <!-- Số điện thoại -->
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <input 
+                    type="tel" 
+                    class="form-control" 
+                    id="phone"
+                    formControlName="phone"
+                    placeholder="Nhập số điện thoại">
+                  <label for="phone">
+                    <i class="bi bi-telephone-fill me-2"></i>
+                    Số điện thoại
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions mt-4">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-info">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    <small class="text-muted">
+                      Các trường có dấu (*) là bắt buộc
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-outline-secondary me-2"
+                    (click)="resetForm()">
+                    <i class="bi bi-arrow-clockwise me-2"></i>
+                    Đặt lại
+                  </button>
+                  <button 
+                    type="submit" 
+                    class="btn btn-primary"
+                    [disabled]="form.invalid || saving">
+                    <i class="bi bi-check-circle me-2"></i>
+                    {{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

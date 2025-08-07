@@ -146,6 +146,10 @@ export class SubjectRegisterComponent implements OnInit {
     return this.registeredSubjectIds.includes(subjectId);
   }
 
+  getTotalSubjects(): number {
+    return this.availableSubjects.length;
+  }
+
   get isCurrentSemesterOpen(): boolean {
     const selected = this.semesters.find(s => s.id === this.selectedSemester);
     return !!selected?.isOpen;

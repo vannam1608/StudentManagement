@@ -68,9 +68,11 @@ namespace StudentManagementAPI.Repositories
                         .ThenInclude(s => s.User)
                 .Include(s => s.Enrollment.CourseClass)
                     .ThenInclude(c => c.Subject)
+                .Include(s => s.Enrollment.CourseClass.Semester) 
                 .Where(s => s.Enrollment.StudentId == studentId)
                 .ToListAsync();
         }
+
 
         public async Task AddAsync(Score score)
         {
@@ -135,6 +137,19 @@ namespace StudentManagementAPI.Repositories
                 .ToListAsync();
 
             return (scores, totalItems);
+        }
+
+        public async Task<IEnumerable<Score>> GetWithSemesterByStudentIdAsync(int studentId)
+        {
+            return await _context.Scores
+                .Include(s => s.Enrollment)
+                    .ThenInclude(e => e.Student)
+                        .ThenInclude(st => st.User)
+                .Include(s => s.Enrollment.CourseClass)
+                    .ThenInclude(cc => cc.Subject)
+                .Include(s => s.Enrollment.CourseClass.Semester)
+                .Where(s => s.Enrollment.StudentId == studentId)
+                .ToListAsync();
         }
 
 
