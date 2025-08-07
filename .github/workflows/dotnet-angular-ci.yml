@@ -45,23 +45,20 @@ jobs:
 
     # 7. Install Angular frontend dependencies
     - name: 📦 Install frontend dependencies
-      working-directory: ./student-management-angular
-      run: npm install
+      working-directory: ./student-management-Angular
+      run: |
+        npm ci
 
-    # 8. Build Angular frontend
+    # 8. Build Angular frontend (Production)
     - name: 🛠️ Build frontend
-      working-directory: ./student-management-angular
-      run: npm run build -- --configuration production
+      working-directory: ./student-management-Angular
+      run: |
+        npm run build -- --configuration production
 
-    # 9. Upload artifacts
-    - name: 📤 Upload backend artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: backend-publish
-        path: ./publish/backend
-
+    # 9. Upload frontend artifact
     - name: 📤 Upload frontend artifact
       uses: actions/upload-artifact@v4
       with:
         name: frontend-dist
-        path: ./student-management-angular/dist
+        path: ./student-management-Angular/dist
+
