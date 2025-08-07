@@ -43,22 +43,22 @@ jobs:
     - name: 📦 Publish backend
       run: dotnet publish StudentManagementAPI/StudentManagementAPI/StudentManagementAPI.csproj -c Release -o ./publish/backend
 
-    # 7. Install Angular frontend dependencies
-    - name: 📦 Install frontend dependencies
-      working-directory: ./student-management-Angular
-      run: |
-        npm ci
+   # 7. Install Angular frontend dependencies
+- name: 📦 Install frontend dependencies
+  working-directory: ./student-management-Angular
+  run: |
+    npm install --legacy-peer-deps
 
-    # 8. Build Angular frontend (Production)
-    - name: 🛠️ Build frontend
-      working-directory: ./student-management-Angular
-      run: |
-        npm run build -- --configuration production
+# 8. Build Angular frontend (Production)
+- name: 🛠️ Build frontend
+  working-directory: ./student-management-Angular
+  run: |
+    npm run build --configuration production
 
-    # 9. Upload frontend artifact
-    - name: 📤 Upload frontend artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: frontend-dist
-        path: ./student-management-Angular/dist
+# 9. Upload frontend artifact
+- name: 📤 Upload frontend artifact
+  uses: actions/upload-artifact@v4
+  with:
+    name: frontend-dist
+    path: ./student-management-Angular/dist
 
