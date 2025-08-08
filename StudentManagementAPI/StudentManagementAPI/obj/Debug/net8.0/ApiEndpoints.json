@@ -1,6 +1,25 @@
 [
   {
     "ContainingType": "StudentManagementAPI.Controllers.AuthController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/auth/change-password",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "StudentManagementAPI.DTOs.Auth.ChangePasswordRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [],
+    "Tags": [
+      "\uD83D\uDEE1\uFE0F Auth - X\u00E1c th\u1EF1c"
+    ]
+  },
+  {
+    "ContainingType": "StudentManagementAPI.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
     "HttpMethod": "POST",

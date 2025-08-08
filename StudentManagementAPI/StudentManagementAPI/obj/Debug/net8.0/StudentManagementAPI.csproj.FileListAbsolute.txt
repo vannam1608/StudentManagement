@@ -329,3 +329,17 @@ C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\Stud
 C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\obj\Debug\net8.0\StudentManagementAPI.genruntimeconfig.cache
 C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\obj\Debug\net8.0\ref\StudentManagementAPI.dll
 C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Microsoft.Extensions.Configuration.Binder.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Abstractions.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.AspNetCore.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Extensions.Hosting.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Extensions.Logging.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Formatting.Compact.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Settings.Configuration.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Sinks.Console.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Sinks.Debug.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Sinks.File.dll
+C:\Users\phamv\OneDrive\Desktop\test\StudentManagement\StudentManagementAPI\StudentManagementAPI\bin\Debug\net8.0\Serilog.Sinks.Seq.dll

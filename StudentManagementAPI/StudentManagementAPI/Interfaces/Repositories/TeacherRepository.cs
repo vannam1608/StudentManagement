@@ -41,7 +41,7 @@ namespace StudentManagementAPI.Repositories
             var teacher = await _context.Teachers.FindAsync(id);
             if (teacher == null) return false;
             _context.Teachers.Remove(teacher);
-            return await _context.SaveChangesAsync() > 0;
+            return await _context.SaveChangesAsync() > 0;//Lưu thay đổi xuống database và kiểm tra kết quả
         }
 
         public async Task<IQueryable<Teacher>> GetQueryableAsync()

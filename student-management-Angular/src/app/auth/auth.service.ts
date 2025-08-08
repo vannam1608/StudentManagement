@@ -41,18 +41,26 @@ export class AuthService {
   }
 
   getUserId(): number {
-    const token = this.getToken();
-    if (!token) return 0;
+  const token = this.getToken();
+  if (!token) return 0;
 
-    try {
-      const payloadBase64 = token.split('.')[1];
-      const decodedPayload = JSON.parse(atob(payloadBase64));
-      return Number(decodedPayload?.nameid ?? 0); // ✅ Ưu tiên lấy từ nameid
-    } catch (err) {
-      console.error('❌ Lỗi giải mã token:', err);
-      return 0;
-    }
+  try {
+    const payloadBase64Url = token.split('.')[1];
+
+    // ✅ Chuyển từ base64url → base64 đúng chuẩn
+    const payloadBase64 = payloadBase64Url
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(payloadBase64Url.length + (4 - payloadBase64Url.length % 4) % 4, '=');
+
+    const decodedPayload = JSON.parse(atob(payloadBase64));
+    return Number(decodedPayload?.studentId ?? decodedPayload?.nameid ?? decodedPayload?.sub ?? 0);
+  } catch (err) {
+    console.error('❌ Lỗi giải mã token:', err);
+    return 0;
   }
+}
+
 
   getCurrentUser(): { fullName: string; role: string } | null {
     const fullName = localStorage.getItem('fullName');

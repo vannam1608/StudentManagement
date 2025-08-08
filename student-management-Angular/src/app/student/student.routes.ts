@@ -35,6 +35,11 @@ export const studentRoutes: Routes = [
         path: 'notifications',
         loadComponent: () =>
           import('./notifications/notifications/notifications.component').then(m => m.NotificationsComponent)
+      },
+
+      {
+        path: 'password/change-password',
+        loadComponent: () => import('./password/change-password.component').then(m => m.ChangePasswordComponent)
       }
     ]
   }

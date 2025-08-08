@@ -11,7 +11,8 @@
         class="form-control"
         placeholder="Nhập mã sinh viên..."
         [(ngModel)]="studentCodeFilter"
-        (input)="onStudentCodeChange()"
+        (ngModelChange)="onStudentCodeChange()"
+      />
       />
     </div>
 

@@ -3,10 +3,7 @@ using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.CourseClass;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
-using StudentManagementAPI.Models;
 using StudentManagementAPI.Models.Common;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace StudentManagementAPI.Services
 {

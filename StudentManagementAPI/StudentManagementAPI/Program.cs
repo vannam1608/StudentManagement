@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog; // ✅ Serilog
 using StudentManagementAPI.Authorization;
 using StudentManagementAPI.Data;
 using StudentManagementAPI.Interfaces.Repositories;
@@ -16,7 +17,19 @@ using StudentManagementAPI.Shared.Middlewares;
 using System.Security.Claims;
 using System.Text;
 
+// ✅ Serilog configuration
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    //.WriteTo.Seq("http://localhost:5341") // ✅ Uncomment nếu dùng SEQ
+    .Enrich.FromLogContext()
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+// ✅ Use Serilog for logging
+builder.Host.UseSerilog();
 
 #region 1. Add Controllers & FluentValidation
 builder.Services.AddControllers()
@@ -156,15 +169,13 @@ builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProv
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
 #endregion
 
-var app = builder.Build();
-
-
 // Add Rate Limiting
 builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
 builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
 builder.Services.AddInMemoryRateLimiting();
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
+var app = builder.Build();
 
 #region 12. Configure HTTP Request Pipeline
 app.UseSwagger();

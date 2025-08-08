@@ -45,10 +45,13 @@
               </a>
             </li>
             <li>
-              <a class="dropdown-item px-3 py-2" routerLink="/student/settings" (click)="closeDropdown()">
-                <i class="bi bi-gear me-2 text-secondary"></i>Cài đặt tài khoản
+              <a class="dropdown-item px-3 py-2 text-warning" 
+                routerLink="/student/password/change-password" 
+                (click)="closeDropdown()">
+                <i class="bi bi-key me-2"></i>Đổi mật khẩu
               </a>
             </li>
+
             <li><hr class="dropdown-divider"></li>
             <li>
               <button class="dropdown-item px-3 py-2 text-danger border-0 bg-transparent w-100 text-start" 
@@ -102,7 +105,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/student/scores" routerLinkActive="active">
+            <a class="nav-link" routerLink="/student/my-scores" routerLinkActive="active">
               <i class="bi bi-bar-chart-fill"></i>
               <span>Kết quả học tập</span>
             </a>
@@ -165,9 +168,10 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/student/scores" routerLinkActive="active">
+            <a class="nav-link" routerLink="/student/my-scores" routerLinkActive="active">
               <i class="bi bi-bar-chart-fill me-3"></i>Kết quả học tập
             </a>
+
           </li>
           <li class="nav-item">
             <a class="nav-link position-relative" routerLink="/student/notifications" routerLinkActive="active">

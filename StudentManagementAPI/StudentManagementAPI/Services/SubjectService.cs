@@ -96,10 +96,10 @@ namespace StudentManagementAPI.Services
         }
 
         public async Task<PaginatedResult<SubjectDto>> GetPagedAsync(
-    int page,
-    int pageSize,
-    string? keyword = null,
-    int? semesterId = null)
+            int page,
+            int pageSize,
+            string? keyword = null,
+            int? semesterId = null)
         {
             // Sanitize input
             page = page <= 0 ? 1 : page;

@@ -17,7 +17,6 @@ export const teacherRoutes: Routes = [
             m => m.TeacherProfileComponent
           )
       },
-
       {
         path: 'update',
         loadComponent: () =>
@@ -25,7 +24,6 @@ export const teacherRoutes: Routes = [
             m => m.TeacherUpdateComponent
           )
       },
-
       {
         path: 'my-classes',
         loadComponent: () =>
@@ -39,7 +37,15 @@ export const teacherRoutes: Routes = [
           import('./my-scores/my-scores/my-scores.component').then(
             m => m.MyScoresComponent
           )
+      },
+      {
+        path: 'change-password',
+        loadComponent: () =>
+          import('./change-pass/change-pass/change-pass.component').then(
+            m => m.ChangePassComponent
+          )
       }
     ]
   }
 ];
+
