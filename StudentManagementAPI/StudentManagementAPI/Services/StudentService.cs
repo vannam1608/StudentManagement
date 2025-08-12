@@ -160,6 +160,8 @@ namespace StudentManagementAPI.Services
                 Name = s.Name,
                 Description = s.Description ?? "",
                 Credit = s.Credit,
+                SemesterId = s.SemesterId,
+                SemesterName = s.SemesterName
             });
         }
 

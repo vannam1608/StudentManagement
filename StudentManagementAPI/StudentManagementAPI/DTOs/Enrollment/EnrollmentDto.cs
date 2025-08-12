@@ -13,11 +13,14 @@
 
         public DateTime EnrollDate { get; set; }
 
-        // ✅ Bổ sung để hỗ trợ hiển thị môn học và học kỳ
-        public string SubjectCode { get; set; } = string.Empty;
+        // ✅ Thêm SemesterId
+        public int SemesterId { get; set; }
 
-        public string SubjectName { get; set; } = string.Empty;
+        // ✅ Thêm SemesterName
         public string SemesterName { get; set; } = string.Empty;
+
+        public string SubjectCode { get; set; } = string.Empty;
+        public string SubjectName { get; set; } = string.Empty;
         public string Schedule { get; set; } = string.Empty;
     }
 }

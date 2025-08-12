@@ -85,8 +85,11 @@
     "courseclass:view_assigned",
     "courseclass:view_by_teacher",
     "student:view_in_class",
-    
+
     "notification:view",
+
+    "semester:view",
+
 
     "score:input",
     "score:view_my_class"

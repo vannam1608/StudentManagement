@@ -1,5 +1,4 @@
 <div class="container-fluid p-4">
-  <!-- Header Section -->
   <div class="row mb-4">
     <div class="col-12">
       <div class="card border-0 shadow-sm bg-gradient-primary text-white">
@@ -17,11 +16,11 @@
       </div>
     </div>
   </div>
+  <hr />
 
-  <!-- Filter Section -->
-  <div class="row mb-4">
+  <div class="row mb-4 g-4">
     <div class="col-lg-4 col-md-6">
-      <div class="card border-0 shadow-sm">
+      <div class="card border-0 shadow-sm h-100">
         <div class="card-body">
           <div class="d-flex align-items-center mb-3">
             <i class="bi bi-funnel text-primary me-2"></i>
@@ -31,7 +30,7 @@
             id="semesterSelect"
             class="form-select form-select-lg"
             [(ngModel)]="selectedSemester"
-            (change)="loadSubjects()">
+            (change)="onSemesterChange()">
             <option [ngValue]="0">🎓 Tất cả học kỳ</option>
             <option *ngFor="let sem of semesters" [ngValue]="sem.id">
               📅 {{ sem.name }}
@@ -40,30 +39,29 @@
         </div>
       </div>
     </div>
-    
-    <!-- Stats Cards -->
+
     <div class="col-lg-4 col-md-6 col-6">
-      <div class="card border-0 shadow-sm bg-light">
-        <div class="card-body text-center">
+      <div class="card border-0 shadow-sm bg-light h-100">
+        <div class="card-body text-center d-flex flex-column justify-content-center">
           <i class="bi bi-book text-info display-6"></i>
-          <h5 class="mt-2 mb-1">{{ getTotalSubjects() }}</h5>
+          <h5 class="mt-2 mb-1">{{ getTotalSubjectsInSelectedSemester() }}</h5>
           <small class="text-muted">Môn học có sẵn</small>
         </div>
       </div>
     </div>
-    
+
     <div class="col-lg-4 col-md-6 col-6">
-      <div class="card border-0 shadow-sm bg-light">
-        <div class="card-body text-center">
+      <div class="card border-0 shadow-sm bg-light h-100">
+        <div class="card-body text-center d-flex flex-column justify-content-center">
           <i class="bi bi-check-circle text-success display-6"></i>
-          <h5 class="mt-2 mb-1">{{ registeredSubjectIds.length }}</h5>
+          <h5 class="mt-2 mb-1">{{ getTotalRegisteredSubjectsInSelectedSemester() }}</h5>
           <small class="text-muted">Đã đăng ký</small>
         </div>
       </div>
     </div>
   </div>
+  <hr />
 
-  <!-- Available Subjects Section -->
   <div class="row">
     <div class="col-12">
       <div class="card border-0 shadow-sm">
@@ -74,63 +72,71 @@
           </div>
         </div>
         <div class="card-body p-0">
-          <!-- Subjects by Semester -->
-          <div *ngFor="let semester of groupedSubjects | keyvalue; let i = index" class="border-bottom">
-            <div class="bg-light px-4 py-3 border-start border-primary border-3">
-              <h6 class="mb-0 d-flex align-items-center">
-                <i class="bi bi-calendar-event text-primary me-2"></i>
-                {{ semester.key }}
-                <span class="badge bg-secondary ms-auto">{{ semester.value.length }} môn</span>
-              </h6>
+          <div *ngIf="groupedSubjects | keyvalue as semesters" class="p-0">
+            <div *ngIf="semesters.length > 0">
+              <div *ngFor="let semester of semesters" class="border-bottom">
+                <div class="bg-light px-4 py-3 border-start border-primary border-3">
+                  <h6 class="mb-0 d-flex align-items-center">
+                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                    {{ semester.key }}
+                    <span class="badge bg-secondary ms-auto">{{ semester.value.length }} môn</span>
+                  </h6>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="border-0">
+                          <i class="bi bi-hash text-muted me-1"></i>Mã môn
+                        </th>
+                        <th class="border-0">
+                          <i class="bi bi-book text-muted me-1"></i>Tên môn học
+                        </th>
+                        <th class="border-0 text-center">
+                          <i class="bi bi-gear text-muted me-1"></i>Thao tác
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let subject of semester.value" class="align-middle">
+                        <td>
+                          <span class="badge bg-outline-primary fs-6">{{ subject.subjectCode }}</span>
+                        </td>
+                        <td>
+                          <div class="fw-semibold">{{ subject.name }}</div>
+                        </td>
+                        <td class="text-center">
+                          <ng-container *ngIf="isRegistered(subject.id); else notRegistered">
+                            <button class="btn btn-sm btn-success" disabled>
+                              <i class="bi bi-check-circle me-1"></i>Đã đăng ký
+                            </button>
+                          </ng-container>
+
+                          <ng-template #notRegistered>
+                            <ng-container *ngIf="isCurrentSemesterOpen; else closedNotice">
+                              <button class="btn btn-sm btn-primary" (click)="registerSubject(subject.id)">
+                                <i class="bi bi-plus-circle me-1"></i>Đăng ký
+                              </button>
+                            </ng-container>
+                          </ng-template>
+
+                          <ng-template #closedNotice>
+                            <span class="badge bg-danger">
+                              <i class="bi bi-lock me-1"></i>Đã đóng
+                            </span>
+                          </ng-template>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-            
-            <div class="table-responsive">
-              <table class="table table-hover mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th class="border-0">
-                      <i class="bi bi-hash text-muted me-1"></i>Mã môn
-                    </th>
-                    <th class="border-0">
-                      <i class="bi bi-book text-muted me-1"></i>Tên môn học
-                    </th>
-                    <th class="border-0 text-center">
-                      <i class="bi bi-gear text-muted me-1"></i>Thao tác
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let subject of semester.value" class="align-middle">
-                    <td>
-                      <span class="badge bg-outline-primary fs-6">{{ subject.subjectCode }}</span>
-                    </td>
-                    <td>
-                      <div class="fw-semibold">{{ subject.name }}</div>
-                    </td>
-                    <td class="text-center">
-                      <ng-container *ngIf="isRegistered(subject.id); else notRegistered">
-                        <button class="btn btn-sm btn-success" disabled>
-                          <i class="bi bi-check-circle me-1"></i>Đã đăng ký
-                        </button>
-                      </ng-container>
-
-                      <ng-template #notRegistered>
-                        <ng-container *ngIf="isCurrentSemesterOpen; else closedNotice">
-                          <button class="btn btn-sm btn-primary" (click)="registerSubject(subject.id)">
-                            <i class="bi bi-plus-circle me-1"></i>Đăng ký
-                          </button>
-                        </ng-container>
-                      </ng-template>
-
-                      <ng-template #closedNotice>
-                        <span class="badge bg-danger">
-                          <i class="bi bi-lock me-1"></i>Đã đóng
-                        </span>
-                      </ng-template>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div *ngIf="semesters.length === 0" class="text-center py-5">
+              <i class="bi bi-info-circle display-4 text-muted mb-3"></i>
+              <h5 class="text-muted">Không có môn học nào có sẵn trong học kỳ này.</h5>
+              <p class="text-muted">Vui lòng chọn học kỳ khác hoặc chờ thông báo từ nhà trường.</p>
             </div>
           </div>
         </div>
@@ -138,7 +144,6 @@
     </div>
   </div>
 
-  <!-- Registered Subjects Section -->
   <div class="row mt-4">
     <div class="col-12">
       <div class="card border-0 shadow-sm">
@@ -165,7 +170,7 @@
               </h6>
               <span class="badge bg-success ms-auto">{{ semester.value.length }} môn</span>
             </div>
-            
+
             <div class="row">
               <div class="col-lg-6 col-md-12 mb-2" *ngFor="let subject of semester.value">
                 <div class="card border-success border-start border-3 h-100">

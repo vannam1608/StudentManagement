@@ -541,19 +541,38 @@
         }
       }
     },
-    "/api/enrollments/{id}": {
+    "/api/enrollments/search": {
       "get": {
         "tags": [
           "Quản lý đăng ký học phần"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
+            "name": "studentId",
+            "in": "query",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
+            }
+          },
+          {
+            "name": "studentCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "semesterId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "subjectName",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -563,43 +582,34 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnrollmentDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnrollmentDto"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnrollmentDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnrollmentDto"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EnrollmentDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnrollmentDto"
+                  }
                 }
               }
             }
           }
         }
-      },
+      }
+    },
+    "/api/enrollments/{id}": {
       "put": {
         "tags": [
           "Quản lý đăng ký học phần"
@@ -695,63 +705,6 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/enrollments/student/{studentId}": {
-      "get": {
-        "tags": [
-          "Quản lý đăng ký học phần"
-        ],
-        "parameters": [
-          {
-            "name": "studentId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "semesterId",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EnrollmentDto"
-                  }
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EnrollmentDto"
-                  }
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/EnrollmentDto"
-                  }
                 }
               }
             }
@@ -3383,15 +3336,19 @@
             "type": "string",
             "format": "date-time"
           },
+          "semesterId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "semesterName": {
+            "type": "string",
+            "nullable": true
+          },
           "subjectCode": {
             "type": "string",
             "nullable": true
           },
           "subjectName": {
-            "type": "string",
-            "nullable": true
-          },
-          "semesterName": {
             "type": "string",
             "nullable": true
           },
@@ -3551,6 +3508,10 @@
             "nullable": true
           },
           "classCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "semesterName": {
             "type": "string",
             "nullable": true
           }

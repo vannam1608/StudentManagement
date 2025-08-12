@@ -12,6 +12,7 @@
     classCode: string;
 
     semesterName: string;
+    
   }
 
   export interface InputScoreDto {

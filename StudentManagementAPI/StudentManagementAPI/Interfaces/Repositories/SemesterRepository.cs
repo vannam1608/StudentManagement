@@ -14,6 +14,11 @@ namespace StudentManagementAPI.Repositories
             _context = context;
         }
 
+        public IQueryable<Semester> Query()
+        {
+            return _context.Semesters.AsQueryable();
+        }
+
         public async Task<IEnumerable<Semester>> GetAllAsync()
         {
             return await _context.Semesters

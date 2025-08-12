@@ -1,0 +1,73 @@
+.icon-circle {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.class-card {
+  transition: all 0.3s ease;
+}
+
+.class-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.class-icon {
+  font-size: 24px;
+  opacity: 0.8;
+}
+
+.info-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-item:last-child {
+  border-bottom: none;
+}
+
+.empty-state {
+  padding: 3rem 1rem;
+}
+
+.stat-item {
+  padding: 1rem 0;
+}
+
+.bg-gradient {
+  background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark, #0056b3) 100%);
+}
+
+.bg-gradient.bg-primary {
+  --bs-primary-dark: #0056b3;
+}
+
+.bg-gradient.bg-success {
+  --bs-primary: #198754;
+  --bs-primary-dark: #146c43;
+}
+
+.bg-gradient.bg-info {
+  --bs-primary: #0dcaf0;
+  --bs-primary-dark: #087990;
+}
+
+.bg-gradient.bg-warning {
+  --bs-primary: #ffc107;
+  --bs-primary-dark: #cc9707;
+}
+
+.bg-gradient.bg-danger {
+  --bs-primary: #dc3545;
+  --bs-primary-dark: #b02a37;
+}
+
+.bg-gradient.bg-secondary {
+  --bs-primary: #6c757d;
+  --bs-primary-dark: #565e64;
+}

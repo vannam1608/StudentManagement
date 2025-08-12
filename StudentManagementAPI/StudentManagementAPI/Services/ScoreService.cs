@@ -159,7 +159,7 @@ namespace StudentManagementAPI.Services
 
             foreach (var score in scores)
             {
-                score.CalculateTotal(); // Đảm bảo tính lại Total trước khi map
+                score.CalculateTotal(); 
             }
 
             return _mapper.Map<IEnumerable<ScoreDto>>(scores);

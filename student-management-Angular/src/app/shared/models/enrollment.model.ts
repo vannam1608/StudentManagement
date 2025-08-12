@@ -7,10 +7,12 @@ export interface EnrollmentDto {
   classCode: string;
   enrollDate: Date;
   subjectName: string;
-  subjectCode: string;     // ✅ THÊM DÒNG NÀY
+  subjectCode: string;
+  semesterId: number; 
   semesterName: string;
   schedule: string;
 }
+
 
 
 export interface CreateEnrollmentDto {

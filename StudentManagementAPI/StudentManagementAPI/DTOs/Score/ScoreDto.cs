@@ -11,4 +11,7 @@
 
     public string SubjectName { get; set; } = string.Empty;
     public string ClassCode { get; set; } = string.Empty;
+
+    // ✅ Thêm thuộc tính này để chứa tên học kỳ
+    public string SemesterName { get; set; } = string.Empty;
 }

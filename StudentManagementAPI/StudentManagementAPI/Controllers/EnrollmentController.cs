@@ -33,18 +33,37 @@ namespace StudentManagementAPI.Controllers
             return Ok(enrollments);
         }
 
-        /// <summary>🔍 Lấy chi tiết một đăng ký học phần theo ID</summary>
-        [HttpGet("{id}")]
+        /// <summary>🔍 Tìm kiếm đăng ký học phần (lọc theo studentId, studentCode, semesterId, subjectName)</summary>
+        [HttpGet("search")]
         [Authorize(Policy = "enrollment:view")]
-        [ProducesResponseType(typeof(EnrollmentDto), 200)]
-        [ProducesResponseType(404)]
-        public async Task<IActionResult> GetEnrollmentById(int id)
+        [ProducesResponseType(typeof(IEnumerable<EnrollmentDto>), 200)]
+        public async Task<IActionResult> SearchEnrollments(
+    [FromQuery] string? studentId,
+    [FromQuery] string? studentCode,
+    [FromQuery] string? semesterId,
+    [FromQuery] string? subjectName)
         {
-            var enrollment = await _enrollmentService.GetByIdAsync(id);
-            if (enrollment == null)
-                return NotFound("Không tìm thấy đăng ký.");
-            return Ok(enrollment);
+            int? studentIdParsed = null;
+            if (int.TryParse(studentId, out var sid))
+                studentIdParsed = sid;
+
+            int? semesterIdParsed = null;
+            if (int.TryParse(semesterId, out var semid))
+                semesterIdParsed = semid;
+
+            var result = await _enrollmentService.SearchAsync(
+                studentIdParsed,
+                semesterIdParsed,
+                studentCode,
+                subjectName);
+
+            if (!result.Data.Any())
+                return NotFound("Không tìm thấy kết quả phù hợp.");
+
+            return Ok(result);
+
         }
+
 
         /// <summary>🆕 Sinh viên đăng ký lớp học phần mới</summary>
         [HttpPost]
@@ -85,16 +104,6 @@ namespace StudentManagementAPI.Controllers
             return Ok("✅ Đã hủy đăng ký thành công.");
         }
 
-        /// <summary>📌 Lấy danh sách đăng ký của 1 sinh viên (có thể lọc theo học kỳ)</summary>
-        [HttpGet("student/{studentId}")]
-        [Authorize(Policy = "enrollment:view")]
-        [ProducesResponseType(typeof(IEnumerable<EnrollmentDto>), 200)]
-        public async Task<IActionResult> GetByStudent(int studentId, [FromQuery] int? semesterId)
-        {
-            var result = await _enrollmentService.GetByStudentAndSemesterAsync(studentId, semesterId);
-            return Ok(result);
-        }
-
         /// <summary>📄 Danh sách đăng ký học phần có phân trang</summary>
         [HttpGet("paged")]
         [Authorize(Policy = "enrollment:view")]
@@ -104,6 +113,5 @@ namespace StudentManagementAPI.Controllers
             var result = await _enrollmentService.GetPagedAsync(paginationDto);
             return Ok(result);
         }
-
     }
 }

@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using StudentManagementAPI.DTOs;
 using StudentManagementAPI.DTOs.Common;
 using StudentManagementAPI.DTOs.Enrollment;
 using StudentManagementAPI.Interfaces.Repositories;
 using StudentManagementAPI.Interfaces.Services;
-using StudentManagementAPI.Models;
 using StudentManagementAPI.Models.Common;
 
 namespace StudentManagementAPI.Services
@@ -13,11 +11,16 @@ namespace StudentManagementAPI.Services
     public class EnrollmentService : IEnrollmentService
     {
         private readonly IEnrollmentRepository _enrollmentRepository;
+        private readonly ISemesterRepository _semesterRepository;
         private readonly IMapper _mapper;
 
-        public EnrollmentService(IEnrollmentRepository enrollmentRepository, IMapper mapper)
+        public EnrollmentService(
+            IEnrollmentRepository enrollmentRepository,
+            ISemesterRepository semesterRepository,
+            IMapper mapper)
         {
             _enrollmentRepository = enrollmentRepository;
+            _semesterRepository = semesterRepository;
             _mapper = mapper;
         }
 
@@ -62,25 +65,74 @@ namespace StudentManagementAPI.Services
             return true;
         }
 
-        public async Task<IEnumerable<EnrollmentDto>> GetByStudentAndSemesterAsync(int studentId, int? semesterId)
-        {
-            var enrollments = await _enrollmentRepository.GetByStudentAndSemesterAsync(studentId, semesterId);
-            return _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
+        // SearchAsync có phân trang
+            public async Task<PaginatedResult<EnrollmentDto>> SearchAsync(
+                int? studentId = null,
+                int? semesterId = null,
+                string? studentCode = null,
+                string? subjectName = null,
+                int page = 1,
+                int pageSize = 10)
+            {
+                // Nếu semesterId không truyền -> lấy học kỳ đang mở
+                if (!semesterId.HasValue)
+                {
+                    var activeSemester = await _semesterRepository.Query()
+                        .FirstOrDefaultAsync(s => s.IsOpen);
+
+                    if (activeSemester != null)
+                        semesterId = activeSemester.Id;
+                }
+
+                // Tạo query ban đầu
+                var query = _enrollmentRepository.Query();
+
+                if (studentId.HasValue)
+                    query = query.Where(e => e.StudentId == studentId.Value);
+
+                if (semesterId.HasValue)
+                    query = query.Where(e => e.CourseClass.SemesterId == semesterId.Value);
+
+                if (!string.IsNullOrEmpty(studentCode))
+                    query = query.Where(e => e.Student.StudentCode.ToLower().Contains(studentCode.ToLower()));
+
+                if (!string.IsNullOrEmpty(subjectName))
+                    query = query.Where(e => e.CourseClass.Subject.Name.ToLower().Contains(subjectName.ToLower()));
+
+                // Đếm tổng số bản ghi
+                var totalItems = await query.CountAsync();
+
+                // Lấy dữ liệu phân trang
+                var itemsList = await query
+                    .OrderBy(e => e.StudentId)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                var items = _mapper.Map<IEnumerable<EnrollmentDto>>(itemsList);
+
+            return new PaginatedResult<EnrollmentDto>
+            {
+                Data = items,
+                TotalItems = totalItems,
+                CurrentPage = page,
+                PageSize = pageSize
+            };
         }
 
         public async Task<PaginatedResult<EnrollmentDto>> GetPagedAsync(PaginationQueryDto query)
         {
-            var source = _enrollmentRepository.Query()
-                .OrderBy(e => e.StudentId);
+            var source = _enrollmentRepository.Query();
 
             var totalItems = await source.CountAsync();
 
-            var enrollments = await source
+            var itemsList = await source
+                .OrderBy(e => e.StudentId)
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
                 .ToListAsync();
 
-            var items = _mapper.Map<IEnumerable<EnrollmentDto>>(enrollments);
+            var items = _mapper.Map<IEnumerable<EnrollmentDto>>(itemsList);
 
             return new PaginatedResult<EnrollmentDto>
             {
@@ -90,10 +142,5 @@ namespace StudentManagementAPI.Services
                 PageSize = query.PageSize
             };
         }
-
-
-
-
-
     }
 }

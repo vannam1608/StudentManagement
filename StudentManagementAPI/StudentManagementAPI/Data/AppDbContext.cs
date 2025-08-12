@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using StudentManagementAPI.DTOs.Subject;
 using StudentManagementAPI.Models;
 
 namespace StudentManagementAPI.Data
@@ -18,7 +19,7 @@ namespace StudentManagementAPI.Data
         public DbSet<Enrollment> Enrollments { get; set; }
         public DbSet<Score> Scores { get; set; }
         public DbSet<Notification> Notifications { get; set; }
-        
+        public DbSet<SubjectDto> SubjectDtos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -53,17 +54,16 @@ namespace StudentManagementAPI.Data
                 .HasDefaultValue(true);
 
             modelBuilder.Entity<Notification>()
-                .Property(n => n.TargetRole)
-                .HasDefaultValue("All");
-            modelBuilder.Entity<Notification>()
                 .HasOne(n => n.Creator)
                 .WithMany()
                 .HasForeignKey(n => n.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
+            modelBuilder.Entity<SubjectDto>(entity =>
+            {
+                entity.HasNoKey();
+                entity.ToView(null);
+            });
         }
-
-
     }
 }

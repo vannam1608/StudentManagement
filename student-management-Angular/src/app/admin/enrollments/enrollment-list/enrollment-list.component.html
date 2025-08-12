@@ -1,10 +1,10 @@
 <div class="container mt-4">
-  <h3 class="mb-3">📋 Danh sách đăng ký môn học</h3>
+  <h3 class="mb-3">📋 Danh sách học phần đang giảng dạy</h3>
 
   <!-- Bộ lọc -->
-  <div class="row mb-3">
+  <div class="row mb-3 g-3">
     <div class="col-md-4">
-      <label for="studentFilter">🎓 Mã sinh viên:</label>
+      <label for="studentFilter" class="form-label">🎓 Mã sinh viên:</label>
       <input
         type="text"
         id="studentFilter"
@@ -13,18 +13,29 @@
         [(ngModel)]="studentCodeFilter"
         (ngModelChange)="onStudentCodeChange()"
       />
+    </div>
+
+    <div class="col-md-4">
+      <label for="subjectFilter" class="form-label">📚 Tên môn học:</label>
+      <input
+        type="text"
+        id="subjectFilter"
+        class="form-control"
+        placeholder="Nhập tên môn học..."
+        [(ngModel)]="subjectNameFilter"
+        (ngModelChange)="onSubjectNameChange()"
       />
     </div>
 
     <div class="col-md-4">
-      <label for="semesterFilter">📅 Học kỳ:</label>
+      <label for="semesterFilter" class="form-label">📅 Học kỳ:</label>
       <select
         id="semesterFilter"
-        class="form-control"
+        class="form-select"
         [(ngModel)]="selectedSemesterId"
         (change)="onSemesterChange()"
       >
-        <option [ngValue]="null">-- Tất cả học kỳ --</option>
+        <option [ngValue]="null">-- Chọn học kỳ --</option>
         <option *ngFor="let semester of semesters" [ngValue]="semester.id">
           {{ semester.name }}
         </option>
@@ -32,8 +43,9 @@
     </div>
   </div>
 
-  <table class="table table-bordered">
-    <thead>
+  <!-- Bảng dữ liệu -->
+  <table class="table table-bordered table-hover align-middle">
+    <thead class="table-light">
       <tr>
         <th>#</th>
         <th>Họ tên</th>
@@ -58,6 +70,7 @@
         <td>{{ item.schedule }}</td>
         <td>{{ item.semesterName }}</td>
         <td>{{ item.enrollDate | date: 'shortDate' }}</td>
+
         <td>
           <button class="btn btn-danger btn-sm" (click)="delete(item.id)">
             <i class="bi bi-trash"></i> Xoá
@@ -65,14 +78,18 @@
         </td>
       </tr>
       <tr *ngIf="enrollments?.length === 0">
-        <td colspan="10" class="text-center">Không có dữ liệu.</td>
+        <td colspan="10" class="text-center text-muted">Không có dữ liệu.</td>
       </tr>
     </tbody>
   </table>
 
   <!-- PHÂN TRANG -->
   <div class="d-flex justify-content-between align-items-center mt-3">
-    <button class="btn btn-secondary" [disabled]="currentPage === 1" (click)="goToPreviousPage()">
+    <button
+      class="btn btn-secondary"
+      [disabled]="currentPage === 1"
+      (click)="goToPreviousPage()"
+    >
       ← Trước
     </button>
     <span>Trang {{ currentPage }} / {{ totalPages }}</span>

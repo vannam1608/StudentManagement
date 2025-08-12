@@ -12,10 +12,18 @@ namespace StudentManagementAPI.Interfaces.Services
         Task<bool> UpdateAsync(int id, CreateEnrollmentDto dto);
         Task<bool> DeleteAsync(int id);
 
-        // ✅ Cho phép lọc theo studentId (bắt buộc) và semesterId (tùy chọn)
-        Task<IEnumerable<EnrollmentDto>> GetByStudentAndSemesterAsync(int studentId, int? semesterId);
+        // ✅ Tìm kiếm/lọc danh sách đăng ký (gộp các method cũ)
+        Task<PaginatedResult<EnrollmentDto>> SearchAsync(
+        int? studentId = null,
+        int? semesterId = null,
+        string? studentCode = null,
+        string? subjectName = null,
+        int page = 1,
+        int pageSize = 10
+);
 
+
+        // ✅ Lấy danh sách đăng ký có phân trang
         Task<PaginatedResult<EnrollmentDto>> GetPagedAsync(PaginationQueryDto query);
-
     }
 }

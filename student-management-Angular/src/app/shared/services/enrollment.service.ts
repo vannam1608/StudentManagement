@@ -6,41 +6,40 @@ import { PagedResult } from '../models/paged-result.model';
 
 @Injectable({ providedIn: 'root' })
 export class EnrollmentService {
+  private readonly baseUrl = 'https://localhost:7172/api/enrollments';
   private readonly userApi = 'https://localhost:7172/api/users';
-  private readonly enrollApi = 'https://localhost:7172/api/enrollments';
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * 📝 Đăng ký môn học cho sinh viên
-   * POST /api/users/students/{studentId}/register
-   */
+  /** 📝 Đăng ký môn học cho sinh viên */
   registerSubject(studentId: number, courseClassId: number): Observable<{ message: string }> {
-    const url = `${this.userApi}/students/${studentId}/register`;
-    return this.http.post<{ message: string }>(url, { courseClassId });
+    return this.http.post<{ message: string }>(
+      `${this.userApi}/students/${studentId}/register`,
+      { courseClassId }
+    );
   }
 
-  /**
-   * 📚 Lấy danh sách đăng ký học phần của sinh viên
-   * GET /api/enrollments/student/{studentId}?semesterId=...
-   */
+  /** 📚 Lấy danh sách đăng ký học phần của sinh viên (có thể lọc theo học kỳ) */
   getEnrollmentsByStudent(studentId: number, semesterId?: number): Observable<EnrollmentDto[]> {
-    const url = `${this.enrollApi}/student/${studentId}`;
-    const params = semesterId != null
-      ? new HttpParams().set('semesterId', semesterId.toString())
-      : undefined;
-
-    return this.http.get<EnrollmentDto[]>(url, { params });
+    let params = new HttpParams();
+    if (semesterId != null) {
+      params = params.set('semesterId', semesterId.toString());
+    }
+    return this.http.get<EnrollmentDto[]>(`${this.baseUrl}/student/${studentId}`, { params });
   }
 
-  /**
-   * 📋 Lấy tất cả đăng ký học phần có phân trang
-   * GET /api/enrollments/paged?page=1&pageSize=10&semesterId=...
-   */
-  getPagedEnrollments(
+  /** 📚 Lấy danh sách đăng ký học phần theo học kỳ (tất cả sinh viên) */
+  getEnrollmentsBySemester(semesterId: number): Observable<EnrollmentDto[]> {
+    return this.http.get<EnrollmentDto[]>(`${this.baseUrl}/semester/${semesterId}`);
+  }
+
+  /** 📋 Tìm kiếm + phân trang */
+  searchEnrollments(
     page: number,
     pageSize: number,
-    semesterId?: number
+    semesterId?: number,
+    studentCode?: string,
+    subjectName?: string
   ): Observable<PagedResult<EnrollmentDto>> {
     let params = new HttpParams()
       .set('page', page.toString())
@@ -49,16 +48,18 @@ export class EnrollmentService {
     if (semesterId != null) {
       params = params.set('semesterId', semesterId.toString());
     }
+    if (studentCode?.trim()) {
+      params = params.set('studentCode', studentCode.trim());
+    }
+    if (subjectName?.trim()) {
+      params = params.set('subjectName', subjectName.trim());
+    }
 
-    return this.http.get<PagedResult<EnrollmentDto>>(`${this.enrollApi}/paged`, { params });
+    return this.http.get<PagedResult<EnrollmentDto>>(`${this.baseUrl}/search`, { params });
   }
 
-  /**
-   * 🗑️ Xoá đăng ký học phần
-   * DELETE /api/enrollments/{enrollmentId}
-   */
+  /** 🗑️ Xoá đăng ký học phần */
   deleteEnrollment(enrollmentId: number): Observable<string> {
-    const url = `${this.enrollApi}/${enrollmentId}`;
-    return this.http.delete(url, { responseType: 'text' }) as Observable<string>;
+    return this.http.delete(`${this.baseUrl}/${enrollmentId}`, { responseType: 'text' }) as Observable<string>;
   }
 }

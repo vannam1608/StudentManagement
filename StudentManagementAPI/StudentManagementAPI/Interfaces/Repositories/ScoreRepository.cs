@@ -99,11 +99,17 @@ namespace StudentManagementAPI.Repositories
             return await _context.Scores
                 .Include(s => s.Enrollment)
                     .ThenInclude(e => e.Student)
-                        .ThenInclude(st => st.User) 
+                        .ThenInclude(st => st.User)
 
                 .Include(s => s.Enrollment)
                     .ThenInclude(e => e.CourseClass)
                         .ThenInclude(c => c.Subject)
+
+                // ✅ Thêm dòng này để nạp thông tin về Học kỳ
+                .Include(s => s.Enrollment)
+                    .ThenInclude(e => e.CourseClass)
+                        .ThenInclude(c => c.Semester)
+
                 .Where(s => s.Enrollment.CourseClass.TeacherId == teacherId)
                 .ToListAsync();
         }

@@ -2,19 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { jwtDecode } from 'jwt-decode'; // Nhớ đã cài: `npm install jwt-decode`
+import { jwtDecode } from 'jwt-decode';
+import { FormsModule } from '@angular/forms'; // 👈 Thêm import FormsModule để sử dụng ngModel
 
 @Component({
   selector: 'app-my-classes',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule], // 👈 Thêm FormsModule vào imports
   templateUrl: './my-classes.component.html',
   styleUrls: ['./my-classes.component.scss']
 })
 export class MyClassesComponent implements OnInit {
   classes: any[] = [];
+  filteredClasses: any[] = []; // 👈 Thêm mảng mới để lưu danh sách đã lọc
   loading = true;
   error: string | null = null;
+  searchQuery: string = ''; // 👈 Thêm biến để lưu trữ chuỗi tìm kiếm
 
   constructor(private http: HttpClient) {}
 
@@ -37,10 +40,10 @@ export class MyClassesComponent implements OnInit {
         return;
       }
 
-      // ✅ Gọi đúng API có teacherId
       this.http.get<any[]>(`/api/CourseClass/teacher/${teacherId}`).subscribe({
         next: (data) => {
           this.classes = data;
+          this.filteredClasses = data; // 👈 Khởi tạo filteredClasses ban đầu
           this.loading = false;
         },
         error: (err) => {
@@ -49,12 +52,23 @@ export class MyClassesComponent implements OnInit {
           this.loading = false;
         }
       });
-
     } catch (err) {
       console.error('❌ Lỗi giải mã token:', err);
       this.error = 'Token không hợp lệ.';
       this.loading = false;
     }
+  }
+
+  // 👈 Thêm phương thức để lọc danh sách
+  applySearchFilter(): void {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredClasses = this.classes.filter(cls => {
+      const classCodeMatch = cls.classCode?.toLowerCase().includes(query);
+      const subjectNameMatch = cls.subjectName?.toLowerCase().includes(query);
+      const semesterNameMatch = cls.semesterName?.toLowerCase().includes(query);
+      
+      return classCodeMatch || subjectNameMatch || semesterNameMatch;
+    });
   }
 
   // Utility methods for UI

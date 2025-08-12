@@ -30,14 +30,18 @@ namespace StudentManagementAPI.Shared
             CreateMap<CreateStudentDto, Student>();
             CreateMap<UpdateStudentDto, Student>();
 
-            // ✅ Subject
-            CreateMap<Subject, SubjectDto>()
-                .ForMember(dest => dest.SemesterId, opt => opt.MapFrom(src => src.SemesterId))
-                .ForMember(dest => dest.SemesterName, opt => opt.MapFrom(src => src.Semester != null ? src.Semester.Name : ""))
-                .ReverseMap();
 
+            CreateMap<Subject, SubjectDto>().ReverseMap();
 
-            CreateMap<CreateSubjectDto, Subject>();
+            // ✅ Subject từ Enrollment (map Enrollment sang SubjectDto, lấy Semester từ CourseClass)
+            CreateMap<Enrollment, SubjectDto>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.CourseClass.Subject.Id))
+                .ForMember(dest => dest.SubjectCode, opt => opt.MapFrom(src => src.CourseClass.Subject.SubjectCode))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.CourseClass.Subject.Name))
+                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.CourseClass.Subject.Description))
+                .ForMember(dest => dest.Credit, opt => opt.MapFrom(src => src.CourseClass.Subject.Credit))
+                .ForMember(dest => dest.SemesterId, opt => opt.MapFrom(src => src.CourseClass.Semester.Id))
+                .ForMember(dest => dest.SemesterName, opt => opt.MapFrom(src => src.CourseClass.Semester.Name));
 
             // ✅ Teacher
             CreateMap<Teacher, TeacherDto>()
@@ -59,14 +63,15 @@ namespace StudentManagementAPI.Shared
 
             // ✅ Enrollment
             CreateMap<Enrollment, EnrollmentDto>()
-                .ForMember(dest => dest.StudentCode, opt => opt.MapFrom(src => src.Student.StudentCode)) 
+                .ForMember(dest => dest.StudentCode, opt => opt.MapFrom(src => src.Student.StudentCode))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Student.User.FullName))
                 .ForMember(dest => dest.ClassCode, opt => opt.MapFrom(src => src.CourseClass.ClassCode))
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.CourseClass.Subject.Name))
                 .ForMember(dest => dest.SubjectCode, opt => opt.MapFrom(src => src.CourseClass.Subject.SubjectCode))
                 .ForMember(dest => dest.SemesterName, opt => opt.MapFrom(src => src.CourseClass.Semester.Name))
+                .ForMember(dest => dest.SemesterId, opt => opt.MapFrom(src => src.CourseClass.Semester.Id))
                 .ForMember(dest => dest.Schedule, opt => opt.MapFrom(src => src.CourseClass.Schedule));
-            CreateMap<EnrollmentDto, Enrollment>();
+
             CreateMap<CreateEnrollmentDto, Enrollment>();
 
             // ✅ Score
@@ -74,7 +79,8 @@ namespace StudentManagementAPI.Shared
                 .ForMember(dest => dest.StudentCode, opt => opt.MapFrom(src => src.Enrollment.Student.StudentCode ?? ""))
                 .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => src.Enrollment.Student.User.FullName ?? ""))
                 .ForMember(dest => dest.SubjectName, opt => opt.MapFrom(src => src.Enrollment.CourseClass.Subject.Name ?? ""))
-                .ForMember(dest => dest.ClassCode, opt => opt.MapFrom(src => src.Enrollment.CourseClass.ClassCode ?? ""));
+                .ForMember(dest => dest.ClassCode, opt => opt.MapFrom(src => src.Enrollment.CourseClass.ClassCode ?? ""))
+                .ForMember(dest => dest.SemesterName, opt => opt.MapFrom(src => src.Enrollment.CourseClass.Semester.Name));
             CreateMap<ScoreDto, Score>();
             CreateMap<InputScoreDto, Score>();
 
